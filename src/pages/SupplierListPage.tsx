@@ -23,11 +23,12 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { Supplier } from "@/types"; // Importar Supplier
 
 const supplierFormSchema = z.object({
   name: z.string().min(1, "El nombre es requerido."),
   description: z.string().optional(),
-});
+}) satisfies z.ZodType<Omit<Supplier, 'id'>>; // Añadir esta aserción
 
 type SupplierFormValues = z.infer<typeof supplierFormSchema>;
 

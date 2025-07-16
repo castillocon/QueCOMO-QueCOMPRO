@@ -18,7 +18,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { PlusCircle, MinusCircle, ArrowLeft, XCircle } from 'lucide-react';
 import { useMealPlanning } from '@/context/MealPlanningContext';
-import { Recipe } from '@/types';
+import { Recipe, Ingredient } from '@/types'; // Importar Ingredient
 import { toast } from 'sonner';
 
 const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
@@ -35,7 +35,7 @@ const formSchema = z.object({
       name: z.string().min(1, 'El nombre del ingrediente es requerido.'),
       quantity: z.string().min(1, 'La cantidad es requerida.'),
       supplier: z.string().optional(),
-    })
+    }) satisfies z.ZodType<Ingredient> // Añadir esta aserción
   ).min(1, 'Debe añadir al menos un ingrediente.'),
   instructions: z.array(
     z.string().min(1, 'La instrucción no puede estar vacía.')
