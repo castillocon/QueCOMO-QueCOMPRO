@@ -1,4 +1,4 @@
-import React, { useRef, useState, useEffect } from "react";
+import React, { useRef, useState, useEffect, useMemo } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
@@ -7,17 +7,16 @@ import { useMealPlanning } from '@/context/MealPlanningContext';
 import { useSession } from '@/context/SessionContext';
 import { toast } from "sonner";
 import html2pdf from 'html2pdf.js';
-import { getWeekDays, formatDisplayDate } from '@/utils/date'; // Importar utilidades de fecha
-import { parseQuantity } from '@/utils/helpers'; // Importar parseQuantity
+import { getWeekDays, formatDisplayDate } from '@/utils/date';
+import { parseQuantity } from '@/utils/helpers';
 
 const ShoppingListPage: React.FC = () => {
   const { recipes, mealPlan } = useMealPlanning();
-  const { user, profile } = useSession(); // Obtener el perfil
+  const { user, profile } = useSession();
   const shoppingListRef = useRef<HTMLDivElement>(null);
 
   const [currentWeekStart, setCurrentWeekStart] = useState(new Date());
 
-  // Adjust currentWeekStart to be the beginning of the current week (Monday)
   useEffect(() => {
     const today = new Date();
     const dayOfWeek = today.getDay(); // 0 for Sunday, 1 for Monday, ..., 6 for Saturday
@@ -28,11 +27,11 @@ const ShoppingListPage: React.FC = () => {
   }, []);
 
   const weekDays = getWeekDays(currentWeekStart);
-  // Usar el username del perfil, si no existe, usar first_name, si no, el email
   const userName = profile?.username || profile?.first_name || user?.email || "Usuario";
   const weekRangeText = `Semana del ${formatDisplayDate(weekDays[0])} al ${formatDisplayDate(weekDays[6])}`;
 
-  const generateShoppingList = () => {
+  // Memoize the shopping list generation to prevent unnecessary re-computations
+  const shoppingListGroupedBySupplier = useMemo(() => {
     // Map: SupplierName -> IngredientName -> Unit -> TotalQuantity
     const aggregatedList = new Map<string, Map<string, Map<string, number>>>();
     // Map: SupplierName -> IngredientName -> Set of original unparsed quantities
@@ -76,9 +75,9 @@ const ShoppingListPage: React.FC = () => {
     // Process aggregated quantities
     aggregatedList.forEach((ingredientMap, supplierName) => {
       const items: { item: string; quantity: string }[] = [];
-      ingredientMap.forEach((unitMap, itemName) => {
+      ingredientMap.forEach((totalUnitMap, itemName) => {
         let quantityStringParts: string[] = [];
-        unitMap.forEach((totalValue, unit) => {
+        totalUnitMap.forEach((totalValue, unit) => {
           quantityStringParts.push(`${totalValue} ${unit}`);
         });
         items.push({ item: itemName, quantity: quantityStringParts.join(', ') });
@@ -112,9 +111,7 @@ const ShoppingListPage: React.FC = () => {
     });
 
     return finalShoppingList.sort((a, b) => a.supplier.localeCompare(b.supplier));
-  };
-
-  const shoppingListGroupedBySupplier = generateShoppingList();
+  }, [recipes, mealPlan]); // Dependencies for memoization
 
   const handleDownloadPdf = () => {
     if (shoppingListRef.current) {
