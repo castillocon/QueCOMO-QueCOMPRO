@@ -1,9 +1,9 @@
 import React, { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { MealPlanEntry } from "@/types"; // Se eliminó la importación de Recipe ya que no se usa directamente aquí
+import { MealPlanEntry } from "@/types";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { useMealPlanning } from '@/context/MealPlanningContext'; // Importar useMealPlanning
+import { useMealPlanning } from '@/context/MealPlanningContext';
 
 const getWeekDays = (startDate: Date) => {
   const days = [];
@@ -16,11 +16,12 @@ const getWeekDays = (startDate: Date) => {
 };
 
 const formatDate = (date: Date) => date.toISOString().split('T')[0]; // YYYY-MM-DD
-const formatDisplayDate = (date: Date) => date.toLocaleDateString('es-ES', { weekday: 'long', day: 'numeric', month: 'short' });
+// Modificado para un formato más conciso: "1 Ene" en lugar de "lunes, 1 de enero"
+const formatDisplayDate = (date: Date) => date.toLocaleDateString('es-ES', { day: 'numeric', month: 'short' });
 
 const MealPlannerPage: React.FC = () => {
   const [currentWeekStart, setCurrentWeekStart] = useState(new Date());
-  const { recipes, mealPlan, addOrUpdateMealPlanEntry } = useMealPlanning(); // Usar mealPlan y addOrUpdateMealPlanEntry del contexto
+  const { recipes, mealPlan, addOrUpdateMealPlanEntry } = useMealPlanning();
 
   const weekDays = getWeekDays(currentWeekStart);
   const mealTypes = ['Desayuno', 'Almuerzo', 'Cena', 'Merienda'];
@@ -52,7 +53,7 @@ const MealPlannerPage: React.FC = () => {
 
       <div className="flex justify-between items-center mb-6">
         <Button onClick={goToPreviousWeek} variant="outline">Semana Anterior</Button>
-        <h2 className="text-xl font-semibold">
+        <h2 className="text-xl font-semibold whitespace-nowrap"> {/* Added whitespace-nowrap */}
           Semana del {formatDisplayDate(weekDays[0])} al {formatDisplayDate(weekDays[6])}
         </h2>
         <Button onClick={goToNextWeek} variant="outline">Semana Siguiente</Button>
