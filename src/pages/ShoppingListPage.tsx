@@ -1,11 +1,15 @@
-import React from "react";
+import React, { useRef } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Button } from "@/components/ui/button";
+import { Download } from "lucide-react";
 import { useMealPlanning } from '@/context/MealPlanningContext';
-import { Ingredient } from "@/types";
+import { toast } from "sonner";
+import html2pdf from 'html2pdf.js';
 
 const ShoppingListPage: React.FC = () => {
   const { recipes, mealPlan } = useMealPlanning();
+  const shoppingListRef = useRef<HTMLDivElement>(null);
 
   // Helper function to parse quantity strings
   const parseQuantity = (quantityStr: string): { value: number | null; unit: string } => {
@@ -87,15 +91,31 @@ const ShoppingListPage: React.FC = () => {
 
   const shoppingList = generateShoppingList();
 
+  const handleDownloadPdf = () => {
+    if (shoppingListRef.current) {
+      toast.loading("Generando PDF de la lista de compras...");
+      html2pdf().from(shoppingListRef.current).save('lista_de_compras.pdf');
+      toast.success("PDF generado con éxito.");
+    } else {
+      toast.error("No se pudo encontrar el contenido de la lista de compras.");
+    }
+  };
+
   return (
     <div className="container mx-auto p-4">
-      <h1 className="text-3xl font-bold mb-6 text-center">Lista de Compras</h1>
+      <div className="flex justify-between items-center mb-6">
+        <h1 className="text-3xl font-bold">Lista de Compras</h1>
+        <Button onClick={handleDownloadPdf} disabled={shoppingList.length === 0}>
+          <Download className="mr-2 h-4 w-4" />
+          Descargar PDF
+        </Button>
+      </div>
 
       <Card>
         <CardHeader>
           <CardTitle>Ingredientes Necesarios</CardTitle>
         </CardHeader>
-        <CardContent>
+        <CardContent ref={shoppingListRef}> {/* Contenido a exportar a PDF */}
           {shoppingList.length > 0 ? (
             <Table>
               <TableHeader>
