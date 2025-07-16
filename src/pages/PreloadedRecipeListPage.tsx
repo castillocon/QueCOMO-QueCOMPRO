@@ -2,33 +2,42 @@ import React, { useState, useRef } from "react";
 import { Link } from "react-router-dom";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, Download } from "lucide-react";
+import { ArrowLeft, Download, Search } from "lucide-react"; // Importar Search icon
 import { preloadedRecipes } from "@/data/preloadedRecipes";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { MealPlanEntry, Recipe } from "@/types"; // Importar MealPlanEntry y Recipe
+import { Input } from "@/components/ui/input"; // Importar Input
+import { MealPlanEntry, Recipe } from "@/types";
 import { toast } from "sonner";
 import html2pdf from 'html2pdf.js';
-import { useSession } from '@/context/SessionContext'; // Importar useSession
+import { useSession } from '@/context/SessionContext';
 
 const PreloadedRecipeListPage: React.FC = () => {
   const [selectedMealType, setSelectedMealType] = useState<MealPlanEntry['mealtype'] | 'Todos'>('Todos');
+  const [searchTerm, setSearchTerm] = useState<string>(''); // Nuevo estado para el término de búsqueda
   const pdfContentRef = useRef<HTMLDivElement>(null);
   const [showPdfContent, setShowPdfContent] = useState(false);
   const { user, profile } = useSession();
 
   const mealTypeOrder: (MealPlanEntry['mealtype'] | 'Todos')[] = ['Desayuno', 'Almuerzo', 'Merienda', 'Cena'];
 
-  const filteredRecipes = preloadedRecipes.filter(recipe =>
-    selectedMealType === 'Todos' || recipe.mealtype === selectedMealType
-  ).sort((a, b) => {
-    // Sort by meal type first
+  const filteredRecipes = preloadedRecipes.filter(recipe => {
+    const matchesMealType = selectedMealType === 'Todos' || recipe.mealtype === selectedMealType;
+    const lowerCaseSearchTerm = searchTerm.toLowerCase();
+
+    const matchesSearchTerm =
+      recipe.name.toLowerCase().includes(lowerCaseSearchTerm) ||
+      recipe.ingredients.some(ingredient =>
+        ingredient.name.toLowerCase().includes(lowerCaseSearchTerm)
+      );
+
+    return matchesMealType && matchesSearchTerm;
+  }).sort((a, b) => {
     const mealTypeAIndex = mealTypeOrder.indexOf(a.mealtype);
     const mealTypeBIndex = mealTypeOrder.indexOf(b.mealtype);
     if (mealTypeAIndex !== mealTypeBIndex) {
       return mealTypeAIndex - mealTypeBIndex;
     }
-    // Then by name
     return a.name.localeCompare(b.name);
   });
 
@@ -39,7 +48,7 @@ const PreloadedRecipeListPage: React.FC = () => {
     }
 
     toast.loading("Generando PDF de las recetas...");
-    setShowPdfContent(true); // Mostrar el contenido oculto para la generación del PDF
+    setShowPdfContent(true);
 
     setTimeout(async () => {
       try {
@@ -68,12 +77,11 @@ const PreloadedRecipeListPage: React.FC = () => {
         console.error("Error al generar el PDF:", error);
         toast.error("Error al generar el PDF.");
       } finally {
-        setShowPdfContent(false); // Ocultar el contenido de nuevo
+        setShowPdfContent(false);
       }
-    }, 50); // Pequeño retraso para asegurar que el DOM se actualice
+    }, 50);
   };
 
-  // Group recipes by meal type for PDF display
   const groupedRecipes: { [key: string]: Recipe[] } = {};
   mealTypeOrder.forEach(type => {
     if (type !== 'Todos') {
@@ -91,9 +99,9 @@ const PreloadedRecipeListPage: React.FC = () => {
       </Button>
       <h1 className="text-3xl font-bold mb-6 text-primary">Recetas Pre-cargadas</h1>
 
-      <div className="mb-6 flex items-center justify-between gap-4">
-        <div className="flex items-center gap-4">
-          <h2 className="text-lg font-semibold">Filtrar por Tipo de Comida:</h2>
+      <div className="mb-6 flex flex-col sm:flex-row items-center justify-between gap-4">
+        <div className="flex items-center gap-4 w-full sm:w-auto">
+          <h2 className="text-lg font-semibold whitespace-nowrap">Filtrar por Tipo de Comida:</h2>
           <Select
             onValueChange={(value: MealPlanEntry['mealtype'] | 'Todos') => setSelectedMealType(value)}
             value={selectedMealType}
@@ -110,7 +118,17 @@ const PreloadedRecipeListPage: React.FC = () => {
             </SelectContent>
           </Select>
         </div>
-        <Button onClick={handleDownloadPdf} disabled={filteredRecipes.length === 0}>
+        <div className="relative w-full sm:max-w-xs">
+          <Search className="absolute left-2 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+          <Input
+            type="text"
+            placeholder="Buscar por nombre o ingrediente..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="pl-8 w-full"
+          />
+        </div>
+        <Button onClick={handleDownloadPdf} disabled={filteredRecipes.length === 0} className="w-full sm:w-auto">
           <Download className="mr-2 h-4 w-4" />
           Descargar Lista PDF
         </Button>
@@ -149,7 +167,7 @@ const PreloadedRecipeListPage: React.FC = () => {
         </Card>
       ) : (
         <p className="col-span-full text-center text-muted-foreground">
-          No hay recetas pre-cargadas disponibles para el tipo de comida seleccionado.
+          No hay recetas pre-cargadas disponibles para el tipo de comida seleccionado o el término de búsqueda.
         </p>
       )}
 
@@ -158,9 +176,10 @@ const PreloadedRecipeListPage: React.FC = () => {
         <h1 className="text-2xl font-bold mb-2 text-center">Lista de Recetas Pre-cargadas</h1>
         <p className="text-lg text-center mb-4">
           {selectedMealType === 'Todos' ? 'Todas las Recetas' : `Filtrado por: ${selectedMealType}`}
+          {searchTerm && ` (Búsqueda: "${searchTerm}")`}
         </p>
         {mealTypeOrder.map(mealType => {
-          if (mealType === 'Todos') return null; // Skip 'Todos' as it's a filter option, not a meal type
+          if (mealType === 'Todos') return null;
           const recipesForType = groupedRecipes[mealType];
           if (recipesForType && recipesForType.length > 0) {
             return (
