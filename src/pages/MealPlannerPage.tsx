@@ -8,7 +8,8 @@ import { useSession } from '@/context/SessionContext';
 import { Download } from "lucide-react";
 import { toast } from "sonner";
 import html2pdf from 'html2pdf.js';
-import { getWeekDays, formatDate, formatDisplayDate, formatDayOfWeek } from '@/utils/date'; // Importar utilidades de fecha
+import { getWeekDays, formatDate, formatDisplayDate, formatDayOfWeek } from '@/utils/date';
+import { cn } from "@/lib/utils"; // Importar cn
 
 const MealPlannerPage: React.FC = () => {
   const [currentWeekStart, setCurrentWeekStart] = useState(() => {
@@ -23,10 +24,10 @@ const MealPlannerPage: React.FC = () => {
   const { recipes, mealPlan, addOrUpdateMealPlanEntry } = useMealPlanning();
   const { user } = useSession();
   const pdfContentRef = useRef<HTMLDivElement>(null);
-  const [showPdfContent, setShowPdfContent] = useState(false); // Nuevo estado para controlar la visibilidad
+  const [showPdfContent, setShowPdfContent] = useState(false);
 
   const weekDays = getWeekDays(currentWeekStart);
-  const mealTypes = ['Desayuno', 'Almuerzo', 'Merienda', 'Cena']; // Orden cambiado
+  const mealTypes = ['Desayuno', 'Almuerzo', 'Merienda', 'Cena'];
 
   const handleRecipeSelect = (date: string, mealtype: MealPlanEntry['mealtype'], recipeid: string) => {
     addOrUpdateMealPlanEntry(date, mealtype, recipeid);
@@ -56,9 +57,8 @@ const MealPlannerPage: React.FC = () => {
     }
 
     toast.loading("Generando PDF del plan semanal...");
-    setShowPdfContent(true); // Hacer el contenido visible
+    setShowPdfContent(true);
 
-    // Pequeño retraso para asegurar que el DOM se actualice antes de la captura
     setTimeout(async () => {
       try {
         const startDateFormatted = formatDisplayDate(weekDays[0]).replace(/\s/g, '_');
@@ -66,17 +66,17 @@ const MealPlannerPage: React.FC = () => {
         const filename = `plan_semanal_${startDateFormatted}_al_${endDateFormatted}.pdf`;
 
         await html2pdf().from(pdfContentRef.current).set({
-          margin: [10, 10, 10, 10], // Top, Left, Bottom, Right
+          margin: [10, 10, 10, 10],
           filename: filename,
           image: { type: 'jpeg', quality: 0.98 },
           html2canvas: { scale: 2, logging: true, dpi: 192, letterRendering: true },
-          jsPDF: { unit: 'mm', format: 'a4', orientation: 'landscape' }, // CAMBIO AQUÍ: 'landscape'
+          jsPDF: { unit: 'mm', format: 'a4', orientation: 'landscape' },
           callback: function (doc) {
             const pageCount = doc.internal.getNumberOfPages();
             for (let i = 1; i <= pageCount; i++) {
               doc.setPage(i);
               doc.setFontSize(10);
-              doc.setTextColor(100); // Grey color for the footer text
+              doc.setTextColor(100);
               doc.text('🛒🍲 QueComo@QueCompro', doc.internal.pageSize.getWidth() / 2, doc.internal.pageSize.getHeight() - 10, { align: 'center' });
             }
           }
@@ -86,9 +86,9 @@ const MealPlannerPage: React.FC = () => {
         console.error("Error al generar el PDF:", error);
         toast.error("Error al generar el PDF.");
       } finally {
-        setShowPdfContent(false); // Ocultar el contenido de nuevo
+        setShowPdfContent(false);
       }
-    }, 50); // Retraso de 50ms
+    }, 50);
   };
 
   const userName = user?.user_metadata?.first_name || user?.email || "Usuario";
@@ -125,14 +125,28 @@ const MealPlannerPage: React.FC = () => {
                 const availableRecipes = recipes.filter(r => r.mealtype === mealType);
 
                 return (
-                  <div key={mealType} className="border rounded-md p-3">
+                  <div
+                    key={mealType}
+                    className={cn(
+                      "border rounded-md p-3 transition-colors duration-200",
+                      selectedRecipe ? "bg-selectedMeal text-selectedMeal-foreground" : "bg-background"
+                    )}
+                  >
                     <h3 className="font-medium text-md mb-2">{mealType}</h3>
                     <Select
                       onValueChange={(recipeid) => handleRecipeSelect(formatDate(day), mealType as MealPlanEntry['mealtype'], recipeid)}
                       value={selectedRecipe?.id || ""}
                     >
-                      <SelectTrigger className="w-full">
-                        <SelectValue placeholder="Seleccionar Receta" />
+                      <SelectTrigger
+                        className={cn(
+                          "w-full",
+                          selectedRecipe ? "bg-selectedMeal text-selectedMeal-foreground border-selectedMeal" : ""
+                        )}
+                      >
+                        <SelectValue
+                          placeholder="Seleccionar Receta"
+                          className={cn(selectedRecipe ? "text-selectedMeal-foreground" : "")}
+                        />
                       </SelectTrigger>
                       <SelectContent>
                         {availableRecipes.length > 0 ? (
@@ -149,7 +163,7 @@ const MealPlannerPage: React.FC = () => {
                       </SelectContent>
                     </Select>
                     {selectedRecipe && (
-                      <p className="text-sm text-muted-foreground mt-2">
+                      <p className={cn("text-sm mt-2", selectedRecipe ? "text-selectedMeal-foreground" : "text-muted-foreground")}>
                         {selectedRecipe.name}
                       </p>
                     )}

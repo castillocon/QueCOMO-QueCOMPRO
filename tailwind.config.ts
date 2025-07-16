@@ -62,6 +62,10 @@ export default {
           border: "hsl(var(--sidebar-border))",
           ring: "hsl(var(--sidebar-ring))",
         },
+        selectedMeal: { // Nuevo color para la selección de comidas
+          DEFAULT: "hsl(190 35% 33%)", // #356a75
+          foreground: "hsl(0 0% 98%)", // Texto claro para contraste
+        },
       },
       borderRadius: {
         lg: "var(--radius)",
