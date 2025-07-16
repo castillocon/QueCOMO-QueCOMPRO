@@ -83,7 +83,7 @@ const MealPlannerPage: React.FC = () => {
           filename: filename,
           image: { type: 'jpeg', quality: 0.98 },
           html2canvas: { scale: 2, logging: true, dpi: 192, letterRendering: true },
-          jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+          jsPDF: { unit: 'mm', format: 'a4', orientation: 'landscape' } // CAMBIO AQUÍ: 'landscape'
         }).save();
         toast.success("PDF generado con éxito.");
       } catch (error) {
