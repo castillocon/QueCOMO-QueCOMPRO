@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect, useMemo } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { MealPlanEntry } from "@/types";
@@ -21,22 +21,23 @@ const MealPlannerPage: React.FC = () => {
     return monday;
   });
 
-  const { recipes, mealPlan, addOrUpdateMealPlanEntry } = useMealPlanning();
-  const { user, profile } = useSession(); // Obtener el perfil
+  const { recipes, mealPlan, addOrUpdateMealPlanEntry, recipesById } = useMealPlanning();
+  const { user, profile } = useSession();
   const pdfContentRef = useRef<HTMLDivElement>(null);
   const [showPdfContent, setShowPdfContent] = useState(false);
 
-  const weekDays = getWeekDays(currentWeekStart);
-  const mealTypes = ['Desayuno', 'Almuerzo', 'Merienda', 'Cena'];
+  const weekDays = useMemo(() => getWeekDays(currentWeekStart), [currentWeekStart]);
+  const mealTypes = useMemo(() => ['Desayuno', 'Almuerzo', 'Merienda', 'Cena'], []); // Meal types are static
 
   const handleRecipeSelect = (date: string, mealtype: MealPlanEntry['mealtype'], recipeid: string) => {
     addOrUpdateMealPlanEntry(date, mealtype, recipeid);
   };
 
-  const getRecipeForMeal = (date: string, mealtype: MealPlanEntry['mealtype']) => {
+  // Usar recipesById para una búsqueda más eficiente
+  const getRecipeForMeal = useCallback((date: string, mealtype: MealPlanEntry['mealtype']) => {
     const entry = mealPlan.find(e => e.date === date && e.mealtype === mealtype);
-    return entry ? recipes.find(r => r.id === entry.recipeid) : undefined;
-  };
+    return entry ? recipesById.get(entry.recipeid) : undefined;
+  }, [mealPlan, recipesById]);
 
   const goToPreviousWeek = () => {
     const newDate = new Date(currentWeekStart);
@@ -91,9 +92,9 @@ const MealPlannerPage: React.FC = () => {
     }, 50);
   };
 
-  // Usar el username del perfil, si no existe, usar first_name, si no, el email
-  const userName = profile?.username || profile?.first_name || user?.email || "Usuario";
-  const weekRangeText = `Semana del ${formatDisplayDate(weekDays[0])} al ${formatDisplayDate(weekDays[6])}`;
+  // Memoizar el nombre de usuario y el texto del rango de la semana
+  const userName = useMemo(() => profile?.username || profile?.first_name || user?.email || "Usuario", [profile, user]);
+  const weekRangeText = useMemo(() => `Semana del ${formatDisplayDate(weekDays[0])} al ${formatDisplayDate(weekDays[6])}`, [weekDays]);
 
   return (
     <div className="container mx-auto p-4">

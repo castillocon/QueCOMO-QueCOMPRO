@@ -64,7 +64,7 @@ const RecipeFormPage: React.FC = () => {
       name: '',
       description: '',
       mealtype: 'Almuerzo',
-      ingredients: [{ name: '', quantity: '', supplier: '' }],
+      ingredients: [{ name: '', quantity: '', supplier: '' }] as Ingredient[], // Explicitly cast for clarity
       instructions: [''],
       imageUrl: '', // Initialize imageUrl
     },
@@ -100,7 +100,7 @@ const RecipeFormPage: React.FC = () => {
         name: '',
         description: '',
         mealtype: 'Almuerzo',
-        ingredients: [{ name: '', quantity: '', supplier: '' }],
+        ingredients: [{ name: '', quantity: '', supplier: '' }] as Ingredient[], // Explicitly cast for clarity
         instructions: [''],
         imageUrl: '',
       });

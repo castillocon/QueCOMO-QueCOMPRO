@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import { Link } from "react-router-dom";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -13,27 +13,29 @@ const RecipeListPage: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState<string>('');
   const [selectedMealType, setSelectedMealType] = useState<MealPlanEntry['mealtype'] | 'Todos'>('Todos');
 
-  const mealTypeOrder: (MealPlanEntry['mealtype'] | 'Todos')[] = ['Desayuno', 'Almuerzo', 'Merienda', 'Cena'];
+  const mealTypeOrder: (MealPlanEntry['mealtype'] | 'Todos')[] = useMemo(() => ['Desayuno', 'Almuerzo', 'Merienda', 'Cena'], []);
 
-  const filteredRecipes = recipes.filter(recipe => {
-    const matchesMealType = selectedMealType === 'Todos' || recipe.mealtype === selectedMealType;
-    const lowerCaseSearchTerm = searchTerm.toLowerCase();
+  const filteredRecipes = useMemo(() => {
+    return recipes.filter(recipe => {
+      const matchesMealType = selectedMealType === 'Todos' || recipe.mealtype === selectedMealType;
+      const lowerCaseSearchTerm = searchTerm.toLowerCase();
 
-    const matchesSearchTerm =
-      recipe.name.toLowerCase().includes(lowerCaseSearchTerm) ||
-      recipe.ingredients.some(ingredient =>
-        ingredient.name.toLowerCase().includes(lowerCaseSearchTerm)
-      );
+      const matchesSearchTerm =
+        recipe.name.toLowerCase().includes(lowerCaseSearchTerm) ||
+        recipe.ingredients.some(ingredient =>
+          ingredient.name.toLowerCase().includes(lowerCaseSearchTerm)
+        );
 
-    return matchesMealType && matchesSearchTerm;
-  }).sort((a, b) => {
-    const mealTypeAIndex = mealTypeOrder.indexOf(a.mealtype);
-    const mealTypeBIndex = mealTypeOrder.indexOf(b.mealtype);
-    if (mealTypeAIndex !== mealTypeBIndex) {
-      return mealTypeAIndex - mealTypeBIndex;
-    }
-    return a.name.localeCompare(b.name);
-  });
+      return matchesMealType && matchesSearchTerm;
+    }).sort((a, b) => {
+      const mealTypeAIndex = mealTypeOrder.indexOf(a.mealtype);
+      const mealTypeBIndex = mealTypeOrder.indexOf(b.mealtype);
+      if (mealTypeAIndex !== mealTypeBIndex) {
+        return mealTypeAIndex - mealTypeBIndex;
+      }
+      return a.name.localeCompare(b.name);
+    });
+  }, [recipes, searchTerm, selectedMealType, mealTypeOrder]);
 
   return (
     <div className="container mx-auto p-4">

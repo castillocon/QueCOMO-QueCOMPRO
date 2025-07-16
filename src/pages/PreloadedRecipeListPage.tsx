@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useMemo } from "react";
 import { Link } from "react-router-dom";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -19,27 +19,29 @@ const PreloadedRecipeListPage: React.FC = () => {
   const [showPdfContent, setShowPdfContent] = useState(false);
   const { user, profile } = useSession();
 
-  const mealTypeOrder: (MealPlanEntry['mealtype'] | 'Todos')[] = ['Desayuno', 'Almuerzo', 'Merienda', 'Cena'];
+  const mealTypeOrder: (MealPlanEntry['mealtype'] | 'Todos')[] = useMemo(() => ['Desayuno', 'Almuerzo', 'Merienda', 'Cena'], []);
 
-  const filteredRecipes = preloadedRecipes.filter(recipe => {
-    const matchesMealType = selectedMealType === 'Todos' || recipe.mealtype === selectedMealType;
-    const lowerCaseSearchTerm = searchTerm.toLowerCase();
+  const filteredRecipes = useMemo(() => {
+    return preloadedRecipes.filter(recipe => {
+      const matchesMealType = selectedMealType === 'Todos' || recipe.mealtype === selectedMealType;
+      const lowerCaseSearchTerm = searchTerm.toLowerCase();
 
-    const matchesSearchTerm =
-      recipe.name.toLowerCase().includes(lowerCaseSearchTerm) ||
-      recipe.ingredients.some(ingredient =>
-        ingredient.name.toLowerCase().includes(lowerCaseSearchTerm)
-      );
+      const matchesSearchTerm =
+        recipe.name.toLowerCase().includes(lowerCaseSearchTerm) ||
+        recipe.ingredients.some(ingredient =>
+          ingredient.name.toLowerCase().includes(lowerCaseSearchTerm)
+        );
 
-    return matchesMealType && matchesSearchTerm;
-  }).sort((a, b) => {
-    const mealTypeAIndex = mealTypeOrder.indexOf(a.mealtype);
-    const mealTypeBIndex = mealTypeOrder.indexOf(b.mealtype);
-    if (mealTypeAIndex !== mealTypeBIndex) {
-      return mealTypeAIndex - mealTypeBIndex;
-    }
-    return a.name.localeCompare(b.name);
-  });
+      return matchesMealType && matchesSearchTerm;
+    }).sort((a, b) => {
+      const mealTypeAIndex = mealTypeOrder.indexOf(a.mealtype);
+      const mealTypeBIndex = mealTypeOrder.indexOf(b.mealtype);
+      if (mealTypeAIndex !== mealTypeBIndex) {
+        return mealTypeAIndex - mealTypeBIndex;
+      }
+      return a.name.localeCompare(b.name);
+    });
+  }, [selectedMealType, searchTerm, mealTypeOrder]);
 
   const handleDownloadPdf = async () => {
     if (!pdfContentRef.current) {
@@ -82,12 +84,15 @@ const PreloadedRecipeListPage: React.FC = () => {
     }, 50);
   };
 
-  const groupedRecipes: { [key: string]: Recipe[] } = {};
-  mealTypeOrder.forEach(type => {
-    if (type !== 'Todos') {
-      groupedRecipes[type] = filteredRecipes.filter(r => r.mealtype === type);
-    }
-  });
+  const groupedRecipes = useMemo(() => {
+    const groups: { [key: string]: Recipe[] } = {};
+    mealTypeOrder.forEach(type => {
+      if (type !== 'Todos') {
+        groups[type] = filteredRecipes.filter(r => r.mealtype === type);
+      }
+    });
+    return groups;
+  }, [filteredRecipes, mealTypeOrder]);
 
   return (
     <div className="container mx-auto p-4">

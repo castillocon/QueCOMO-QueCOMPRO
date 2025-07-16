@@ -1,4 +1,4 @@
-import React, { useRef } from "react";
+import React, { useRef, useMemo } from "react";
 import { useParams, Link } from "react-router-dom";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -10,9 +10,9 @@ import { useSession } from '@/context/SessionContext';
 
 const RecipeDetailPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
-  const { recipes } = useMealPlanning();
+  const { recipesById } = useMealPlanning(); // Usar el mapa de recetas
   const { user, profile } = useSession();
-  const recipe = recipes.find(r => r.id === id);
+  const recipe = useMemo(() => id ? recipesById.get(id) : undefined, [id, recipesById]); // Obtener receta del mapa
   const recipeContentRef = useRef<HTMLDivElement>(null);
 
   const handleDownloadPdf = () => {

@@ -1,4 +1,4 @@
-import React, { createContext, useState, useContext, ReactNode, useEffect, useCallback } from 'react';
+import React, { createContext, useState, useContext, ReactNode, useEffect, useCallback, useMemo } from 'react';
 import { Recipe, MealPlanEntry, Supplier } from '@/types';
 import { supabase } from '@/integrations/supabase/client';
 import { useSession } from './SessionContext';
@@ -13,13 +13,14 @@ interface MealPlanningContextType {
   deleteRecipe: (id: string) => Promise<void>;
   addOrUpdateMealPlanEntry: (date: string, mealtype: MealPlanEntry['mealtype'], recipeid: string) => Promise<void>;
   removeMealPlanEntry: (date: string, mealtype: MealPlanEntry['mealtype']) => Promise<void>;
-  toggleIngredientPurchased: (entryId: string, ingredientName: string) => Promise<void>; // Nuevo
+  toggleIngredientPurchased: (entryId: string, ingredientName: string) => Promise<void>;
   addSupplier: (newSupplier: Omit<Supplier, 'id'>) => Promise<void>;
   updateSupplier: (updatedSupplier: Supplier) => Promise<void>;
   deleteSupplier: (id: string) => Promise<void>;
   isLoadingRecipes: boolean;
   isLoadingMealPlan: boolean;
   isLoadingSuppliers: boolean;
+  recipesById: Map<string, Recipe>; // Nuevo: Mapa de recetas por ID
 }
 
 const MealPlanningContext = createContext<MealPlanningContextType | undefined>(undefined);
@@ -64,6 +65,11 @@ export const MealPlanningProvider: React.FC<{ children: ReactNode }> = ({ childr
       fetchDataFromSupabase<Supplier>('suppliers', setSuppliers, setIsLoadingSuppliers);
     }
   }, [user, isLoadingSession, fetchDataFromSupabase]);
+
+  // Memoizar el mapa de recetas por ID para búsquedas rápidas
+  const recipesById = useMemo(() => {
+    return new Map(recipes.map(recipe => [recipe.id, recipe]));
+  }, [recipes]);
 
   const uploadImage = async (file: File, userId: string, recipeId: string): Promise<string | undefined> => {
     const fileExt = file.name.split('.').pop();
@@ -387,7 +393,8 @@ export const MealPlanningProvider: React.FC<{ children: ReactNode }> = ({ childr
       deleteSupplier,
       isLoadingRecipes,
       isLoadingMealPlan,
-      isLoadingSuppliers
+      isLoadingSuppliers,
+      recipesById // Exponer el mapa
     }}>
       {children}
     </MealPlanningContext.Provider>

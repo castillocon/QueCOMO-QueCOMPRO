@@ -36,7 +36,7 @@ const SupplierListPage: React.FC = () => {
   const { suppliers, addSupplier, updateSupplier, deleteSupplier, isLoadingSuppliers } = useMealPlanning();
   const [isAddDialogOpen, setIsAddDialogOpen] = React.useState(false);
   const [isEditDialogOpen, setIsEditDialogOpen] = React.useState(false);
-  const [currentSupplier, setCurrentSupplier] = React.useState<any>(null);
+  const [currentSupplier, setCurrentSupplier] = React.useState<Supplier | null>(null); // Tipar currentSupplier
 
   const addForm = useForm<SupplierFormValues>({
     resolver: zodResolver(supplierFormSchema),

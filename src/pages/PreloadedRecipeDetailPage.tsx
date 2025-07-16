@@ -1,4 +1,4 @@
-import React, { useRef } from "react";
+import React, { useRef, useMemo } from "react";
 import { useParams, Link } from "react-router-dom";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -13,8 +13,8 @@ import { useSession } from '@/context/SessionContext'; // Importar useSession
 const PreloadedRecipeDetailPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const { addRecipe } = useMealPlanning();
-  const { user, profile } = useSession(); // Obtener el perfil
-  const recipe = preloadedRecipes.find(r => r.id === id);
+  const { user, profile } = useSession();
+  const recipe = useMemo(() => preloadedRecipes.find(r => r.id === id), [id]); // Memoize recipe lookup
   const recipeContentRef = useRef<HTMLDivElement>(null);
 
   const handleAddRecipeToMyRecipes = async () => {
@@ -30,7 +30,8 @@ const PreloadedRecipeDetailPage: React.FC = () => {
     if (recipeContentRef.current && recipe) {
       toast.loading("Generando PDF de la receta...");
       const filename = `receta_${recipe.name.replace(/\s/g, '_')}.pdf`;
-      const userName = profile?.username || profile?.first_name || user?.email || "Usuario"; // Obtener el nombre de usuario
+      // Memoize userName for PDF generation
+      const userName = profile?.username || profile?.first_name || user?.email || "Usuario"; 
 
       html2pdf().from(recipeContentRef.current).set({
         margin: [10, 10, 10, 10],

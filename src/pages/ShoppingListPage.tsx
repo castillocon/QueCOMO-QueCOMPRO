@@ -12,7 +12,7 @@ import { parseQuantity } from '@/utils/helpers';
 import { Checkbox } from "@/components/ui/checkbox"; // Importar Checkbox
 
 const ShoppingListPage: React.FC = () => {
-  const { recipes, mealPlan, toggleIngredientPurchased } = useMealPlanning();
+  const { recipes, mealPlan, toggleIngredientPurchased, recipesById } = useMealPlanning(); // Usar recipesById
   const { user, profile } = useSession();
   const shoppingListRef = useRef<HTMLDivElement>(null);
 
@@ -27,9 +27,9 @@ const ShoppingListPage: React.FC = () => {
     setCurrentWeekStart(monday);
   }, []);
 
-  const weekDays = getWeekDays(currentWeekStart);
-  const userName = profile?.username || profile?.first_name || user?.email || "Usuario";
-  const weekRangeText = `Semana del ${formatDisplayDate(weekDays[0])} al ${formatDisplayDate(weekDays[6])}`;
+  const weekDays = useMemo(() => getWeekDays(currentWeekStart), [currentWeekStart]);
+  const userName = useMemo(() => profile?.username || profile?.first_name || user?.email || "Usuario", [profile, user]);
+  const weekRangeText = useMemo(() => `Semana del ${formatDisplayDate(weekDays[0])} al ${formatDisplayDate(weekDays[6])}`, [weekDays]);
 
   // Memoize the shopping list generation to prevent unnecessary re-computations
   const shoppingListGroupedBySupplier = useMemo(() => {
@@ -38,17 +38,9 @@ const ShoppingListPage: React.FC = () => {
     // Map: SupplierName -> IngredientName -> Set of original unparsed quantities
     const unquantifiedItems = new Map<string, Map<string, Set<string>>>();
 
-    // Map: RecipeId -> MealPlanEntryId -> Set of purchased ingredients
-    const purchasedStatusMap = new Map<string, Map<string, Set<string>>>();
-
     mealPlan.forEach(entry => {
-      const recipe = recipes.find(r => r.id === entry.recipeid);
+      const recipe = recipesById.get(entry.recipeid); // Usar recipesById
       if (recipe) {
-        if (!purchasedStatusMap.has(recipe.id)) {
-          purchasedStatusMap.set(recipe.id, new Map<string, Set<string>>());
-        }
-        purchasedStatusMap.get(recipe.id)!.set(entry.id, new Set(entry.purchased_ingredients || []));
-
         recipe.ingredients.forEach(ingredient => {
           const { name, quantity, supplier } = ingredient;
           const supplierName = supplier && supplier.trim() !== '' ? supplier.trim() : 'Sin Proveedor';
@@ -90,13 +82,9 @@ const ShoppingListPage: React.FC = () => {
           quantityStringParts.push(`${totalValue} ${unit}`);
         });
 
-        // Determine if the item is purchased. This is tricky for aggregated items.
-        // For simplicity, if *any* instance of this ingredient in *any* meal plan entry
-        // is marked as purchased, we'll consider it purchased for the aggregated list.
-        // A more robust solution would require a dedicated shopping list table.
         let isAggregatedItemPurchased = false;
         mealPlan.forEach(entry => {
-          const recipe = recipes.find(r => r.id === entry.recipeid);
+          const recipe = recipesById.get(entry.recipeid); // Usar recipesById
           if (recipe && recipe.ingredients.some(ing => ing.name === itemName)) {
             if (new Set(entry.purchased_ingredients || []).has(itemName)) {
               isAggregatedItemPurchased = true;
@@ -123,7 +111,7 @@ const ShoppingListPage: React.FC = () => {
 
         let isUnquantifiedItemPurchased = false;
         mealPlan.forEach(entry => {
-          const recipe = recipes.find(r => r.id === entry.recipeid);
+          const recipe = recipesById.get(entry.recipeid); // Usar recipesById
           if (recipe && recipe.ingredients.some(ing => ing.name === itemName)) {
             if (new Set(entry.purchased_ingredients || []).has(itemName)) {
               isUnquantifiedItemPurchased = true;
@@ -151,9 +139,10 @@ const ShoppingListPage: React.FC = () => {
     // A more robust solution would involve a dedicated shopping list table with unique items.
     finalShoppingList.forEach(supplierGroup => {
       supplierGroup.items.forEach(item => {
-        const relevantEntry = mealPlan.find(entry =>
-          recipes.find(r => r.id === entry.recipeid)?.ingredients.some(ing => ing.name === item.item)
-        );
+        const relevantEntry = mealPlan.find(entry => {
+          const recipe = recipesById.get(entry.recipeid); // Usar recipesById
+          return recipe?.ingredients.some(ing => ing.name === item.item);
+        });
         if (relevantEntry) {
           item.mealPlanEntryId = relevantEntry.id;
           item.recipeId = relevantEntry.recipeid;
@@ -164,7 +153,7 @@ const ShoppingListPage: React.FC = () => {
 
 
     return finalShoppingList.sort((a, b) => a.supplier.localeCompare(b.supplier));
-  }, [recipes, mealPlan]); // Dependencies for memoization
+  }, [mealPlan, recipesById]); // Dependencies for memoization
 
   const handleDownloadPdf = () => {
     if (shoppingListRef.current) {
