@@ -3,7 +3,7 @@ import { Auth } from '@supabase/auth-ui-react';
 import { ThemeSupa } from '@supabase/auth-ui-shared';
 import { supabase } from '@/integrations/supabase/client';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import i18n from '@supabase/auth-ui-shared'; // Importar i18n como default export
+import { i18n } from '@supabase/auth-ui-shared'; // Importar i18n como exportación con nombre
 
 const Login: React.FC = () => {
   return (
