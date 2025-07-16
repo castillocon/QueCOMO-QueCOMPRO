@@ -472,4 +472,420 @@ export const preloadedRecipes: Recipe[] = [
     ],
     mealtype: "Desayuno",
   },
+  // Nuevas recetas de Almuerzo saludables y económicas
+  {
+    id: "pre-21",
+    name: "Ensalada de Pasta con Atún y Verduras",
+    description: "Una ensalada de pasta fresca y completa, ideal para un almuerzo ligero.",
+    ingredients: [
+      { name: "Pasta corta (fusilli, macarrones)", quantity: "200g" },
+      { name: "Atún en lata (en agua o aceite)", quantity: "1 lata (escurrido)" },
+      { name: "Tomates cherry", quantity: "1 taza (cortados a la mitad)" },
+      { name: "Pepino", quantity: "1/2 unidad (picado)" },
+      { name: "Maíz dulce (enlatado)", quantity: "1/2 taza (escurrido)" },
+      { name: "Cebolla morada", quantity: "1/4 unidad (finamente picada)" },
+      { name: "Mayonesa ligera", quantity: "3 cucharadas" },
+      { name: "Mostaza Dijon", quantity: "1 cucharadita" },
+      { name: "Perejil fresco", quantity: "2 cucharadas (picado)" },
+      { name: "Sal", quantity: "al gusto" },
+      { name: "Pimienta", quantity: "al gusto" },
+    ],
+    instructions: [
+      "Cocinar la pasta según las instrucciones del paquete. Escurrir y enfriar con agua fría.",
+      "En un bol grande, combinar la pasta fría, el atún desmenuzado, los tomates cherry, el pepino, el maíz y la cebolla morada.",
+      "En un bol pequeño, mezclar la mayonesa, la mostaza, el perejil, la sal y la pimienta para hacer el aderezo.",
+      "Verter el aderezo sobre la ensalada de pasta y mezclar bien hasta que todos los ingredientes estén cubiertos.",
+      "Refrigerar por al menos 30 minutos antes de servir para que los sabores se mezclen."
+    ],
+    mealtype: "Almuerzo",
+  },
+  {
+    id: "pre-22",
+    name: "Sopa de Verduras y Pollo",
+    description: "Una sopa reconfortante y nutritiva, perfecta para aprovechar restos de pollo.",
+    ingredients: [
+      { name: "Pechuga de pollo cocida (desmenuzada)", quantity: "1 taza" },
+      { name: "Caldo de pollo", quantity: "6 tazas" },
+      { name: "Zanahorias", quantity: "2 unidades (en rodajas)" },
+      { name: "Apio", quantity: "2 tallos (en rodajas)" },
+      { name: "Papas", quantity: "1 unidad (en cubos pequeños)" },
+      { name: "Guisantes (congelados)", quantity: "1/2 taza" },
+      { name: "Cebolla", quantity: "1/2 unidad (picada)" },
+      { name: "Aceite de oliva", quantity: "1 cucharada" },
+      { name: "Sal", quantity: "al gusto" },
+      { name: "Pimienta", quantity: "al gusto" },
+      { name: "Perejil fresco", quantity: "para decorar" },
+    ],
+    instructions: [
+      "En una olla grande, calentar el aceite de oliva a fuego medio. Añadir la cebolla, zanahorias y apio. Cocinar por 5-7 minutos hasta que estén ligeramente tiernas.",
+      "Incorporar las papas y el caldo de pollo. Llevar a ebullición, luego reducir el fuego y cocinar a fuego lento durante 15-20 minutos, o hasta que las papas estén tiernas.",
+      "Añadir el pollo desmenuzado y los guisantes. Cocinar por 5 minutos más, o hasta que los guisantes estén cocidos y el pollo caliente.",
+      "Sazonar con sal y pimienta al gusto. Servir caliente, espolvoreado con perejil fresco."
+    ],
+    mealtype: "Almuerzo",
+  },
+  {
+    id: "pre-23",
+    name: "Wrap de Hummus y Vegetales",
+    description: "Un wrap rápido y fresco, lleno de fibra y vitaminas.",
+    ingredients: [
+      { name: "Tortilla de trigo integral", quantity: "1 unidad" },
+      { name: "Hummus", quantity: "2 cucharadas" },
+      { name: "Lechuga romana", quantity: "1 hoja grande" },
+      { name: "Zanahoria rallada", quantity: "1/4 taza" },
+      { name: "Pepino (en tiras finas)", quantity: "1/4 unidad" },
+      { name: "Pimiento rojo (en tiras finas)", quantity: "1/4 unidad" },
+      { name: "Tomate (en rodajas finas)", quantity: "1/2 unidad" },
+      { name: "Sal", quantity: "una pizca" },
+      { name: "Pimienta", quantity: "una pizca" },
+    ],
+    instructions: [
+      "Extender la tortilla de trigo sobre una superficie plana.",
+      "Untar el hummus uniformemente sobre la tortilla, dejando un borde libre.",
+      "Colocar la lechuga en el centro de la tortilla.",
+      "Distribuir la zanahoria rallada, las tiras de pepino y pimiento, y las rodajas de tomate sobre la lechuga.",
+      "Sazonar ligeramente con sal y pimienta.",
+      "Doblar los lados de la tortilla hacia adentro y luego enrollar firmemente desde la parte inferior hacia arriba.",
+      "Cortar el wrap por la mitad en diagonal y servir inmediatamente."
+    ],
+    mealtype: "Almuerzo",
+  },
+  {
+    id: "pre-24",
+    name: "Arroz con Pollo y Verduras (salteado)",
+    description: "Un plato completo y sabroso, ideal para aprovechar sobras de arroz y pollo.",
+    ingredients: [
+      { name: "Arroz cocido", quantity: "2 tazas" },
+      { name: "Pechuga de pollo (cocida y picada)", quantity: "150g" },
+      { name: "Zanahoria (picada en cubos pequeños)", quantity: "1/2 unidad" },
+      { name: "Guisantes (congelados)", quantity: "1/2 taza" },
+      { name: "Maíz (congelado)", quantity: "1/2 taza" },
+      { name: "Huevo", quantity: "1 unidad (batido)" },
+      { name: "Salsa de soja baja en sodio", quantity: "2 cucharadas" },
+      { name: "Aceite vegetal", quantity: "1 cucharada" },
+      { name: "Cebollino (picado)", quantity: "para decorar" },
+    ],
+    instructions: [
+      "Calentar el aceite vegetal en un wok o sartén grande a fuego medio-alto.",
+      "Añadir la zanahoria y cocinar por 2-3 minutos. Luego añadir los guisantes y el maíz, cocinar por 2 minutos más.",
+      "Empujar las verduras a un lado de la sartén. Verter el huevo batido en el espacio vacío y revolver rápidamente para hacer huevos revueltos. Mezclar con las verduras.",
+      "Añadir el arroz cocido y el pollo picado a la sartén. Mezclar bien con las verduras y el huevo.",
+      "Verter la salsa de soja sobre el arroz y mezclar hasta que todo esté bien combinado y caliente.",
+      "Servir caliente, espolvoreado con cebollino picado."
+    ],
+    mealtype: "Almuerzo",
+  },
+  {
+    id: "pre-25",
+    name: "Tostada de Aguacate y Huevo Poché",
+    description: "Un clásico saludable y delicioso, perfecto para un almuerzo ligero o brunch.",
+    ingredients: [
+      { name: "Pan integral (rebanada gruesa)", quantity: "1 unidad" },
+      { name: "Aguacate", quantity: "1/2 unidad (machacado)" },
+      { name: "Huevo", quantity: "1 unidad" },
+      { name: "Vinagre blanco", quantity: "1 cucharadita (para pochar)" },
+      { name: "Chile en hojuelas (opcional)", quantity: "una pizca" },
+      { name: "Sal marina", quantity: "al gusto" },
+      { name: "Pimienta negra", quantity: "al gusto" },
+    ],
+    instructions: [
+      "Tostar el pan hasta que esté dorado y crujiente.",
+      "Mientras tanto, pochar el huevo: llevar una olla pequeña con agua a ebullición suave. Añadir el vinagre. Con una cuchara, crear un remolino en el agua y verter el huevo con cuidado en el centro. Cocinar por 3-4 minutos para una yema líquida.",
+      "Machacar el aguacate en un bol y sazonar con sal y pimienta.",
+      "Untar el aguacate machacado sobre la tostada.",
+      "Con una espumadera, retirar el huevo pochado del agua y escurrirlo bien. Colocarlo suavemente sobre el aguacate.",
+      "Espolvorear con chile en hojuelas, sal y pimienta al gusto. Servir inmediatamente."
+    ],
+    mealtype: "Almuerzo",
+  },
+  {
+    id: "pre-26",
+    name: "Ensalada de Garbanzos y Pepino",
+    description: "Una ensalada refrescante y proteica, ideal para un almuerzo vegetariano.",
+    ingredients: [
+      { name: "Garbanzos cocidos", quantity: "1 lata (escurrida y enjuagada)" },
+      { name: "Pepino", quantity: "1 unidad (picado en cubos)" },
+      { name: "Tomate", quantity: "1 unidad (picado en cubos)" },
+      { name: "Cebolla morada", quantity: "1/4 unidad (finamente picada)" },
+      { name: "Perejil fresco", quantity: "3 cucharadas (picado)" },
+      { name: "Jugo de limón", quantity: "2 cucharadas" },
+      { name: "Aceite de oliva virgen extra", quantity: "3 cucharadas" },
+      { name: "Sal", quantity: "al gusto" },
+      { name: "Pimienta", quantity: "al gusto" },
+    ],
+    instructions: [
+      "En un bol grande, combinar los garbanzos, pepino, tomate, cebolla morada y perejil.",
+      "En un bol pequeño, batir el jugo de limón, el aceite de oliva, la sal y la pimienta para hacer el aderezo.",
+      "Verter el aderezo sobre la ensalada y mezclar bien.",
+      "Refrigerar por al menos 15 minutos antes de servir para que los sabores se integren."
+    ],
+    mealtype: "Almuerzo",
+  },
+  {
+    id: "pre-27",
+    name: "Sándwich de Queso a la Parrilla con Tomate",
+    description: "Un sándwich clásico y reconfortante, con un toque de tomate fresco.",
+    ingredients: [
+      { name: "Pan de molde", quantity: "2 rebanadas" },
+      { name: "Queso cheddar (o tu favorito)", quantity: "2 lonchas" },
+      { name: "Tomate", quantity: "2 rodajas finas" },
+      { name: "Mantequilla", quantity: "1 cucharada" },
+      { name: "Sal", quantity: "una pizca" },
+      { name: "Pimienta", quantity: "una pizca" },
+    ],
+    instructions: [
+      "Untar mantequilla en un lado de cada rebanada de pan.",
+      "Colocar una rebanada de pan con el lado de la mantequilla hacia abajo en una sartén fría.",
+      "Poner una loncha de queso, las rodajas de tomate, la otra loncha de queso y finalmente la segunda rebanada de pan con el lado de la mantequilla hacia arriba.",
+      "Cocinar a fuego medio-bajo durante 3-5 minutos por cada lado, o hasta que el pan esté dorado y crujiente y el queso se haya derretido.",
+      "Cortar por la mitad y servir caliente."
+    ],
+    mealtype: "Almuerzo",
+  },
+  {
+    id: "pre-28",
+    name: "Tortilla de Patatas Individual",
+    description: "Una pequeña tortilla de patatas, perfecta para una porción individual.",
+    ingredients: [
+      { name: "Papas", quantity: "1 unidad pequeña (cocida y en cubos)" },
+      { name: "Huevos", quantity: "2 unidades" },
+      { name: "Cebolla", quantity: "1/4 unidad (picada finamente)" },
+      { name: "Aceite de oliva", quantity: "2 cucharadas" },
+      { name: "Sal", quantity: "al gusto" },
+      { name: "Pimienta", quantity: "al gusto" },
+    ],
+    instructions: [
+      "En una sartén pequeña antiadherente, calentar 1 cucharada de aceite de oliva a fuego medio-bajo.",
+      "Añadir la cebolla y cocinar hasta que esté transparente y suave, unos 5-7 minutos. Retirar de la sartén.",
+      "En un bol, batir los huevos con sal y pimienta. Añadir las papas cocidas y la cebolla cocida. Mezclar bien.",
+      "Calentar la cucharada restante de aceite en la misma sartén a fuego medio.",
+      "Verter la mezcla de huevo y papas en la sartén. Cocinar sin mover durante 5-7 minutos, o hasta que los bordes estén cuajados y la parte superior casi.",
+      "Con la ayuda de un plato, voltear la tortilla y cocinar por el otro lado durante 3-5 minutos más, o hasta que esté dorada y cocida por completo.",
+      "Servir caliente o a temperatura ambiente."
+    ],
+    mealtype: "Almuerzo",
+  },
+  {
+    id: "pre-29",
+    name: "Ensalada de Lentejas con Verduras Asadas",
+    description: "Una ensalada tibia y nutritiva con lentejas y vegetales de temporada asados.",
+    ingredients: [
+      { name: "Lentejas cocidas", quantity: "1.5 tazas" },
+      { name: "Calabacín", quantity: "1/2 unidad (en cubos)" },
+      { name: "Pimiento (cualquier color)", quantity: "1/2 unidad (en cubos)" },
+      { name: "Cebolla roja", quantity: "1/4 unidad (en gajos)" },
+      { name: "Aceite de oliva", quantity: "2 cucharadas" },
+      { name: "Vinagre balsámico", quantity: "1 cucharada" },
+      { name: "Sal", quantity: "al gusto" },
+      { name: "Pimienta", quantity: "al gusto" },
+      { name: "Hierbas provenzales (opcional)", quantity: "1/2 cucharadita" },
+    ],
+    instructions: [
+      "Precalentar el horno a 200°C (400°F).",
+      "En un bol, mezclar el calabacín, pimiento y cebolla con 1 cucharada de aceite de oliva, sal, pimienta y hierbas provenzales.",
+      "Extender las verduras en una bandeja para hornear y asar durante 20-25 minutos, o hasta que estén tiernas y ligeramente doradas.",
+      "En un bol grande, combinar las lentejas cocidas y las verduras asadas.",
+      "Aderezar con la cucharada restante de aceite de oliva y el vinagre balsámico. Mezclar bien.",
+      "Servir tibia o a temperatura ambiente."
+    ],
+    mealtype: "Almuerzo",
+  },
+  {
+    id: "pre-30",
+    name: "Pasta con Salsa de Tomate y Atún",
+    description: "Una comida rápida y fácil, perfecta para un almuerzo entre semana.",
+    ingredients: [
+      { name: "Pasta (espagueti, penne)", quantity: "150g" },
+      { name: "Atún en lata (en aceite o agua)", quantity: "1 lata (escurrido)" },
+      { name: "Salsa de tomate (passata)", quantity: "200g" },
+      { name: "Ajo", quantity: "1 diente (picado)" },
+      { name: "Aceite de oliva", quantity: "1 cucharada" },
+      { name: "Orégano seco", quantity: "1/2 cucharadita" },
+      { name: "Sal", quantity: "al gusto" },
+      { name: "Pimienta", quantity: "al gusto" },
+      { name: "Perejil fresco (picado)", quantity: "para decorar" },
+    ],
+    instructions: [
+      "Cocinar la pasta según las instrucciones del paquete. Reservar 1/4 taza del agua de cocción antes de escurrir.",
+      "Mientras la pasta se cocina, calentar el aceite de oliva en una sartén a fuego medio. Añadir el ajo picado y cocinar por 1 minuto hasta que esté fragante.",
+      "Incorporar la salsa de tomate y el orégano. Cocinar a fuego lento durante 5-7 minutos.",
+      "Añadir el atún escurrido a la salsa y mezclar bien. Si la salsa está muy espesa, añadir un poco del agua de cocción de la pasta.",
+      "Escurrir la pasta y añadirla directamente a la sartén con la salsa. Mezclar bien para que la pasta se impregne de la salsa.",
+      "Sazonar con sal y pimienta al gusto. Servir caliente, espolvoreado con perejil fresco."
+    ],
+    mealtype: "Almuerzo",
+  },
+  // Nuevas recetas de Merienda saludables y económicas
+  {
+    id: "pre-31",
+    name: "Manzana con Mantequilla de Cacahuete",
+    description: "Una merienda clásica, sencilla y llena de energía.",
+    ingredients: [
+      { name: "Manzana", quantity: "1 unidad" },
+      { name: "Mantequilla de cacahuete natural", quantity: "2 cucharadas" },
+      { name: "Canela en polvo (opcional)", quantity: "una pizca" },
+    ],
+    instructions: [
+      "Lavar la manzana y cortarla en rodajas o gajos.",
+      "Untar la mantequilla de cacahuete sobre las rodajas de manzana.",
+      "Espolvorear con canela si se desea.",
+      "Servir inmediatamente."
+    ],
+    mealtype: "Merienda",
+  },
+  {
+    id: "pre-32",
+    name: "Tostada de Arroz con Aguacate y Tomate",
+    description: "Una merienda ligera y crujiente, con grasas saludables.",
+    ingredients: [
+      { name: "Tostadas de arroz (galletas de arroz)", quantity: "2 unidades" },
+      { name: "Aguacate", quantity: "1/4 unidad (machacado)" },
+      { name: "Tomate cherry", quantity: "3-4 unidades (cortados a la mitad)" },
+      { name: "Sal", quantity: "una pizca" },
+      { name: "Pimienta", quantity: "una pizca" },
+    ],
+    instructions: [
+      "Machacar el aguacate en un bol y sazonar con sal y pimienta.",
+      "Untar el aguacate machacado sobre las tostadas de arroz.",
+      "Colocar los tomates cherry cortados por encima.",
+      "Servir."
+    ],
+    mealtype: "Merienda",
+  },
+  {
+    id: "pre-33",
+    name: "Palomitas de Maíz Caseras",
+    description: "Una merienda divertida y saludable si se prepara sin exceso de grasa y sal.",
+    ingredients: [
+      { name: "Granos de maíz para palomitas", quantity: "1/4 taza" },
+      { name: "Aceite vegetal (coco o girasol)", quantity: "1 cucharadita" },
+      { name: "Sal", quantity: "al gusto" },
+    ],
+    instructions: [
+      "En una olla grande con tapa, calentar el aceite a fuego medio-alto.",
+      "Añadir 2-3 granos de maíz. Cuando uno de ellos explote, añadir el resto de los granos en una sola capa.",
+      "Tapar la olla y retirar del fuego por 30 segundos (esto ayuda a que todos los granos alcancen la misma temperatura).",
+      "Volver a poner la olla a fuego medio. Agitar la olla ocasionalmente para evitar que se quemen. Los granos empezarán a explotar.",
+      "Cuando las explosiones disminuyan a una cada 2-3 segundos, retirar la olla del fuego. Dejar reposar unos segundos hasta que dejen de explotar.",
+      "Verter las palomitas en un bol grande y sazonar con sal al gusto. Servir."
+    ],
+    mealtype: "Merienda",
+  },
+  {
+    id: "pre-34",
+    name: "Zanahorias y Hummus",
+    description: "Una merienda crujiente y nutritiva, rica en fibra y proteínas.",
+    ingredients: [
+      { name: "Zanahorias", quantity: "2 unidades (peladas y cortadas en bastones)" },
+      { name: "Hummus", quantity: "1/4 taza" },
+    ],
+    instructions: [
+      "Colocar los bastones de zanahoria en un plato.",
+      "Servir el hummus en un pequeño bol junto a las zanahorias para mojar.",
+      "Disfrutar."
+    ],
+    mealtype: "Merienda",
+  },
+  {
+    id: "pre-35",
+    name: "Yogur Griego con Bayas",
+    description: "Una merienda rica en proteínas y antioxidantes, muy refrescante.",
+    ingredients: [
+      { name: "Yogur griego natural", quantity: "1 taza" },
+      { name: "Bayas mixtas (frescas o congeladas)", quantity: "1/2 taza" },
+      { name: "Miel o sirope de arce (opcional)", quantity: "1 cucharadita" },
+    ],
+    instructions: [
+      "En un bol, colocar el yogur griego.",
+      "Añadir las bayas por encima.",
+      "Si se desea, rociar con un poco de miel o sirope de arce.",
+      "Servir frío."
+    ],
+    mealtype: "Merienda",
+  },
+  {
+    id: "pre-36",
+    name: "Galletas de Arroz con Queso Fresco y Pepino",
+    description: "Una merienda ligera y crujiente, con un toque refrescante.",
+    ingredients: [
+      { name: "Galletas de arroz", quantity: "2 unidades" },
+      { name: "Queso fresco batido (o requesón)", quantity: "2 cucharadas" },
+      { name: "Pepino", quantity: "1/4 unidad (en rodajas finas)" },
+      { name: "Eneldo fresco (opcional)", quantity: "una pizca" },
+      { name: "Sal", quantity: "una pizca" },
+      { name: "Pimienta", quantity: "una pizca" },
+    ],
+    instructions: [
+      "Untar el queso fresco batido sobre las galletas de arroz.",
+      "Colocar las rodajas finas de pepino encima del queso.",
+      "Sazonar con sal, pimienta y eneldo si se desea.",
+      "Servir inmediatamente."
+    ],
+    mealtype: "Merienda",
+  },
+  {
+    id: "pre-37",
+    name: "Frutos Secos Mixtos",
+    description: "Una merienda energética y saludable, rica en grasas buenas y fibra.",
+    ingredients: [
+      { name: "Mix de frutos secos (almendras, nueces, anacardos)", quantity: "1/4 taza" },
+    ],
+    instructions: [
+      "Simplemente medir la porción deseada de frutos secos y disfrutar.",
+      "Asegúrate de elegir opciones sin sal añadida o azúcares."
+    ],
+    mealtype: "Merienda",
+  },
+  {
+    id: "pre-38",
+    name: "Tostada Integral con Tomate y Orégano",
+    description: "Una merienda sencilla y mediterránea, ideal para un antojo salado.",
+    ingredients: [
+      { name: "Pan integral", quantity: "1 rebanada" },
+      { name: "Tomate (rallado o en rodajas finas)", quantity: "1/2 unidad" },
+      { name: "Aceite de oliva virgen extra", quantity: "1 cucharadita" },
+      { name: "Orégano seco", quantity: "una pizca" },
+      { name: "Sal", quantity: "una pizca" },
+    ],
+    instructions: [
+      "Tostar la rebanada de pan.",
+      "Untar el tomate rallado sobre la tostada (o colocar las rodajas de tomate).",
+      "Rociar con aceite de oliva, espolvorear orégano y una pizca de sal.",
+      "Servir inmediatamente."
+    ],
+    mealtype: "Merienda",
+  },
+  {
+    id: "pre-39",
+    name: "Batido de Leche y Cacao",
+    description: "Un batido simple y reconfortante, una opción más saludable que los batidos comerciales.",
+    ingredients: [
+      { name: "Leche (o bebida vegetal)", quantity: "1 taza" },
+      { name: "Cacao en polvo sin azúcar", quantity: "1 cucharada" },
+      { name: "Miel o edulcorante (opcional)", quantity: "1 cucharadita" },
+    ],
+    instructions: [
+      "En un vaso, combinar la leche, el cacao en polvo y la miel/edulcorante si se usa.",
+      "Mezclar bien con una cuchara o batidor pequeño hasta que el cacao se disuelva y no haya grumos.",
+      "Servir frío o ligeramente tibio."
+    ],
+    mealtype: "Merienda",
+  },
+  {
+    id: "pre-40",
+    name: "Huevo Duro con Sal y Pimienta",
+    description: "Una merienda rápida y rica en proteínas, perfecta para saciar el hambre.",
+    ingredients: [
+      { name: "Huevo", quantity: "1 unidad" },
+      { name: "Sal", quantity: "una pizca" },
+      { name: "Pimienta", quantity: "una pizca" },
+    ],
+    instructions: [
+      "Hervir el huevo en agua durante 8-10 minutos para que quede duro. Enfriar bajo agua fría y pelar.",
+      "Cortar el huevo por la mitad o en rodajas.",
+      "Sazonar con sal y pimienta al gusto.",
+      "Servir."
+    ],
+    mealtype: "Merienda",
+  },
 ];
