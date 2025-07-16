@@ -15,6 +15,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { deleteDemoUserData } from "@/integrations/supabase/utils"; // Importar la nueva función
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -24,11 +25,22 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
   const { user, profile } = useSession(); // Obtener el perfil
 
   const handleLogout = async () => {
-    const { error } = await supabase.auth.signOut();
-    if (error) {
-      toast.error("Error al cerrar sesión: " + error.message);
+    if (user && user.email === 'demo@quecomoquecompro.com') {
+      toast.loading("Cerrando sesión y limpiando datos del usuario demo...");
+      await deleteDemoUserData(user.id);
+      const { error } = await supabase.auth.signOut();
+      if (error) {
+        toast.error("Error al cerrar sesión: " + error.message);
+      } else {
+        toast.success("Sesión demo cerrada y datos limpiados con éxito.");
+      }
     } else {
-      toast.success("Sesión cerrada con éxito.");
+      const { error } = await supabase.auth.signOut();
+      if (error) {
+        toast.error("Error al cerrar sesión: " + error.message);
+      } else {
+        toast.success("Sesión cerrada con éxito.");
+      }
     }
   };
 

@@ -3,6 +3,7 @@ import { Recipe, MealPlanEntry, Supplier } from '@/types';
 import { supabase } from '@/integrations/supabase/client';
 import { useSession } from './SessionContext';
 import { toast } from 'sonner';
+import { uploadImage, deleteImage } from '@/integrations/supabase/utils'; // Importar desde el nuevo archivo
 
 interface MealPlanningContextType {
   recipes: Recipe[];
@@ -70,46 +71,6 @@ export const MealPlanningProvider: React.FC<{ children: ReactNode }> = ({ childr
   const recipesById = useMemo(() => {
     return new Map(recipes.map(recipe => [recipe.id, recipe]));
   }, [recipes]);
-
-  const uploadImage = async (file: File, userId: string, recipeId: string): Promise<string | undefined> => {
-    const fileExt = file.name.split('.').pop();
-    const fileName = `${recipeId}.${fileExt}`;
-    const filePath = `${userId}/${recipeId}/${fileName}`;
-
-    const { error: uploadError } = await supabase.storage
-      .from('recipe-images')
-      .upload(filePath, file, { upsert: true });
-
-    if (uploadError) {
-      toast.error('Error al subir la imagen: ' + uploadError.message);
-      return undefined;
-    }
-
-    const { data } = supabase.storage
-      .from('recipe-images')
-      .getPublicUrl(filePath);
-
-    return data?.publicUrl;
-  };
-
-  const deleteImage = async (imageUrl: string) => {
-    if (!imageUrl) return;
-
-    const pathSegments = imageUrl.split('/');
-    const userId = pathSegments[pathSegments.length - 2];
-    const recipeId = pathSegments[pathSegments.length - 1].split('.')[0];
-    const fileName = pathSegments[pathSegments.length - 1];
-    const filePath = `${userId}/${recipeId}/${fileName}`;
-
-    const { error } = await supabase.storage
-      .from('recipe-images')
-      .remove([filePath]);
-
-    if (error) {
-      console.error('Error al eliminar la imagen de Supabase Storage:', error.message);
-      // No mostrar toast de error al usuario para no interrumpir el flujo principal
-    }
-  };
 
   const addRecipe = async (newRecipe: Omit<Recipe, 'id'>, imageFile?: File) => {
     if (!user) {
