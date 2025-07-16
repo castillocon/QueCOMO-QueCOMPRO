@@ -2,7 +2,7 @@ import React from 'react';
 import { Auth } from '@supabase/auth-ui-react';
 import { ThemeSupa } from '@supabase/auth-ui-shared';
 import { supabase } from '@/integrations/supabase/client';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle, CardFooter } from '@/components/ui/card'; // Importar CardFooter
 
 const Login: React.FC = () => {
   return (
@@ -36,6 +36,17 @@ const Login: React.FC = () => {
             redirectTo={window.location.origin}
           />
         </CardContent>
+        <CardFooter className="flex flex-col items-center text-center mt-6 pt-4 border-t border-gray-200 dark:border-gray-700">
+          <p className="text-sm text-color2 mb-2">
+            ¿Solo quieres probar? Usa estas credenciales de demostración:
+          </p>
+          <p className="text-base font-semibold text-color3">
+            Usuario: <span className="font-normal text-color1">demo@quecomoquecompro.com</span>
+          </p>
+          <p className="text-base font-semibold text-color3">
+            Clave: <span className="font-normal text-color1">demo</span>
+          </p>
+        </CardFooter>
       </Card>
     </div>
   );
