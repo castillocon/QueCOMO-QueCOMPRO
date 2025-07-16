@@ -7,6 +7,7 @@ import { preloadedRecipes } from "@/data/preloadedRecipes";
 import { useMealPlanning } from '@/context/MealPlanningContext';
 import { toast } from "sonner";
 import html2pdf from 'html2pdf.js';
+import { formatDisplayDate } from '@/utils/date'; // Importar utilidades de fecha
 
 const PreloadedRecipeDetailPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();

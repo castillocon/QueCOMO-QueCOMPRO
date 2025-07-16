@@ -1,5 +1,4 @@
-import { Toaster } from "@/components/ui/toaster";
-import { Toaster as Sonner } from "@/components/ui/sonner";
+import { Toaster as Sonner } from "@/components/ui/sonner"; // Solo mantener Sonner
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Routes, Route, Navigate } from "react-router-dom";
@@ -14,7 +13,7 @@ import Login from "./pages/Login";
 import ProfilePage from "./pages/ProfilePage";
 import PreloadedRecipeListPage from "./pages/PreloadedRecipeListPage";
 import PreloadedRecipeDetailPage from "./pages/PreloadedRecipeDetailPage";
-import SupplierListPage from "./pages/SupplierListPage"; // Importar la nueva página de proveedores
+import SupplierListPage from "./pages/SupplierListPage";
 import { MealPlanningProvider } from "./context/MealPlanningContext";
 import { useSession } from "./context/SessionContext";
 
@@ -38,7 +37,7 @@ const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ children }) =
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
-      <Toaster />
+      {/* <Toaster /> */} {/* Eliminado: Usamos Sonner */}
       <Sonner />
       <MealPlanningProvider>
         <Routes>
@@ -134,7 +133,7 @@ const App = () => (
             }
           />
           <Route
-            path="/suppliers" // Nueva ruta para la lista de proveedores
+            path="/suppliers"
             element={
               <ProtectedRoute>
                 <Layout>

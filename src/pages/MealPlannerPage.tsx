@@ -4,24 +4,11 @@ import { Button } from "@/components/ui/button";
 import { MealPlanEntry } from "@/types";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useMealPlanning } from '@/context/MealPlanningContext';
-import { useSession } from '@/context/SessionContext'; // Importar useSession
+import { useSession } from '@/context/SessionContext';
 import { Download } from "lucide-react";
 import { toast } from "sonner";
 import html2pdf from 'html2pdf.js';
-
-const getWeekDays = (startDate: Date) => {
-  const days = [];
-  for (let i = 0; i < 7; i++) {
-    const date = new Date(startDate);
-    date.setDate(startDate.getDate() + i);
-    days.push(date);
-  }
-  return days;
-};
-
-const formatDate = (date: Date) => date.toISOString().split('T')[0]; // YYYY-MM-DD
-const formatDisplayDate = (date: Date) => date.toLocaleDateString('es-ES', { day: 'numeric', month: 'short' });
-const formatDayOfWeek = (date: Date) => date.toLocaleDateString('es-ES', { weekday: 'long' });
+import { getWeekDays, formatDate, formatDisplayDate, formatDayOfWeek } from '@/utils/date'; // Importar utilidades de fecha
 
 const MealPlannerPage: React.FC = () => {
   const [currentWeekStart, setCurrentWeekStart] = useState(() => {

@@ -1,4 +1,4 @@
-import React, { createContext, useState, useContext, ReactNode, useEffect } from 'react';
+import React, { createContext, useState, useContext, ReactNode, useEffect, useCallback } from 'react';
 import { Recipe, MealPlanEntry, Supplier } from '@/types';
 import { supabase } from '@/integrations/supabase/client';
 import { useSession } from './SessionContext';
@@ -27,91 +27,42 @@ export const MealPlanningProvider: React.FC<{ children: ReactNode }> = ({ childr
   const { user, isLoading: isLoadingSession } = useSession();
   const [recipes, setRecipes] = useState<Recipe[]>([]);
   const [mealPlan, setMealPlan] = useState<MealPlanEntry[]>([]);
-  const [suppliers, setSuppliers] = useState<Supplier[]>([]); // Nuevo estado para proveedores
+  const [suppliers, setSuppliers] = useState<Supplier[]>([]);
   const [isLoadingRecipes, setIsLoadingRecipes] = useState(true);
   const [isLoadingMealPlan, setIsLoadingMealPlan] = useState(true);
-  const [isLoadingSuppliers, setIsLoadingSuppliers] = useState(true); // Nuevo estado de carga
+  const [isLoadingSuppliers, setIsLoadingSuppliers] = useState(true);
 
-  // Fetch recipes
-  useEffect(() => {
-    const fetchRecipes = async () => {
-      if (!user) {
-        setRecipes([]);
-        setIsLoadingRecipes(false);
-        return;
-      }
-      setIsLoadingRecipes(true);
-      const { data, error } = await supabase
-        .from('recipes')
-        .select('*')
-        .eq('user_id', user.id);
-
-      if (error) {
-        toast.error('Error al cargar recetas: ' + error.message);
-      } else {
-        setRecipes(data as Recipe[]);
-      }
-      setIsLoadingRecipes(false);
-    };
-
-    if (!isLoadingSession) {
-      fetchRecipes();
+  const fetchDataFromSupabase = useCallback(async <T,>(
+    tableName: string,
+    setter: React.Dispatch<React.SetStateAction<T[]>>,
+    setIsLoading: React.Dispatch<React.SetStateAction<boolean>>,
+  ) => {
+    if (!user) {
+      setter([]);
+      setIsLoading(false);
+      return;
     }
-  }, [user, isLoadingSession]);
+    setIsLoading(true);
+    const { data, error } = await supabase
+      .from(tableName)
+      .select('*')
+      .eq('user_id', user.id);
 
-  // Fetch meal plan
-  useEffect(() => {
-    const fetchMealPlan = async () => {
-      if (!user) {
-        setMealPlan([]);
-        setIsLoadingMealPlan(false);
-        return;
-      }
-      setIsLoadingMealPlan(true);
-      const { data, error } = await supabase
-        .from('meal_plan_entries')
-        .select('*')
-        .eq('user_id', user.id);
-
-      if (error) {
-        toast.error('Error al cargar plan de comidas: ' + error.message);
-      } else {
-        setMealPlan(data as MealPlanEntry[]);
-      }
-      setIsLoadingMealPlan(false);
-    };
-
-    if (!isLoadingSession) {
-      fetchMealPlan();
+    if (error) {
+      toast.error(`Error al cargar ${tableName}: ` + error.message);
+    } else {
+      setter(data as T[]);
     }
-  }, [user, isLoadingSession]);
+    setIsLoading(false);
+  }, [user]);
 
-  // Fetch suppliers
   useEffect(() => {
-    const fetchSuppliers = async () => {
-      if (!user) {
-        setSuppliers([]);
-        setIsLoadingSuppliers(false);
-        return;
-      }
-      setIsLoadingSuppliers(true);
-      const { data, error } = await supabase
-        .from('suppliers')
-        .select('*')
-        .eq('user_id', user.id);
-
-      if (error) {
-        toast.error('Error al cargar proveedores: ' + error.message);
-      } else {
-        setSuppliers(data as Supplier[]);
-      }
-      setIsLoadingSuppliers(false);
-    };
-
     if (!isLoadingSession) {
-      fetchSuppliers();
+      fetchDataFromSupabase<Recipe>('recipes', setRecipes, setIsLoadingRecipes);
+      fetchDataFromSupabase<MealPlanEntry>('meal_plan_entries', setMealPlan, setIsLoadingMealPlan);
+      fetchDataFromSupabase<Supplier>('suppliers', setSuppliers, setIsLoadingSuppliers);
     }
-  }, [user, isLoadingSession]);
+  }, [user, isLoadingSession, fetchDataFromSupabase]);
 
   const addRecipe = async (newRecipe: Omit<Recipe, 'id'>) => {
     if (!user) {
@@ -303,18 +254,18 @@ export const MealPlanningProvider: React.FC<{ children: ReactNode }> = ({ childr
     <MealPlanningContext.Provider value={{
       recipes,
       mealPlan,
-      suppliers, // Exponer proveedores
+      suppliers,
       addRecipe,
       updateRecipe,
       deleteRecipe,
       addOrUpdateMealPlanEntry,
       removeMealPlanEntry,
-      addSupplier, // Exponer funciones de proveedor
+      addSupplier,
       updateSupplier,
       deleteSupplier,
       isLoadingRecipes,
       isLoadingMealPlan,
-      isLoadingSuppliers // Exponer estado de carga de proveedores
+      isLoadingSuppliers
     }}>
       {children}
     </MealPlanningContext.Provider>

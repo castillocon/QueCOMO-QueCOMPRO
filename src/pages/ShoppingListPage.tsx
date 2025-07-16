@@ -7,19 +7,8 @@ import { useMealPlanning } from '@/context/MealPlanningContext';
 import { useSession } from '@/context/SessionContext';
 import { toast } from "sonner";
 import html2pdf from 'html2pdf.js';
-
-// Helper functions (copied from MealPlannerPage for self-containment)
-const getWeekDays = (startDate: Date) => {
-  const days = [];
-  for (let i = 0; i < 7; i++) {
-    const date = new Date(startDate);
-    date.setDate(startDate.getDate() + i);
-    days.push(date);
-  }
-  return days;
-};
-
-const formatDisplayDate = (date: Date) => date.toLocaleDateString('es-ES', { day: 'numeric', month: 'short' });
+import { getWeekDays, formatDisplayDate } from '@/utils/date'; // Importar utilidades de fecha
+import { parseQuantity } from '@/utils/helpers'; // Importar parseQuantity
 
 const ShoppingListPage: React.FC = () => {
   const { recipes, mealPlan } = useMealPlanning();
@@ -41,17 +30,6 @@ const ShoppingListPage: React.FC = () => {
   const weekDays = getWeekDays(currentWeekStart);
   const userName = user?.user_metadata?.first_name || user?.email || "Usuario";
   const weekRangeText = `Semana del ${formatDisplayDate(weekDays[0])} al ${formatDisplayDate(weekDays[6])}`;
-
-  // Helper function to parse quantity strings
-  const parseQuantity = (quantityStr: string): { value: number | null; unit: string } => {
-    const match = quantityStr.match(/^(\d+(\.\d+)?)\s*([a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+)?$/);
-    if (match) {
-      const value = parseFloat(match[1]);
-      const unit = match[3] ? match[3].trim().toLowerCase() : '';
-      return { value, unit };
-    }
-    return { value: null, unit: quantityStr.trim().toLowerCase() };
-  };
 
   const generateShoppingList = () => {
     // Map: SupplierName -> IngredientName -> Unit -> TotalQuantity

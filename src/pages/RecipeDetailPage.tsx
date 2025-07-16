@@ -6,6 +6,7 @@ import { ArrowLeft, Edit, Download } from "lucide-react";
 import { useMealPlanning } from '@/context/MealPlanningContext';
 import { toast } from "sonner";
 import html2pdf from 'html2pdf.js';
+import { formatDisplayDate } from '@/utils/date'; // Importar utilidades de fecha
 
 const RecipeDetailPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
