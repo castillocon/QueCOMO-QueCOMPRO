@@ -26,12 +26,12 @@ const MealPlannerPage: React.FC = () => {
   const weekDays = getWeekDays(currentWeekStart);
   const mealTypes = ['Desayuno', 'Almuerzo', 'Cena', 'Merienda'];
 
-  const handleRecipeSelect = (date: string, mealType: MealPlanEntry['mealType'], recipeId: string) => {
-    addOrUpdateMealPlanEntry(date, mealType, recipeId);
+  const handleRecipeSelect = (date: string, mealtype: MealPlanEntry['mealtype'], recipeId: string) => { // Corregido aquí
+    addOrUpdateMealPlanEntry(date, mealtype, recipeId);
   };
 
-  const getRecipeForMeal = (date: string, mealType: MealPlanEntry['mealType']) => {
-    const entry = mealPlan.find(e => e.date === date && e.mealType === mealType);
+  const getRecipeForMeal = (date: string, mealtype: MealPlanEntry['mealtype']) => { // Corregido aquí
+    const entry = mealPlan.find(e => e.date === date && e.mealtype === mealtype);
     // Filtrar recetas por mealtype (minúsculas)
     return entry ? recipes.find(r => r.id === entry.recipeId) : undefined;
   };
@@ -68,7 +68,7 @@ const MealPlannerPage: React.FC = () => {
             </CardHeader>
             <CardContent className="flex-grow p-4 space-y-4">
               {mealTypes.map(mealType => {
-                const selectedRecipe = getRecipeForMeal(formatDate(day), mealType as MealPlanEntry['mealType']);
+                const selectedRecipe = getRecipeForMeal(formatDate(day), mealType as MealPlanEntry['mealtype']); // Corregido aquí
                 // Filtrar recetas por mealtype (minúsculas)
                 const availableRecipes = recipes.filter(r => r.mealtype === mealType);
 
@@ -76,7 +76,7 @@ const MealPlannerPage: React.FC = () => {
                   <div key={mealType} className="border rounded-md p-3">
                     <h3 className="font-medium text-md mb-2">{mealType}</h3>
                     <Select
-                      onValueChange={(recipeId) => handleRecipeSelect(formatDate(day), mealType as MealPlanEntry['mealType'], recipeId)}
+                      onValueChange={(recipeId) => handleRecipeSelect(formatDate(day), mealType as MealPlanEntry['mealtype'], recipeId)} // Corregido aquí
                       value={selectedRecipe?.id || ""}
                     >
                       <SelectTrigger className="w-full">
