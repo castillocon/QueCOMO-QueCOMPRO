@@ -125,7 +125,11 @@ const ShoppingListPage: React.FC = () => {
   const handleDownloadPdf = () => {
     if (shoppingListRef.current) {
       toast.loading("Generando PDF de la lista de compras...");
-      html2pdf().from(shoppingListRef.current).save('lista_de_compras.pdf');
+      const startDateFormatted = formatDisplayDate(weekDays[0]).replace(/\s/g, '_');
+      const endDateFormatted = formatDisplayDate(weekDays[6]).replace(/\s/g, '_');
+      const filename = `lista_de_compras_semana_${startDateFormatted}_al_${endDateFormatted}.pdf`;
+
+      html2pdf().from(shoppingListRef.current).save(filename);
       toast.success("PDF generado con éxito.");
     } else {
       toast.error("No se pudo encontrar el contenido de la lista de compras.");
