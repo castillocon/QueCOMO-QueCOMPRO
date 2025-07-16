@@ -206,14 +206,18 @@ const RecipeFormPage: React.FC = () => {
                       render={({ field }) => (
                         <FormItem className="flex-1 min-w-[100px]">
                           <FormLabel className={index === 0 ? 'block' : 'sr-only'}>Proveedor (Opcional)</FormLabel>
-                          <Select onValueChange={field.onChange} value={field.value || ''} disabled={isLoadingSuppliers}>
+                          <Select
+                            onValueChange={(value) => field.onChange(value === "UNASSIGNED_SUPPLIER" ? undefined : value)}
+                            value={field.value || "UNASSIGNED_SUPPLIER"} // Set default to our unassigned value
+                            disabled={isLoadingSuppliers}
+                          >
                             <FormControl>
                               <SelectTrigger>
                                 <SelectValue placeholder="Seleccionar Proveedor" />
                               </SelectTrigger>
                             </FormControl>
                             <SelectContent>
-                              <SelectItem value="">Sin Proveedor</SelectItem> {/* Opción para no seleccionar proveedor */}
+                              <SelectItem value="UNASSIGNED_SUPPLIER">Sin Proveedor</SelectItem> {/* Opción para no seleccionar proveedor */}
                               {suppliers.length > 0 ? (
                                 suppliers.map(supplier => (
                                   <SelectItem key={supplier.id} value={supplier.name}>
