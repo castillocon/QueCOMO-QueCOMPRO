@@ -135,7 +135,7 @@ import React, { useEffect, useState } from 'react';
             const options = {
               maxSizeMB: 1, // (max file size in MB)
               maxWidthOrHeight: 1920, // (max width or height in pixels)
-              use  WebWorker: true,
+              useWebWorker: true, // Corregido: eliminado el espacio extra
               fileType: file.type,
             };
             const compressedFile = await imageCompression(file, options);
@@ -244,7 +244,6 @@ import React, { useEffect, useState } from 'react';
                             <SelectItem value="Desayuno">Desayuno</SelectItem>
                             <SelectItem value="Almuerzo">Almuerzo</SelectItem>
                             <SelectItem value="Cena">Cena</SelectItem>
-                            <SelectItem value="Merienda">Merienda</SelectItem>
                           </SelectContent>
                         </Select>
                         <FormMessage />
