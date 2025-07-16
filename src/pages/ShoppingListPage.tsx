@@ -171,6 +171,7 @@ const ShoppingListPage: React.FC = () => {
                   <Table>
                     <TableHeader>
                       <TableRow>
+                        <TableHead className="w-[40px]">✓</TableHead> {/* Nueva columna para el checkbox */}
                         <TableHead>Artículo</TableHead>
                         <TableHead>Cantidad</TableHead>
                       </TableRow>
@@ -178,6 +179,9 @@ const ShoppingListPage: React.FC = () => {
                     <TableBody>
                       {supplierGroup.items.map((item, itemIndex) => (
                         <TableRow key={`${supIndex}-${itemIndex}`}>
+                          <TableCell className="text-center">
+                            <div className="w-4 h-4 border border-gray-400 rounded-sm mx-auto"></div> {/* Checkbox visual */}
+                          </TableCell>
                           <TableCell className="font-medium">{item.item}</TableCell>
                           <TableCell>{item.quantity}</TableCell>
                         </TableRow>
