@@ -4,85 +4,85 @@
 
 @layer base {
   :root {
-    --background: 0 0% 98%; /* #f9f9f9 */
-    --foreground: 209 19% 30%; /* Darker version of #849db5 for readability */
+    --background: 0 0% 98%; /* #f9f9f9 - Un blanco muy suave para el fondo principal */
+    --foreground: 207 29% 16%; /* #1f2c35 - Color principal para el texto, oscuro y legible */
 
-    --card: 0 0% 98%;
-    --card-foreground: 209 19% 30%;
+    --card: 0 0% 98%; /* #f9f9f9 - Fondo de tarjetas */
+    --card-foreground: 207 29% 16%; /* #1f2c35 - Texto en tarjetas */
 
-    --popover: 0 0% 98%;
-    --popover-foreground: 209 19% 30%;
+    --popover: 0 0% 98%; /* #f9f9f9 - Fondo de popovers */
+    --popover-foreground: 207 29% 16%; /* #1f2c35 - Texto en popovers */
 
-    --primary: 209 19% 62%; /* #849db5 */
-    --primary-foreground: 0 0% 98%; /* #f9f9f9 */
+    --primary: 209 59% 67%; /* #7db0db - ¡Este es el color para tus botones! */
+    --primary-foreground: 28 29% 6%; /* #140f07 - Texto oscuro para contrastar con el botón azul */
 
-    --secondary: 165 50% 93%; /* #e3f4ef */
-    --secondary-foreground: 209 19% 30%;
+    --secondary: 176 100% 86%; /* #b7fff8 - Un azul/cian muy claro para elementos secundarios */
+    --secondary-foreground: 207 29% 16%; /* #1f2c35 - Texto en elementos secundarios */
 
-    --muted: 165 50% 93%; /* #e3f4ef */
-    --muted-foreground: 198 20% 72%; /* #a4c1ca */
+    --muted: 176 100% 86%; /* #b7fff8 - Para elementos menos prominentes */
+    --muted-foreground: 210 29% 40%; /* #4c6882 - Texto en elementos muted */
 
-    --accent: 175 30% 82%; /* #c3e2e0 */
-    --accent-foreground: 209 19% 30%;
+    --accent: 210 29% 40%; /* #4c6882 - Un azul-gris medio para acentos y estados de hover */
+    --accent-foreground: 0 0% 98%; /* #f9f9f9 - Texto en elementos de acento */
 
-    --destructive: 0 84.2% 60.2%; /* Default red */
-    --destructive-foreground: 210 40% 98%; /* Default white */
+    --destructive: 0 84.2% 60.2%; /* Rojo por defecto para acciones destructivas */
+    --destructive-foreground: 210 40% 98%; /* Blanco por defecto para texto destructivo */
 
-    --border: 175 30% 82%; /* #c3e2e0 */
-    --input: 165 50% 93%; /* #e3f4ef */
-    --ring: 209 19% 62%; /* #849db5 */
+    --border: 210 29% 40%; /* #4c6882 - Color para bordes */
+    --input: 176 100% 86%; /* #b7fff8 - Fondo de campos de entrada */
+    --ring: 209 59% 67%; /* #7db0db - Color del anillo de enfoque, igual que el primario */
 
     --radius: 0.5rem;
 
-    /* Sidebar colors - adjusting to new palette */
-    --sidebar-background: 0 0% 98%; /* Similar to background */
-    --sidebar-foreground: 209 19% 30%; /* Similar to foreground */
-    --sidebar-primary: 209 19% 62%; /* Similar to primary */
-    --sidebar-primary-foreground: 0 0% 98%; /* Similar to primary-foreground */
-    --sidebar-accent: 175 30% 82%; /* Similar to accent */
-    --sidebar-accent-foreground: 209 19% 30%; /* Similar to accent-foreground */
-    --sidebar-border: 175 30% 82%; /* Similar to border */
-    --sidebar-ring: 209 19% 62%; /* Similar to ring */
+    /* Colores de la barra lateral (sidebar) - ajustados a la nueva paleta */
+    --sidebar-background: 0 0% 98%; /* #f9f9f9 */
+    --sidebar-foreground: 207 29% 16%; /* #1f2c35 */
+    --sidebar-primary: 209 59% 67%; /* #7db0db */
+    --sidebar-primary-foreground: 28 29% 6%; /* #140f07 */
+    --sidebar-accent: 210 29% 40%; /* #4c6882 */
+    --sidebar-accent-foreground: 0 0% 98%; /* #f9f9f9 */
+    --sidebar-border: 210 29% 40%; /* #4c6882 */
+    --sidebar-ring: 209 59% 67%; /* #7db0db */
   }
 
   .dark {
-    --background: 209 19% 10%; /* Darker version of color1 hue */
-    --foreground: 165 50% 93%; /* color4, as light text on dark background */
+    --background: 28 29% 6%; /* #140f07 - Fondo principal en modo oscuro */
+    --foreground: 176 100% 86%; /* #b7fff8 - Texto principal en modo oscuro */
 
-    --card: 209 19% 10%;
-    --card-foreground: 165 50% 93%;
+    --card: 28 29% 6%; /* #140f07 - Fondo de tarjetas en modo oscuro */
+    --card-foreground: 176 100% 86%; /* #b7fff8 - Texto en tarjetas en modo oscuro */
 
-    --popover: 209 19% 10%;
-    --popover-foreground: 165 50% 93%;
+    --popover: 28 29% 6%; /* #140f07 - Fondo de popovers en modo oscuro */
+    --popover-foreground: 176 100% 86%; /* #b7fff8 - Texto en popovers en modo oscuro */
 
-    --primary: 165 50% 93%; /* color4, as primary button in dark mode */
-    --primary-foreground: 209 19% 10%; /* Dark text on light primary */
+    --primary: 209 59% 67%; /* #7db0db - Botones en modo oscuro */
+    --primary-foreground: 28 29% 6%; /* #140f07 - Texto oscuro para contrastar con el botón azul */
 
-    --secondary: 198 20% 30%; /* Darker version of color2 */
-    --secondary-foreground: 165 50% 93%;
+    --secondary: 207 29% 16%; /* #1f2c35 - Elementos secundarios en modo oscuro */
+    --secondary-foreground: 176 100% 86%; /* #b7fff8 - Texto en elementos secundarios en modo oscuro */
 
-    --muted: 198 20% 30%;
-    --muted-foreground: 175 30% 82%; /* color3 */
+    --muted: 207 29% 16%; /* #1f2c35 - Elementos muted en modo oscuro */
+    --muted-foreground: 210 29% 40%; /* #4c6882 - Texto en elementos muted en modo oscuro */
 
-    --accent: 198 20% 40%; /* Darker version of color2 */
-    --accent-foreground: 165 50% 93%;
+    --accent: 210 29% 40%; /* #4c6882 - Acentos en modo oscuro */
+    --accent-foreground: 176 100% 86%; /* #b7fff8 - Texto en elementos de acento en modo oscuro */
 
-    --destructive: 0 62.8% 30.6%; /* Default dark red */
-    --destructive-foreground: 210 40% 98%; /* Default white */
+    --destructive: 0 62.8% 30.6%; /* Rojo por defecto para acciones destructivas */
+    --destructive-foreground: 210 40% 98%; /* Blanco por defecto para texto destructivo */
 
-    --border: 198 20% 30%;
-    --input: 198 20% 30%;
-    --ring: 165 50% 93%;
+    --border: 207 29% 16%; /* #1f2c35 - Bordes en modo oscuro */
+    --input: 207 29% 16%; /* #1f2c35 - Campos de entrada en modo oscuro */
+    --ring: 209 59% 67%; /* #7db0db - Anillo de enfoque en modo oscuro */
 
-    /* Sidebar colors - adjusting to new palette */
-    --sidebar-background: 209 19% 10%;
-    --sidebar-foreground: 165 50% 93%;
-    --sidebar-primary: 165 50% 93%;
-    --sidebar-primary-foreground: 209 19% 10%;
-    --sidebar-accent: 198 20% 40%;
-    --sidebar-accent-foreground: 165 50% 93%;
-    --sidebar-border: 198 20% 30%;
-    --sidebar-ring: 165 50% 93%;
+    /* Colores de la barra lateral (sidebar) - ajustados a la nueva paleta */
+    --sidebar-background: 28 29% 6%; /* #140f07 */
+    --sidebar-foreground: 176 100% 86%; /* #b7fff8 */
+    --sidebar-primary: 209 59% 67%; /* #7db0db */
+    --sidebar-primary-foreground: 28 29% 6%; /* #140f07 */
+    --sidebar-accent: 210 29% 40%; /* #4c6882 */
+    --sidebar-accent-foreground: 176 100% 86%; /* #b7fff8 */
+    --sidebar-border: 207 29% 16%; /* #1f2c35 */
+    --sidebar-ring: 209 59% 67%; /* #7db0db */
   }
 }
 
