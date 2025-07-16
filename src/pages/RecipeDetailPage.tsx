@@ -3,11 +3,11 @@ import { useParams, Link } from "react-router-dom";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, Edit } from "lucide-react";
-import { useRecipes } from '@/context/RecipeContext';
+import { useMealPlanning } from '@/context/MealPlanningContext'; // Se cambió la importación
 
 const RecipeDetailPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
-  const { recipes } = useRecipes();
+  const { recipes } = useMealPlanning(); // Se cambió el hook
   const recipe = recipes.find(r => r.id === id);
 
   if (!recipe) {

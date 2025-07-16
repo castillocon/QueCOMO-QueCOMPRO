@@ -1,9 +1,9 @@
 import React, { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Recipe, MealPlanEntry } from "@/types";
+import { MealPlanEntry } from "@/types"; // Se eliminó la importación de Recipe ya que no se usa directamente aquí
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { useRecipes } from '@/context/RecipeContext'; // Import useRecipes
+import { useMealPlanning } from '@/context/MealPlanningContext'; // Importar useMealPlanning
 
 const getWeekDays = (startDate: Date) => {
   const days = [];
@@ -20,29 +20,16 @@ const formatDisplayDate = (date: Date) => date.toLocaleDateString('es-ES', { wee
 
 const MealPlannerPage: React.FC = () => {
   const [currentWeekStart, setCurrentWeekStart] = useState(new Date());
-  const [mealPlan, setMealPlan] = useState<MealPlanEntry[]>([]);
-  const { recipes } = useRecipes(); // Use recipes from context
+  const { recipes, mealPlan, addOrUpdateMealPlanEntry } = useMealPlanning(); // Usar mealPlan y addOrUpdateMealPlanEntry del contexto
 
   const weekDays = getWeekDays(currentWeekStart);
   const mealTypes = ['Desayuno', 'Almuerzo', 'Cena', 'Merienda'];
 
-  const handleRecipeSelect = (date: string, mealType: string, recipeId: string) => {
-    setMealPlan(prevPlan => {
-      const existingEntryIndex = prevPlan.findIndex(
-        entry => entry.date === date && entry.mealType === mealType
-      );
-
-      if (existingEntryIndex > -1) {
-        const updatedPlan = [...prevPlan];
-        updatedPlan[existingEntryIndex] = { ...updatedPlan[existingEntryIndex], recipeId };
-        return updatedPlan;
-      } else {
-        return [...prevPlan, { id: `mp-${Date.now()}`, date, mealType, recipeId }];
-      }
-    });
+  const handleRecipeSelect = (date: string, mealType: MealPlanEntry['mealType'], recipeId: string) => {
+    addOrUpdateMealPlanEntry(date, mealType, recipeId);
   };
 
-  const getRecipeForMeal = (date: string, mealType: string) => {
+  const getRecipeForMeal = (date: string, mealType: MealPlanEntry['mealType']) => {
     const entry = mealPlan.find(e => e.date === date && e.mealType === mealType);
     return entry ? recipes.find(r => r.id === entry.recipeId) : undefined;
   };
@@ -79,14 +66,14 @@ const MealPlannerPage: React.FC = () => {
             </CardHeader>
             <CardContent className="flex-grow p-4 space-y-4">
               {mealTypes.map(mealType => {
-                const selectedRecipe = getRecipeForMeal(formatDate(day), mealType);
+                const selectedRecipe = getRecipeForMeal(formatDate(day), mealType as MealPlanEntry['mealType']);
                 const availableRecipes = recipes.filter(r => r.mealType === mealType);
 
                 return (
                   <div key={mealType} className="border rounded-md p-3">
                     <h3 className="font-medium text-md mb-2">{mealType}</h3>
                     <Select
-                      onValueChange={(recipeId) => handleRecipeSelect(formatDate(day), mealType, recipeId)}
+                      onValueChange={(recipeId) => handleRecipeSelect(formatDate(day), mealType as MealPlanEntry['mealType'], recipeId)}
                       value={selectedRecipe?.id || ""}
                     >
                       <SelectTrigger className="w-full">

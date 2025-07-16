@@ -17,7 +17,7 @@ import {
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { PlusCircle, MinusCircle, ArrowLeft } from 'lucide-react';
-import { useRecipes } from '@/context/RecipeContext';
+import { useMealPlanning } from '@/context/MealPlanningContext'; // Se cambió la importación
 import { Recipe } from '@/types';
 import { toast } from 'sonner';
 
@@ -43,7 +43,7 @@ type RecipeFormValues = z.infer<typeof formSchema>;
 const RecipeFormPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const { recipes, addRecipe, updateRecipe } = useRecipes();
+  const { recipes, addRecipe, updateRecipe } = useMealPlanning(); // Se cambió el hook
 
   const isEditing = !!id;
   const currentRecipe = isEditing ? recipes.find(r => r.id === id) : undefined;
@@ -53,7 +53,7 @@ const RecipeFormPage: React.FC = () => {
     defaultValues: {
       name: '',
       description: '',
-      mealType: 'Almuerzo', // Default value
+      mealType: 'Almuerzo', // Valor por defecto
       ingredients: [{ name: '', quantity: '' }],
       instructions: [''],
     },

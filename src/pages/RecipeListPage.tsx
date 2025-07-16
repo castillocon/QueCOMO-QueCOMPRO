@@ -3,10 +3,10 @@ import { Link } from "react-router-dom";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { PlusCircle } from "lucide-react";
-import { useRecipes } from '@/context/RecipeContext';
+import { useMealPlanning } from '@/context/MealPlanningContext'; // Se cambió la importación
 
 const RecipeListPage: React.FC = () => {
-  const { recipes } = useRecipes();
+  const { recipes } = useMealPlanning(); // Se cambió el hook
 
   return (
     <div className="container mx-auto p-4">
