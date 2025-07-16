@@ -1,6 +1,6 @@
 import React from 'react';
 import { Auth } from '@supabase/auth-ui-react';
-import { ThemeSupa } from '@supabase/auth-ui-shared'; // Eliminar i18n de la importación
+import { ThemeSupa } from '@supabase/auth-ui-shared';
 import { supabase } from '@/integrations/supabase/client';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
@@ -15,7 +15,7 @@ const Login: React.FC = () => {
         <CardContent>
           <Auth
             supabaseClient={supabase}
-            providers={['google', 'microsoft']}
+            providers={[]} {/* Se eliminaron los proveedores 'google' y 'microsoft' */}
             appearance={{
               theme: ThemeSupa,
               variables: {
@@ -29,7 +29,6 @@ const Login: React.FC = () => {
             }}
             theme="light"
             redirectTo={window.location.origin}
-            // Se eliminó la prop localization
           />
         </CardContent>
       </Card>
