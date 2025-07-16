@@ -1,7 +1,7 @@
 import React, { createContext, useState, useContext, ReactNode, useEffect } from 'react';
 import { Recipe, MealPlanEntry } from '@/types';
 import { supabase } from '@/integrations/supabase/client';
-import { useSession } from './SessionContext'; // Importar useSession
+import { useSession } from './SessionContext';
 import { toast } from 'sonner';
 
 interface MealPlanningContextType {
@@ -23,7 +23,7 @@ export const MealPlanningProvider: React.FC<{ children: ReactNode }> = ({ childr
   const [recipes, setRecipes] = useState<Recipe[]>([]);
   const [mealPlan, setMealPlan] = useState<MealPlanEntry[]>([]);
   const [isLoadingRecipes, setIsLoadingRecipes] = useState(true);
-  const [isLoadingMealPlan, setIsLoadingMealPlan] = useState(true);
+  const [isLoadingMealPlan, setIsLoadingMealPlan] = true);
 
   // Fetch recipes
   useEffect(() => {
@@ -84,9 +84,11 @@ export const MealPlanningProvider: React.FC<{ children: ReactNode }> = ({ childr
       toast.error('Debes iniciar sesión para añadir recetas.');
       return;
     }
+    // Asegurarse de que el objeto enviado a Supabase tenga 'mealtype' en minúsculas
+    const { mealtype, ...rest } = newRecipe;
     const { data, error } = await supabase
       .from('recipes')
-      .insert({ ...newRecipe, user_id: user.id })
+      .insert({ ...rest, mealtype, user_id: user.id }) // Cambiado a 'mealtype'
       .select();
 
     if (error) {
@@ -102,9 +104,11 @@ export const MealPlanningProvider: React.FC<{ children: ReactNode }> = ({ childr
       toast.error('Debes iniciar sesión para actualizar recetas.');
       return;
     }
+    // Asegurarse de que el objeto enviado a Supabase tenga 'mealtype' en minúsculas
+    const { mealtype, ...rest } = updatedRecipe;
     const { error } = await supabase
       .from('recipes')
-      .update(updatedRecipe)
+      .update({ ...rest, mealtype }) // Cambiado a 'mealtype'
       .eq('id', updatedRecipe.id)
       .eq('user_id', user.id);
 

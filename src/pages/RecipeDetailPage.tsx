@@ -3,11 +3,11 @@ import { useParams, Link } from "react-router-dom";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, Edit } from "lucide-react";
-import { useMealPlanning } from '@/context/MealPlanningContext'; // Se cambió la importación
+import { useMealPlanning } from '@/context/MealPlanningContext';
 
 const RecipeDetailPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
-  const { recipes } = useMealPlanning(); // Se cambió el hook
+  const { recipes } = useMealPlanning();
   const recipe = recipes.find(r => r.id === id);
 
   if (!recipe) {
@@ -41,7 +41,7 @@ const RecipeDetailPage: React.FC = () => {
       <Card>
         <CardHeader>
           <CardTitle className="text-3xl">{recipe.name}</CardTitle>
-          <CardDescription className="text-lg">{recipe.mealType}</CardDescription>
+          <CardDescription className="text-lg">{recipe.mealtype}</CardDescription> {/* Cambiado a 'mealtype' */}
           {recipe.description && <p className="text-muted-foreground mt-2">{recipe.description}</p>}
         </CardHeader>
         <CardContent className="grid md:grid-cols-2 gap-8">

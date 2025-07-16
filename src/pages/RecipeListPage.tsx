@@ -3,10 +3,10 @@ import { Link } from "react-router-dom";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { PlusCircle } from "lucide-react";
-import { useMealPlanning } from '@/context/MealPlanningContext'; // Se cambió la importación
+import { useMealPlanning } from '@/context/MealPlanningContext';
 
 const RecipeListPage: React.FC = () => {
-  const { recipes } = useMealPlanning(); // Se cambió el hook
+  const { recipes } = useMealPlanning();
 
   return (
     <div className="container mx-auto p-4">
@@ -26,7 +26,7 @@ const RecipeListPage: React.FC = () => {
             <Card key={recipe.id}>
               <CardHeader>
                 <CardTitle>{recipe.name}</CardTitle>
-                <CardDescription>{recipe.mealType}</CardDescription>
+                <CardDescription>{recipe.mealtype}</CardDescription> {/* Cambiado a 'mealtype' */}
               </CardHeader>
               <CardContent>
                 <p className="text-sm text-muted-foreground line-clamp-2 mb-3">

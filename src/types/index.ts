@@ -9,7 +9,7 @@ export interface Recipe {
   description?: string;
   ingredients: Ingredient[];
   instructions: string[];
-  mealType: 'Desayuno' | 'Almuerzo' | 'Cena' | 'Merienda';
+  mealtype: 'Desayuno' | 'Almuerzo' | 'Cena' | 'Merienda'; // Cambiado a 'mealtype'
 }
 
 export interface MealPlanEntry {

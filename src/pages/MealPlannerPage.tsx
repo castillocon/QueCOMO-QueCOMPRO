@@ -32,6 +32,7 @@ const MealPlannerPage: React.FC = () => {
 
   const getRecipeForMeal = (date: string, mealType: MealPlanEntry['mealType']) => {
     const entry = mealPlan.find(e => e.date === date && e.mealType === mealType);
+    // Filtrar recetas por mealtype (minúsculas)
     return entry ? recipes.find(r => r.id === entry.recipeId) : undefined;
   };
 
@@ -53,7 +54,7 @@ const MealPlannerPage: React.FC = () => {
 
       <div className="flex justify-between items-center mb-6">
         <Button onClick={goToPreviousWeek} variant="outline">Semana Anterior</Button>
-        <h2 className="text-xl font-semibold whitespace-nowrap"> {/* Added whitespace-nowrap */}
+        <h2 className="text-xl font-semibold whitespace-nowrap">
           Semana del {formatDisplayDate(weekDays[0])} al {formatDisplayDate(weekDays[6])}
         </h2>
         <Button onClick={goToNextWeek} variant="outline">Semana Siguiente</Button>
@@ -68,7 +69,8 @@ const MealPlannerPage: React.FC = () => {
             <CardContent className="flex-grow p-4 space-y-4">
               {mealTypes.map(mealType => {
                 const selectedRecipe = getRecipeForMeal(formatDate(day), mealType as MealPlanEntry['mealType']);
-                const availableRecipes = recipes.filter(r => r.mealType === mealType);
+                // Filtrar recetas por mealtype (minúsculas)
+                const availableRecipes = recipes.filter(r => r.mealtype === mealType);
 
                 return (
                   <div key={mealType} className="border rounded-md p-3">

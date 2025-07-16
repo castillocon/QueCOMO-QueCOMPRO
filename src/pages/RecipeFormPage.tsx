@@ -17,14 +17,14 @@ import {
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { PlusCircle, MinusCircle, ArrowLeft } from 'lucide-react';
-import { useMealPlanning } from '@/context/MealPlanningContext'; // Se cambió la importación
+import { useMealPlanning } from '@/context/MealPlanningContext';
 import { Recipe } from '@/types';
 import { toast } from 'sonner';
 
 const formSchema = z.object({
   name: z.string().min(1, 'El nombre es requerido.'),
   description: z.string().optional(),
-  mealType: z.enum(['Desayuno', 'Almuerzo', 'Cena', 'Merienda'], {
+  mealtype: z.enum(['Desayuno', 'Almuerzo', 'Cena', 'Merienda'], { // Cambiado a 'mealtype'
     required_error: 'El tipo de comida es requerido.',
   }),
   ingredients: z.array(
@@ -43,7 +43,7 @@ type RecipeFormValues = z.infer<typeof formSchema>;
 const RecipeFormPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const { recipes, addRecipe, updateRecipe } = useMealPlanning(); // Se cambió el hook
+  const { recipes, addRecipe, updateRecipe } = useMealPlanning();
 
   const isEditing = !!id;
   const currentRecipe = isEditing ? recipes.find(r => r.id === id) : undefined;
@@ -53,7 +53,7 @@ const RecipeFormPage: React.FC = () => {
     defaultValues: {
       name: '',
       description: '',
-      mealType: 'Almuerzo', // Valor por defecto
+      mealtype: 'Almuerzo', // Cambiado a 'mealtype'
       ingredients: [{ name: '', quantity: '' }],
       instructions: [''],
     },
@@ -74,7 +74,7 @@ const RecipeFormPage: React.FC = () => {
       form.reset({
         name: currentRecipe.name,
         description: currentRecipe.description,
-        mealType: currentRecipe.mealType,
+        mealtype: currentRecipe.mealtype, // Cambiado a 'mealtype'
         ingredients: currentRecipe.ingredients,
         instructions: currentRecipe.instructions,
       });
@@ -82,7 +82,7 @@ const RecipeFormPage: React.FC = () => {
       form.reset({
         name: '',
         description: '',
-        mealType: 'Almuerzo',
+        mealtype: 'Almuerzo', // Cambiado a 'mealtype'
         ingredients: [{ name: '', quantity: '' }],
         instructions: [''],
       });
@@ -147,7 +147,7 @@ const RecipeFormPage: React.FC = () => {
 
               <FormField
                 control={form.control}
-                name="mealType"
+                name="mealtype" // Cambiado a 'mealtype'
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Tipo de Comida</FormLabel>
