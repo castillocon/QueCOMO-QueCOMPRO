@@ -1,15 +1,46 @@
-import React, { useRef } from "react";
+import React, { useRef, useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { Download } from "lucide-react";
 import { useMealPlanning } from '@/context/MealPlanningContext';
+import { useSession } from '@/context/SessionContext'; // Importar useSession
 import { toast } from "sonner";
 import html2pdf from 'html2pdf.js';
 
+// Helper functions (copied from MealPlannerPage for self-containment)
+const getWeekDays = (startDate: Date) => {
+  const days = [];
+  for (let i = 0; i < 7; i++) {
+    const date = new Date(startDate);
+    date.setDate(startDate.getDate() + i);
+    days.push(date);
+  }
+  return days;
+};
+
+const formatDisplayDate = (date: Date) => date.toLocaleDateString('es-ES', { day: 'numeric', month: 'short' });
+
 const ShoppingListPage: React.FC = () => {
   const { recipes, mealPlan } = useMealPlanning();
+  const { user } = useSession(); // Obtener el usuario de la sesión
   const shoppingListRef = useRef<HTMLDivElement>(null);
+
+  const [currentWeekStart, setCurrentWeekStart] = useState(new Date());
+
+  // Adjust currentWeekStart to be the beginning of the current week (Monday)
+  useEffect(() => {
+    const today = new Date();
+    const dayOfWeek = today.getDay(); // 0 for Sunday, 1 for Monday, ..., 6 for Saturday
+    const diff = today.getDate() - dayOfWeek + (dayOfWeek === 0 ? -6 : 1); // Adjust to Monday
+    const monday = new Date(today.setDate(diff));
+    monday.setHours(0, 0, 0, 0); // Set to start of the day
+    setCurrentWeekStart(monday);
+  }, []);
+
+  const weekDays = getWeekDays(currentWeekStart);
+  const userName = user?.user_metadata?.first_name || user?.email || "Usuario";
+  const weekRangeText = `Semana del ${formatDisplayDate(weekDays[0])} al ${formatDisplayDate(weekDays[6])}`;
 
   // Helper function to parse quantity strings
   const parseQuantity = (quantityStr: string): { value: number | null; unit: string } => {
@@ -115,27 +146,32 @@ const ShoppingListPage: React.FC = () => {
         <CardHeader>
           <CardTitle>Ingredientes Necesarios</CardTitle>
         </CardHeader>
-        <CardContent ref={shoppingListRef}> {/* Contenido a exportar a PDF */}
-          {shoppingList.length > 0 ? (
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Artículo</TableHead>
-                  <TableHead>Cantidad</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {shoppingList.map((item, index) => (
-                  <TableRow key={index}>
-                    <TableCell className="font-medium">{item.item}</TableCell>
-                    <TableCell>{item.quantity}</TableCell>
+        <CardContent>
+          {/* Contenido a exportar a PDF */}
+          <div ref={shoppingListRef} className="p-4">
+            <h2 className="text-2xl font-bold mb-2">Lista de Compras de {userName}</h2>
+            <p className="text-lg text-muted-foreground mb-4">{weekRangeText}</p>
+            {shoppingList.length > 0 ? (
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Artículo</TableHead>
+                    <TableHead>Cantidad</TableHead>
                   </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          ) : (
-            <p className="text-center text-muted-foreground">Tu lista de compras está vacía. ¡Planifica algunas comidas!</p>
-          )}
+                </TableHeader>
+                <TableBody>
+                  {shoppingList.map((item, index) => (
+                    <TableRow key={index}>
+                      <TableCell className="font-medium">{item.item}</TableCell>
+                      <TableCell>{item.quantity}</TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            ) : (
+              <p className="text-center text-muted-foreground">Tu lista de compras está vacía. ¡Planifica algunas comidas!</p>
+            )}
+          </div>
         </CardContent>
       </Card>
     </div>
