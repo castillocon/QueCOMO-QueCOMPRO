@@ -1,24 +1,42 @@
 import React from "react";
 import Sidebar, { MobileSidebar } from "./Sidebar";
 import { MadeWithDyad } from "@/components/made-with-dyad";
-import { Link } from "react-router-dom"; // Import Link
-import { Utensils } from "lucide-react"; // Import Utensils
+import { Link } from "react-router-dom";
+import { Utensils, LogOut } from "lucide-react"; // Importar LogOut
+import { Button } from "@/components/ui/button"; // Importar Button
+import { supabase } from "@/integrations/supabase/client"; // Importar supabase client
+import { toast } from "sonner"; // Importar toast
 
 interface LayoutProps {
   children: React.ReactNode;
 }
 
 const Layout: React.FC<LayoutProps> = ({ children }) => {
+  const handleLogout = async () => {
+    const { error } = await supabase.auth.signOut();
+    if (error) {
+      toast.error("Error al cerrar sesión: " + error.message);
+    } else {
+      toast.success("Sesión cerrada con éxito.");
+    }
+  };
+
   return (
     <div className="grid min-h-screen w-full md:grid-cols-[220px_1fr] lg:grid-cols-[280px_1fr]">
       <Sidebar />
       <div className="flex flex-col">
-        <header className="flex h-14 items-center gap-4 border-b bg-muted/40 px-4 lg:h-[60px] lg:px-6 md:hidden">
+        <header className="flex h-14 items-center gap-4 border-b bg-muted/40 px-4 lg:h-[60px] lg:px-6">
           <MobileSidebar />
           <Link to="/" className="flex items-center gap-2 font-semibold">
             <Utensils className="h-6 w-6" />
             <span className="">Planificador de Comidas</span>
           </Link>
+          <div className="ml-auto"> {/* Contenedor para el botón de logout */}
+            <Button variant="ghost" size="icon" onClick={handleLogout}>
+              <LogOut className="h-5 w-5" />
+              <span className="sr-only">Cerrar sesión</span>
+            </Button>
+          </div>
         </header>
         <main className="flex flex-1 flex-col gap-4 p-4 lg:gap-6 lg:p-6">
           {children}
