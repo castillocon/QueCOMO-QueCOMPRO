@@ -1,10 +1,9 @@
 import React, { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { mockRecipes } from "@/data/recipes";
 import { Recipe, MealPlanEntry } from "@/types";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { PlusCircle } from "lucide-react";
+import { useRecipes } from '@/context/RecipeContext'; // Import useRecipes
 
 const getWeekDays = (startDate: Date) => {
   const days = [];
@@ -22,6 +21,7 @@ const formatDisplayDate = (date: Date) => date.toLocaleDateString('es-ES', { wee
 const MealPlannerPage: React.FC = () => {
   const [currentWeekStart, setCurrentWeekStart] = useState(new Date());
   const [mealPlan, setMealPlan] = useState<MealPlanEntry[]>([]);
+  const { recipes } = useRecipes(); // Use recipes from context
 
   const weekDays = getWeekDays(currentWeekStart);
   const mealTypes = ['Desayuno', 'Almuerzo', 'Cena', 'Merienda'];
@@ -44,7 +44,7 @@ const MealPlannerPage: React.FC = () => {
 
   const getRecipeForMeal = (date: string, mealType: string) => {
     const entry = mealPlan.find(e => e.date === date && e.mealType === mealType);
-    return entry ? mockRecipes.find(r => r.id === entry.recipeId) : undefined;
+    return entry ? recipes.find(r => r.id === entry.recipeId) : undefined;
   };
 
   const goToPreviousWeek = () => {
@@ -80,7 +80,7 @@ const MealPlannerPage: React.FC = () => {
             <CardContent className="flex-grow p-4 space-y-4">
               {mealTypes.map(mealType => {
                 const selectedRecipe = getRecipeForMeal(formatDate(day), mealType);
-                const availableRecipes = mockRecipes.filter(r => r.mealType === mealType);
+                const availableRecipes = recipes.filter(r => r.mealType === mealType);
 
                 return (
                   <div key={mealType} className="border rounded-md p-3">

@@ -1,13 +1,14 @@
 import React from "react";
 import { useParams, Link } from "react-router-dom";
-import { mockRecipes } from "@/data/recipes";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, Edit } from "lucide-react";
+import { useRecipes } from '@/context/RecipeContext';
 
 const RecipeDetailPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
-  const recipe = mockRecipes.find(r => r.id === id);
+  const { recipes } = useRecipes();
+  const recipe = recipes.find(r => r.id === id);
 
   if (!recipe) {
     return (
@@ -22,12 +23,20 @@ const RecipeDetailPage: React.FC = () => {
 
   return (
     <div className="container mx-auto p-4">
-      <Button variant="outline" asChild className="mb-6">
-        <Link to="/recipes">
-          <ArrowLeft className="mr-2 h-4 w-4" />
-          Volver a Recetas
-        </Link>
-      </Button>
+      <div className="flex justify-between items-center mb-6">
+        <Button variant="outline" asChild>
+          <Link to="/recipes">
+            <ArrowLeft className="mr-2 h-4 w-4" />
+            Volver a Recetas
+          </Link>
+        </Button>
+        <Button asChild>
+          <Link to={`/recipes/${recipe.id}/edit`}>
+            <Edit className="mr-2 h-4 w-4" />
+            Editar Receta
+          </Link>
+        </Button>
+      </div>
 
       <Card>
         <CardHeader>
