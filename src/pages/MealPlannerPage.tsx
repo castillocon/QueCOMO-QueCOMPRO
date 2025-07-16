@@ -36,6 +36,7 @@ const MealPlannerPage: React.FC = () => {
   const { recipes, mealPlan, addOrUpdateMealPlanEntry } = useMealPlanning();
   const { user } = useSession();
   const pdfContentRef = useRef<HTMLDivElement>(null);
+  const [showPdfContent, setShowPdfContent] = useState(false); // Nuevo estado para controlar la visibilidad
 
   const weekDays = getWeekDays(currentWeekStart);
   const mealTypes = ['Desayuno', 'Almuerzo', 'Merienda', 'Cena']; // Orden cambiado
@@ -61,24 +62,37 @@ const MealPlannerPage: React.FC = () => {
     setCurrentWeekStart(newDate);
   };
 
-  const handleDownloadPdf = () => {
-    if (pdfContentRef.current) {
-      toast.loading("Generando PDF del plan semanal...");
-      const startDateFormatted = formatDisplayDate(weekDays[0]).replace(/\s/g, '_');
-      const endDateFormatted = formatDisplayDate(weekDays[6]).replace(/\s/g, '_');
-      const filename = `plan_semanal_${startDateFormatted}_al_${endDateFormatted}.pdf`;
-
-      html2pdf().from(pdfContentRef.current).set({
-        margin: [10, 10, 10, 10], // Top, Left, Bottom, Right
-        filename: filename,
-        image: { type: 'jpeg', quality: 0.98 },
-        html2canvas: { scale: 2, logging: true, dpi: 192, letterRendering: true },
-        jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
-      }).save();
-      toast.success("PDF generado con éxito.");
-    } else {
+  const handleDownloadPdf = async () => {
+    if (!pdfContentRef.current) {
       toast.error("No se pudo encontrar el contenido del plan semanal.");
+      return;
     }
+
+    toast.loading("Generando PDF del plan semanal...");
+    setShowPdfContent(true); // Hacer el contenido visible
+
+    // Pequeño retraso para asegurar que el DOM se actualice antes de la captura
+    setTimeout(async () => {
+      try {
+        const startDateFormatted = formatDisplayDate(weekDays[0]).replace(/\s/g, '_');
+        const endDateFormatted = formatDisplayDate(weekDays[6]).replace(/\s/g, '_');
+        const filename = `plan_semanal_${startDateFormatted}_al_${endDateFormatted}.pdf`;
+
+        await html2pdf().from(pdfContentRef.current).set({
+          margin: [10, 10, 10, 10], // Top, Left, Bottom, Right
+          filename: filename,
+          image: { type: 'jpeg', quality: 0.98 },
+          html2canvas: { scale: 2, logging: true, dpi: 192, letterRendering: true },
+          jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+        }).save();
+        toast.success("PDF generado con éxito.");
+      } catch (error) {
+        console.error("Error al generar el PDF:", error);
+        toast.error("Error al generar el PDF.");
+      } finally {
+        setShowPdfContent(false); // Ocultar el contenido de nuevo
+      }
+    }, 50); // Retraso de 50ms
   };
 
   const userName = user?.user_metadata?.first_name || user?.email || "Usuario";
@@ -152,7 +166,7 @@ const MealPlannerPage: React.FC = () => {
       </div>
 
       {/* Contenido oculto para la generación del PDF */}
-      <div ref={pdfContentRef} className="absolute -left-[9999px] w-[210mm] p-4 bg-white text-black">
+      <div ref={pdfContentRef} className={`w-[210mm] p-4 bg-white text-black ${showPdfContent ? 'block' : 'hidden'}`}>
         <h1 className="text-2xl font-bold mb-2 text-center">Plan Semanal de Comidas de {userName}</h1>
         <p className="text-lg text-center mb-4">{weekRangeText}</p>
         <table className="w-full border-collapse">
