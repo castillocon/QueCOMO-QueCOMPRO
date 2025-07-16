@@ -2,16 +2,27 @@ import React from "react";
 import Sidebar, { MobileSidebar } from "./Sidebar";
 import { MadeWithDyad } from "@/components/made-with-dyad";
 import { Link } from "react-router-dom";
-import { Utensils, LogOut } from "lucide-react"; // Importar LogOut
-import { Button } from "@/components/ui/button"; // Importar Button
-import { supabase } from "@/integrations/supabase/client"; // Importar supabase client
-import { toast } from "sonner"; // Importar toast
+import { Utensils, LogOut, UserCircle } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
+import { useSession } from "@/context/SessionContext";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 interface LayoutProps {
   children: React.ReactNode;
 }
 
 const Layout: React.FC<LayoutProps> = ({ children }) => {
+  const { user } = useSession();
+
   const handleLogout = async () => {
     const { error } = await supabase.auth.signOut();
     if (error) {
@@ -20,6 +31,8 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
       toast.success("Sesión cerrada con éxito.");
     }
   };
+
+  const userName = user?.user_metadata?.first_name || user?.email || "Usuario";
 
   return (
     <div className="grid min-h-screen w-full md:grid-cols-[220px_1fr] lg:grid-cols-[280px_1fr]">
@@ -31,11 +44,37 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
             <Utensils className="h-6 w-6" />
             <span className="">Planificador de Comidas</span>
           </Link>
-          <div className="ml-auto"> {/* Contenedor para el botón de logout */}
-            <Button variant="ghost" size="icon" onClick={handleLogout}>
-              <LogOut className="h-5 w-5" />
-              <span className="sr-only">Cerrar sesión</span>
-            </Button>
+          <div className="ml-auto flex items-center gap-2">
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" className="relative h-8 flex items-center justify-center space-x-2 px-4">
+                  <UserCircle className="h-5 w-5" />
+                  <span className="hidden md:inline-block">{userName}</span>
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent className="w-56" align="end" forceMount>
+                <DropdownMenuLabel className="font-normal">
+                  <div className="flex flex-col space-y-1">
+                    <p className="text-sm font-medium leading-none">{userName}</p>
+                    {user?.email && (
+                      <p className="text-xs leading-none text-muted-foreground">
+                        {user.email}
+                      </p>
+                    )}
+                  </div>
+                </DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem asChild>
+                  <Link to="/profile">
+                    Perfil
+                  </Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={handleLogout}>
+                  <LogOut className="mr-2 h-4 w-4" />
+                  Cerrar Sesión
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
           </div>
         </header>
         <main className="flex flex-1 flex-col gap-4 p-4 lg:gap-6 lg:p-6">
