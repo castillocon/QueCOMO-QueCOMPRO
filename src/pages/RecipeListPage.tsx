@@ -11,7 +11,7 @@ const RecipeListPage: React.FC = () => {
   return (
     <div className="container mx-auto p-4">
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-3xl font-bold">Mis Recetas</h1>
+        <h1 className="text-3xl font-bold text-primary">Mis Recetas</h1>
         <Button asChild>
           <Link to="/recipes/new">
             <PlusCircle className="mr-2 h-4 w-4" />

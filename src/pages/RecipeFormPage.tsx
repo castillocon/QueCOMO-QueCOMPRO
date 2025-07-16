@@ -113,7 +113,7 @@ const RecipeFormPage: React.FC = () => {
 
       <Card>
         <CardHeader>
-          <CardTitle className="text-3xl">{isEditing ? 'Editar Receta' : 'Añadir Nueva Receta'}</CardTitle>
+          <CardTitle className="text-3xl text-primary">{isEditing ? 'Editar Receta' : 'Añadir Nueva Receta'}</CardTitle>
         </CardHeader>
         <CardContent>
           <Form {...form}>

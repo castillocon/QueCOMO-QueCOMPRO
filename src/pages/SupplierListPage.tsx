@@ -97,7 +97,7 @@ const SupplierListPage: React.FC = () => {
       </Button>
 
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-3xl font-bold">Mis Proveedores</h1>
+        <h1 className="text-3xl font-bold text-primary">Mis Proveedores</h1>
         <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
           <DialogTrigger asChild>
             <Button>

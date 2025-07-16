@@ -96,7 +96,7 @@ const MealPlannerPage: React.FC = () => {
 
   return (
     <div className="container mx-auto p-4">
-      <h1 className="text-3xl font-bold mb-6 text-center">Planificador Semanal de Comidas</h1>
+      <h1 className="text-3xl font-bold mb-6 text-center text-primary">Planificador Semanal de Comidas</h1>
 
       <div className="flex justify-between items-center mb-6">
         <Button onClick={goToPreviousWeek} variant="outline">Semana Anterior</Button>

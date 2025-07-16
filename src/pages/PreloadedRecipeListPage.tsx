@@ -14,7 +14,7 @@ const PreloadedRecipeListPage: React.FC = () => {
           Volver al Planificador
         </Link>
       </Button>
-      <h1 className="text-3xl font-bold mb-6">Recetas Pre-cargadas</h1>
+      <h1 className="text-3xl font-bold mb-6 text-primary">Recetas Pre-cargadas</h1>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         {preloadedRecipes.length > 0 ? (

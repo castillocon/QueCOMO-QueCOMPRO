@@ -78,7 +78,7 @@ const RecipeDetailPage: React.FC = () => {
       <div ref={recipeContentRef} className="p-4 bg-white text-black">
         <Card>
           <CardHeader>
-            <CardTitle className="text-3xl">{recipe.name}</CardTitle>
+            <CardTitle className="text-3xl text-primary">{recipe.name}</CardTitle>
             <CardDescription className="text-lg">{recipe.mealtype}</CardDescription>
             {recipe.description && <p className="text-muted-foreground mt-2">{recipe.description}</p>}
           </CardHeader>

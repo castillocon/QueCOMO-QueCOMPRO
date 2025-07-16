@@ -30,7 +30,7 @@ const ProfilePage: React.FC = () => {
 
       <Card>
         <CardHeader>
-          <CardTitle className="text-3xl">Perfil de Usuario</CardTitle>
+          <CardTitle className="text-3xl text-primary">Perfil de Usuario</CardTitle>
           <CardDescription>Aquí puedes ver tu información de perfil.</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
