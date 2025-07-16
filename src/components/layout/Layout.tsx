@@ -7,7 +7,6 @@ import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { useSession } from "@/context/SessionContext";
-import { useMealPlanning } from "@/context/MealPlanningContext"; // Importar useMealPlanning
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -22,26 +21,9 @@ interface LayoutProps {
 }
 
 const Layout: React.FC<LayoutProps> = ({ children }) => {
-  const { user, profile } = useSession();
-  const { resetUserData } = useMealPlanning(); // Obtener la función de reseteo
+  const { user, profile } = useSession(); // Obtener el perfil
 
   const handleLogout = async () => {
-    if (user?.email === "demo@quecomoquecompro.com") {
-      toast.loading("Cerrando sesión del usuario demo y limpiando datos...");
-      try {
-        // Eliminar datos del usuario demo de las tablas
-        await supabase.from('recipes').delete().eq('user_id', user.id);
-        await supabase.from('meal_plan_entries').delete().eq('user_id', user.id);
-        await supabase.from('suppliers').delete().eq('user_id', user.id);
-        
-        // Resetear el estado local en el contexto
-        resetUserData();
-        toast.success("Datos del usuario demo limpiados con éxito.");
-      } catch (error: any) {
-        toast.error("Error al limpiar datos del usuario demo: " + error.message);
-      }
-    }
-
     const { error } = await supabase.auth.signOut();
     if (error) {
       toast.error("Error al cerrar sesión: " + error.message);
