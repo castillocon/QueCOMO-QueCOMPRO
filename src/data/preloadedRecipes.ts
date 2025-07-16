@@ -266,4 +266,210 @@ export const preloadedRecipes: Recipe[] = [
     ],
     mealtype: "Desayuno",
   },
+  // Nuevas recetas de desayuno saludables y económicas
+  {
+    id: "pre-11",
+    name: "Avena Cremosa con Frutas y Nueces",
+    description: "Un desayuno caliente y reconfortante, lleno de fibra y energía.",
+    ingredients: [
+      { name: "Avena en hojuelas", quantity: "1/2 taza" },
+      { name: "Agua o leche (vegetal)", quantity: "1 taza" },
+      { name: "Frutas frescas (ej. bayas, plátano)", quantity: "1/2 taza" },
+      { name: "Nueces o semillas (ej. chía, linaza)", quantity: "1 cucharada" },
+      { name: "Miel o sirope de arce", quantity: "1 cucharadita (opcional)" },
+    ],
+    instructions: [
+      "En una olla pequeña, combinar la avena y el agua/leche. Llevar a ebullición, luego reducir el fuego y cocinar a fuego lento durante 5-7 minutos, revolviendo ocasionalmente, hasta que espese.",
+      "Verter la avena en un bol.",
+      "Decorar con frutas frescas, nueces/semillas y un chorrito de miel si se desea.",
+      "Servir caliente."
+    ],
+    mealtype: "Desayuno",
+  },
+  {
+    id: "pre-12",
+    name: "Huevos Revueltos con Espinacas y Queso",
+    description: "Un desayuno rápido y rico en proteínas, ideal para empezar el día.",
+    ingredients: [
+      { name: "Huevos", quantity: "2 unidades" },
+      { name: "Espinacas frescas", quantity: "1 taza" },
+      { name: "Queso rallado (opcional)", quantity: "2 cucharadas" },
+      { name: "Aceite de oliva o mantequilla", quantity: "1 cucharadita" },
+      { name: "Sal", quantity: "al gusto" },
+      { name: "Pimienta", quantity: "al gusto" },
+    ],
+    instructions: [
+      "En un bol, batir los huevos con sal y pimienta.",
+      "Calentar el aceite/mantequilla en una sartén a fuego medio.",
+      "Añadir las espinacas y cocinar hasta que se marchiten.",
+      "Verter los huevos batidos sobre las espinacas. Cocinar, revolviendo suavemente, hasta que los huevos estén casi cocidos.",
+      "Si se usa, espolvorear el queso y cocinar por un minuto más hasta que se derrita.",
+      "Servir inmediatamente."
+    ],
+    mealtype: "Desayuno",
+  },
+  {
+    id: "pre-13",
+    name: "Batido de Plátano y Mantequilla de Cacahuete",
+    description: "Un batido cremoso y energético, perfecto para un desayuno rápido o post-entrenamiento.",
+    ingredients: [
+      { name: "Plátano", quantity: "1 unidad (congelado)" },
+      { name: "Leche (o bebida vegetal)", quantity: "1 taza" },
+      { name: "Mantequilla de cacahuete", quantity: "1 cucharada" },
+      { name: "Cacao en polvo (opcional)", quantity: "1 cucharadita" },
+    ],
+    instructions: [
+      "Combinar todos los ingredientes en una licuadora.",
+      "Licuar hasta obtener una mezcla suave y homogénea.",
+      "Servir frío."
+    ],
+    mealtype: "Desayuno",
+  },
+  {
+    id: "pre-14",
+    name: "Tostadas Francesas de Avena",
+    description: "Una versión más saludable de las tostadas francesas, con avena para mayor fibra.",
+    ingredients: [
+      { name: "Pan integral", quantity: "2 rebanadas" },
+      { name: "Huevo", quantity: "1 unidad" },
+      { name: "Leche", quantity: "1/4 taza" },
+      { name: "Avena molida (o harina de avena)", quantity: "2 cucharadas" },
+      { name: "Canela", quantity: "1/4 cucharadita" },
+      { name: "Aceite o mantequilla", quantity: "1 cucharadita" },
+      { name: "Frutas y sirope (para servir)", quantity: "al gusto" },
+    ],
+    instructions: [
+      "En un plato hondo, batir el huevo, la leche, la avena molida y la canela.",
+      "Remojar cada rebanada de pan en la mezcla, asegurándose de que esté bien cubierta.",
+      "Calentar el aceite/mantequilla en una sartén a fuego medio.",
+      "Cocinar las tostadas hasta que estén doradas por ambos lados.",
+      "Servir con frutas frescas y un chorrito de sirope."
+    ],
+    mealtype: "Desayuno",
+  },
+  {
+    id: "pre-15",
+    name: "Pudín de Chía con Frutas",
+    description: "Un desayuno fácil de preparar la noche anterior, nutritivo y refrescante.",
+    ingredients: [
+      { name: "Semillas de chía", quantity: "3 cucharadas" },
+      { name: "Leche (o bebida vegetal)", quantity: "1 taza" },
+      { name: "Miel o sirope de arce", quantity: "1 cucharadita (opcional)" },
+      { name: "Frutas frescas (ej. mango, bayas)", quantity: "1/2 taza" },
+    ],
+    instructions: [
+      "En un frasco o bol, combinar las semillas de chía, la leche y la miel/sirope. Mezclar bien.",
+      "Tapar y refrigerar durante al menos 4 horas o toda la noche, revolviendo una vez después de 15 minutos para evitar grumos.",
+      "Por la mañana, añadir las frutas frescas por encima.",
+      "Servir frío."
+    ],
+    mealtype: "Desayuno",
+  },
+  {
+    id: "pre-16",
+    name: "Tortilla de Verduras Individual",
+    description: "Una tortilla rápida y personalizable, perfecta para un desayuno salado.",
+    ingredients: [
+      { name: "Huevos", quantity: "2 unidades" },
+      { name: "Pimiento (picado)", quantity: "2 cucharadas" },
+      { name: "Cebolla (picada)", quantity: "1 cucharada" },
+      { name: "Champiñones (en rodajas)", quantity: "2 cucharadas" },
+      { name: "Aceite de oliva", quantity: "1 cucharadita" },
+      { name: "Sal", quantity: "al gusto" },
+      { name: "Pimienta", quantity: "al gusto" },
+    ],
+    instructions: [
+      "En un bol, batir los huevos con sal y pimienta.",
+      "Calentar el aceite en una sartén antiadherente a fuego medio.",
+      "Añadir el pimiento, la cebolla y los champiñones. Cocinar hasta que estén tiernos.",
+      "Verter los huevos batidos sobre las verduras en la sartén.",
+      "Cocinar hasta que los bordes estén firmes y el centro casi cuajado. Doblar la tortilla por la mitad.",
+      "Cocinar por un minuto más hasta que esté completamente cocida.",
+      "Servir caliente."
+    ],
+    mealtype: "Desayuno",
+  },
+  {
+    id: "pre-17",
+    name: "Yogur con Granola y Miel",
+    description: "Un desayuno sencillo y nutritivo, con la dulzura natural de la miel.",
+    ingredients: [
+      { name: "Yogur natural (griego o normal)", quantity: "1 taza" },
+      { name: "Granola", quantity: "1/4 taza" },
+      { name: "Miel", quantity: "1 cucharadita" },
+    ],
+    instructions: [
+      "En un bol, colocar el yogur.",
+      "Espolvorear la granola por encima.",
+      "Rociar con miel.",
+      "Servir inmediatamente."
+    ],
+    mealtype: "Desayuno",
+  },
+  {
+    id: "pre-18",
+    name: "Sándwich de Huevo y Aguacate",
+    description: "Un sándwich de desayuno completo y saludable, fácil de llevar.",
+    ingredients: [
+      { name: "Pan integral", quantity: "2 rebanadas" },
+      { name: "Huevo cocido (duro o revuelto)", quantity: "1 unidad" },
+      { name: "Aguacate", quantity: "1/4 unidad (machacado)" },
+      { name: "Sal", quantity: "al gusto" },
+      { name: "Pimienta", quantity: "al gusto" },
+    ],
+    instructions: [
+      "Tostar el pan si se desea.",
+      "Machacar el aguacate en un bol y sazonar con sal y pimienta.",
+      "Si el huevo es duro, picarlo y mezclarlo con el aguacate machacado. Si es revuelto, simplemente colocarlo sobre el aguacate.",
+      "Untar la mezcla de aguacate (o solo aguacate) en una rebanada de pan.",
+      "Colocar el huevo encima (o la mezcla de huevo y aguacate).",
+      "Cubrir con la otra rebanada de pan.",
+      "Servir."
+    ],
+    mealtype: "Desayuno",
+  },
+  {
+    id: "pre-19",
+    name: "Gachas de Maíz (Polenta) con Leche y Canela",
+    description: "Un desayuno caliente y económico, una alternativa a la avena.",
+    ingredients: [
+      { name: "Harina de maíz (polenta instantánea)", quantity: "1/2 taza" },
+      { name: "Leche (o agua)", quantity: "2 tazas" },
+      { name: "Azúcar o edulcorante", quantity: "1-2 cucharadas (al gusto)" },
+      { name: "Canela en polvo", quantity: "1/2 cucharadita" },
+      { name: "Mantequilla (opcional)", quantity: "1 cucharadita" },
+    ],
+    instructions: [
+      "En una olla, combinar la harina de maíz, la leche (o agua), el azúcar y la canela.",
+      "Llevar a ebullición a fuego medio, revolviendo constantemente para evitar grumos.",
+      "Reducir el fuego a bajo y cocinar, revolviendo con frecuencia, durante 5-7 minutos o hasta que espese a la consistencia deseada.",
+      "Retirar del fuego, añadir la mantequilla si se usa y mezclar.",
+      "Servir caliente."
+    ],
+    mealtype: "Desayuno",
+  },
+  {
+    id: "pre-20",
+    name: "Muffins de Huevo y Verduras (sin harina)",
+    description: "Muffins salados ricos en proteínas, perfectos para preparar con antelación.",
+    ingredients: [
+      { name: "Huevos", quantity: "6 unidades" },
+      { name: "Pimiento rojo (picado)", quantity: "1/4 taza" },
+      { name: "Espinacas (picadas)", quantity: "1/2 taza" },
+      { name: "Cebolla (picada)", quantity: "2 cucharadas" },
+      { name: "Leche", quantity: "2 cucharadas" },
+      { name: "Sal", quantity: "al gusto" },
+      { name: "Pimienta", quantity: "al gusto" },
+      { name: "Aceite en spray o papelitos para muffins", quantity: "cantidad necesaria" },
+    ],
+    instructions: [
+      "Precalentar el horno a 180°C (350°F). Engrasar un molde para muffins o usar papelitos.",
+      "En un bol grande, batir los huevos con la leche, sal y pimienta.",
+      "Añadir el pimiento, las espinacas y la cebolla a la mezcla de huevo y mezclar bien.",
+      "Verter la mezcla en los moldes para muffins, llenando cada uno hasta 3/4 de su capacidad.",
+      "Hornear durante 15-20 minutos, o hasta que los muffins estén firmes y ligeramente dorados.",
+      "Dejar enfriar un poco antes de desmoldar. Se pueden guardar en el refrigerador por varios días."
+    ],
+    mealtype: "Desayuno",
+  },
 ];
