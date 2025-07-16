@@ -35,7 +35,16 @@ const PreloadedRecipeDetailPage: React.FC = () => {
         filename: filename,
         image: { type: 'jpeg', quality: 0.98 },
         html2canvas: { scale: 2, logging: true, dpi: 192, letterRendering: true },
-        jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' } // Orientación vertical para recetas individuales
+        jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }, // Orientación vertical para recetas individuales
+        callback: function (doc) {
+          const pageCount = doc.internal.getNumberOfPages();
+          for (let i = 1; i <= pageCount; i++) {
+            doc.setPage(i);
+            doc.setFontSize(10);
+            doc.setTextColor(100); // Grey color for the footer text
+            doc.text('🛒🍲 QueComo@QueCompro', doc.internal.pageSize.getWidth() / 2, doc.internal.pageSize.getHeight() - 10, { align: 'center' });
+          }
+        }
       }).save();
       toast.success("PDF generado con éxito.");
     } else {
