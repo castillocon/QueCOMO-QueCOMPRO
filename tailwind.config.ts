@@ -33,8 +33,8 @@ export default {
           foreground: "hsl(var(--secondary-foreground))",
         },
         destructive: {
-          DEFAULT: "hsl(var(--destructive))",
-          foreground: "hsl(var(--destructive-foreground))",
+          DEFAULT: "0 84.2% 60.2%",
+          foreground: "210 40% 98%",
         },
         muted: {
           DEFAULT: "hsl(var(--muted))",
@@ -61,6 +61,10 @@ export default {
           "accent-foreground": "hsl(var(--sidebar-accent-foreground))",
           border: "hsl(var(--sidebar-border))",
           ring: "hsl(var(--sidebar-ring))",
+        },
+        selectedMeal: { // Nuevo color para la selección de comidas
+          DEFAULT: "hsl(190 35% 33%)", // #356a75
+          foreground: "hsl(0 0% 98%)", // Texto claro para contraste
         },
       },
       borderRadius: {

@@ -4,89 +4,85 @@
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
+    --background: 0 0% 98%; /* #f9f9f9 - Un blanco muy suave para el fondo principal */
+    --foreground: 207 29% 16%; /* #1f2c35 - Color principal para el texto, oscuro y legible */
 
-    --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
+    --card: 0 0% 98%; /* #f9f9f9 - Fondo de tarjetas */
+    --card-foreground: 207 29% 16%; /* #1f2c35 - Texto en tarjetas */
 
-    --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
+    --popover: 0 0% 98%; /* #f9f9f9 - Fondo de popovers */
+    --popover-foreground: 207 29% 16%; /* #1f2c35 - Texto en popovers */
 
-    --primary: 222.2 47.4% 11.2%;
-    --primary-foreground: 210 40% 98%;
+    --primary: 209 59% 67%; /* #7db0db - ¡Este es el color para tus botones! */
+    --primary-foreground: 28 29% 6%; /* #140f07 - Texto oscuro para contrastar con el botón azul */
 
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
+    --secondary: 176 100% 86%; /* #b7fff8 - Un azul/cian muy claro para elementos secundarios */
+    --secondary-foreground: 207 29% 16%; /* #1f2c35 - Texto en elementos secundarios */
 
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
+    --muted: 176 100% 86%; /* #b7fff8 - Para elementos menos prominentes */
+    --muted-foreground: 210 29% 40%; /* #4c6882 - Texto en elementos muted */
 
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
+    --accent: 210 29% 40%; /* #4c6882 - Un azul-gris medio para acentos y estados de hover */
+    --accent-foreground: 0 0% 98%; /* #f9f9f9 - Texto en elementos de acento */
 
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
+    --destructive: 0 84.2% 60.2%; /* Rojo por defecto para acciones destructivas */
+    --destructive-foreground: 210 40% 98%; /* Blanco por defecto para texto destructivo */
 
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 222.2 84% 4.9%;
+    --border: 210 29% 40%; /* #4c6882 - Color para bordes */
+    --input: 176 100% 86%; /* #b7fff8 - Fondo de campos de entrada */
+    --ring: 209 59% 67%; /* #7db0db - Color del anillo de enfoque, igual que el primario */
 
     --radius: 0.5rem;
 
-    --sidebar-background: 0 0% 98%;
-
-    --sidebar-foreground: 240 5.3% 26.1%;
-
-    --sidebar-primary: 240 5.9% 10%;
-
-    --sidebar-primary-foreground: 0 0% 98%;
-
-    --sidebar-accent: 240 4.8% 95.9%;
-
-    --sidebar-accent-foreground: 240 5.9% 10%;
-
-    --sidebar-border: 220 13% 91%;
-
-    --sidebar-ring: 217.2 91.2% 59.8%;
+    /* Colores de la barra lateral (sidebar) - ajustados a la nueva paleta */
+    --sidebar-background: 0 0% 98%; /* #f9f9f9 */
+    --sidebar-foreground: 207 29% 16%; /* #1f2c35 */
+    --sidebar-primary: 209 59% 67%; /* #7db0db */
+    --sidebar-primary-foreground: 28 29% 6%; /* #140f07 */
+    --sidebar-accent: 210 29% 40%; /* #4c6882 */
+    --sidebar-accent-foreground: 0 0% 98%; /* #f9f9f9 */
+    --sidebar-border: 210 29% 40%; /* #4c6882 */
+    --sidebar-ring: 209 59% 67%; /* #7db0db */
   }
 
   .dark {
-    --background: 222.2 84% 4.9%;
-    --foreground: 210 40% 98%;
+    --background: 28 29% 6%; /* #140f07 - Fondo principal en modo oscuro */
+    --foreground: 176 100% 86%; /* #b7fff8 - Texto principal en modo oscuro */
 
-    --card: 222.2 84% 4.9%;
-    --card-foreground: 210 40% 98%;
+    --card: 28 29% 6%; /* #140f07 - Fondo de tarjetas en modo oscuro */
+    --card-foreground: 176 100% 86%; /* #b7fff8 - Texto en tarjetas en modo oscuro */
 
-    --popover: 222.2 84% 4.9%;
-    --popover-foreground: 210 40% 98%;
+    --popover: 28 29% 6%; /* #140f07 - Fondo de popovers en modo oscuro */
+    --popover-foreground: 176 100% 86%; /* #b7fff8 - Texto en popovers en modo oscuro */
 
-    --primary: 210 40% 98%;
-    --primary-foreground: 222.2 47.4% 11.2%;
+    --primary: 209 59% 67%; /* #7db0db - Botones en modo oscuro */
+    --primary-foreground: 28 29% 6%; /* #140f07 - Texto oscuro para contrastar con el botón azul */
 
-    --secondary: 217.2 32.6% 17.5%;
-    --secondary-foreground: 210 40% 98%;
+    --secondary: 207 29% 16%; /* #1f2c35 - Elementos secundarios en modo oscuro */
+    --secondary-foreground: 176 100% 86%; /* #b7fff8 - Texto en elementos secundarios en modo oscuro */
 
-    --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
+    --muted: 207 29% 16%; /* #1f2c35 - Elementos muted en modo oscuro */
+    --muted-foreground: 210 29% 40%; /* #4c6882 - Texto en elementos muted en modo oscuro */
 
-    --accent: 217.2 32.6% 17.5%;
-    --accent-foreground: 210 40% 98%;
+    --accent: 210 29% 40%; /* #4c6882 - Acentos en modo oscuro */
+    --accent-foreground: 176 100% 86%; /* #b7fff8 - Texto en elementos de acento en modo oscuro */
 
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 210 40% 98%;
+    --destructive: 0 62.8% 30.6%; /* Rojo por defecto para acciones destructivas */
+    --destructive-foreground: 210 40% 98%; /* Blanco por defecto para texto destructivo */
 
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
-    --ring: 212.7 26.8% 83.9%;
-    --sidebar-background: 240 5.9% 10%;
-    --sidebar-foreground: 240 4.8% 95.9%;
-    --sidebar-primary: 224.3 76.3% 48%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 240 3.7% 15.9%;
-    --sidebar-accent-foreground: 240 4.8% 95.9%;
-    --sidebar-border: 240 3.7% 15.9%;
-    --sidebar-ring: 217.2 91.2% 59.8%;
+    --border: 207 29% 16%; /* #1f2c35 - Bordes en modo oscuro */
+    --input: 207 29% 16%; /* #1f2c35 - Campos de entrada en modo oscuro */
+    --ring: 209 59% 67%; /* #7db0db - Anillo de enfoque en modo oscuro */
+
+    /* Colores de la barra lateral (sidebar) - ajustados a la nueva paleta */
+    --sidebar-background: 28 29% 6%; /* #140f07 */
+    --sidebar-foreground: 176 100% 86%; /* #b7fff8 */
+    --sidebar-primary: 209 59% 67%; /* #7db0db */
+    --sidebar-primary-foreground: 28 29% 6%; /* #140f07 */
+    --sidebar-accent: 210 29% 40%; /* #4c6882 */
+    --sidebar-accent-foreground: 176 100% 86%; /* #b7fff8 */
+    --sidebar-border: 207 29% 16%; /* #1f2c35 */
+    --sidebar-ring: 209 59% 67%; /* #7db0db */
   }
 }
 
