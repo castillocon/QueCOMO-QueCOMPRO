@@ -2,12 +2,26 @@ import React from "react";
 import { useParams, Link } from "react-router-dom";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, PlusCircle } from "lucide-react"; // Importar PlusCircle
 import { preloadedRecipes } from "@/data/preloadedRecipes";
+import { useMealPlanning } from '@/context/MealPlanningContext'; // Importar el hook de contexto
+import { toast } from "sonner"; // Importar toast para notificaciones
 
 const PreloadedRecipeDetailPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
+  const { addRecipe } = useMealPlanning(); // Obtener la función addRecipe
   const recipe = preloadedRecipes.find(r => r.id === id);
+
+  const handleAddRecipeToMyRecipes = async () => {
+    if (recipe) {
+      // Creamos un nuevo objeto de receta sin el 'id' para que Supabase genere uno nuevo
+      const { id, ...recipeToAdd } = recipe;
+      await addRecipe(recipeToAdd);
+      // La función addRecipe ya muestra un toast de éxito o error
+    } else {
+      toast.error("No se pudo encontrar la receta para añadir.");
+    }
+  };
 
   if (!recipe) {
     return (
@@ -22,12 +36,18 @@ const PreloadedRecipeDetailPage: React.FC = () => {
 
   return (
     <div className="container mx-auto p-4">
-      <Button variant="outline" asChild className="mb-6">
-        <Link to="/preloaded-recipes">
-          <ArrowLeft className="mr-2 h-4 w-4" />
-          Volver a Recetas Pre-cargadas
-        </Link>
-      </Button>
+      <div className="flex justify-between items-center mb-6">
+        <Button variant="outline" asChild>
+          <Link to="/preloaded-recipes">
+            <ArrowLeft className="mr-2 h-4 w-4" />
+            Volver a Recetas Pre-cargadas
+          </Link>
+        </Button>
+        <Button onClick={handleAddRecipeToMyRecipes}>
+          <PlusCircle className="mr-2 h-4 w-4" />
+          Añadir a Mis Recetas
+        </Button>
+      </div>
 
       <Card>
         <CardHeader>
