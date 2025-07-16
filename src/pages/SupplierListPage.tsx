@@ -28,7 +28,7 @@ import { Supplier } from "@/types"; // Importar Supplier
 const supplierFormSchema = z.object({
   name: z.string().min(1, "El nombre es requerido."),
   description: z.string().optional(),
-}); // Eliminado 'satisfies z.ZodType<Omit<Supplier, 'id'>>'
+});
 
 type SupplierFormValues = z.infer<typeof supplierFormSchema>;
 
@@ -43,7 +43,7 @@ const SupplierListPage: React.FC = () => {
     defaultValues: {
       name: "",
       description: "",
-    },
+    } as Omit<Supplier, 'id'>, // Explicitly cast
   });
 
   const editForm = useForm<SupplierFormValues>({
@@ -51,7 +51,7 @@ const SupplierListPage: React.FC = () => {
     defaultValues: {
       name: "",
       description: "",
-    },
+    } as Omit<Supplier, 'id'>, // Explicitly cast
   });
 
   React.useEffect(() => {
