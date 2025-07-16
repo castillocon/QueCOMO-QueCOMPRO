@@ -24,13 +24,14 @@ import { toast } from 'sonner';
 const formSchema = z.object({
   name: z.string().min(1, 'El nombre es requerido.'),
   description: z.string().optional(),
-  mealtype: z.enum(['Desayuno', 'Almuerzo', 'Cena', 'Merienda'], { // Cambiado a 'mealtype'
+  mealtype: z.enum(['Desayuno', 'Almuerzo', 'Cena', 'Merienda'], {
     required_error: 'El tipo de comida es requerido.',
   }),
   ingredients: z.array(
     z.object({
       name: z.string().min(1, 'El nombre del ingrediente es requerido.'),
       quantity: z.string().min(1, 'La cantidad es requerida.'),
+      supplier: z.string().optional(), // Nuevo campo para el proveedor
     })
   ).min(1, 'Debe añadir al menos un ingrediente.'),
   instructions: z.array(
@@ -53,8 +54,8 @@ const RecipeFormPage: React.FC = () => {
     defaultValues: {
       name: '',
       description: '',
-      mealtype: 'Almuerzo', // Cambiado a 'mealtype'
-      ingredients: [{ name: '', quantity: '' }],
+      mealtype: 'Almuerzo',
+      ingredients: [{ name: '', quantity: '', supplier: '' }], // Inicializar con supplier
       instructions: [''],
     },
   });
@@ -74,7 +75,7 @@ const RecipeFormPage: React.FC = () => {
       form.reset({
         name: currentRecipe.name,
         description: currentRecipe.description,
-        mealtype: currentRecipe.mealtype, // Cambiado a 'mealtype'
+        mealtype: currentRecipe.mealtype,
         ingredients: currentRecipe.ingredients,
         instructions: currentRecipe.instructions,
       });
@@ -82,8 +83,8 @@ const RecipeFormPage: React.FC = () => {
       form.reset({
         name: '',
         description: '',
-        mealtype: 'Almuerzo', // Cambiado a 'mealtype'
-        ingredients: [{ name: '', quantity: '' }],
+        mealtype: 'Almuerzo',
+        ingredients: [{ name: '', quantity: '', supplier: '' }],
         instructions: [''],
       });
     }
@@ -147,7 +148,7 @@ const RecipeFormPage: React.FC = () => {
 
               <FormField
                 control={form.control}
-                name="mealtype" // Cambiado a 'mealtype'
+                name="mealtype"
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Tipo de Comida</FormLabel>
@@ -172,12 +173,12 @@ const RecipeFormPage: React.FC = () => {
               <div>
                 <h2 className="text-xl font-semibold mb-3">Ingredientes</h2>
                 {ingredientFields.map((item, index) => (
-                  <div key={item.id} className="flex items-end gap-2 mb-3">
+                  <div key={item.id} className="flex flex-wrap items-end gap-2 mb-3">
                     <FormField
                       control={form.control}
                       name={`ingredients.${index}.name`}
                       render={({ field }) => (
-                        <FormItem className="flex-1">
+                        <FormItem className="flex-1 min-w-[120px]">
                           <FormLabel className={index === 0 ? 'block' : 'sr-only'}>Nombre</FormLabel>
                           <FormControl>
                             <Input placeholder="Ej: Harina" {...field} />
@@ -190,10 +191,23 @@ const RecipeFormPage: React.FC = () => {
                       control={form.control}
                       name={`ingredients.${index}.quantity`}
                       render={({ field }) => (
-                        <FormItem className="flex-1">
+                        <FormItem className="flex-1 min-w-[80px]">
                           <FormLabel className={index === 0 ? 'block' : 'sr-only'}>Cantidad</FormLabel>
                           <FormControl>
                             <Input placeholder="Ej: 200g" {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={form.control}
+                      name={`ingredients.${index}.supplier`}
+                      render={({ field }) => (
+                        <FormItem className="flex-1 min-w-[100px]">
+                          <FormLabel className={index === 0 ? 'block' : 'sr-only'}>Proveedor (Opcional)</FormLabel>
+                          <FormControl>
+                            <Input placeholder="Ej: Supermercado A" {...field} />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -213,7 +227,7 @@ const RecipeFormPage: React.FC = () => {
                 <Button
                   type="button"
                   variant="outline"
-                  onClick={() => appendIngredient({ name: '', quantity: '' })}
+                  onClick={() => appendIngredient({ name: '', quantity: '', supplier: '' })}
                   className="w-full"
                 >
                   <PlusCircle className="mr-2 h-4 w-4" />

@@ -1,6 +1,7 @@
 export interface Ingredient {
   name: string;
   quantity: string;
+  supplier?: string; // Nuevo campo opcional para el proveedor
 }
 
 export interface Recipe {

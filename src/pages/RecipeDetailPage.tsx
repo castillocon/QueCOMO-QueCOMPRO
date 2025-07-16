@@ -1,35 +1,35 @@
-import React, { useRef } from "react"; // Importar useRef
+import React, { useRef } from "react";
 import { useParams, Link } from "react-router-dom";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, Edit, Download } from "lucide-react"; // Importar Download
+import { ArrowLeft, Edit, Download } from "lucide-react";
 import { useMealPlanning } from '@/context/MealPlanningContext';
-import { toast } from "sonner"; // Importar toast para notificaciones
-import html2pdf from 'html2pdf.js'; // Importar html2pdf
+import { toast } from "sonner";
+import html2pdf from 'html2pdf.js';
 
 const RecipeDetailPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const { recipes } = useMealPlanning();
   const recipe = recipes.find(r => r.id === id);
-  const recipeContentRef = useRef<HTMLDivElement>(null); // Ref para el contenido de la receta
+  const recipeContentRef = useRef<HTMLDivElement>(null);
 
   const handleDownloadPdf = () => {
     if (recipeContentRef.current && recipe) {
       toast.loading("Generando PDF de la receta...");
-      const filename = `receta_${recipe.name.replace(/\s/g, '_')}.pdf`; // Nombre de archivo dinámico
+      const filename = `receta_${recipe.name.replace(/\s/g, '_')}.pdf`;
 
       html2pdf().from(recipeContentRef.current).set({
         margin: [10, 10, 10, 10],
         filename: filename,
         image: { type: 'jpeg', quality: 0.98 },
         html2canvas: { scale: 2, logging: true, dpi: 192, letterRendering: true },
-        jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }, // Orientación vertical para recetas individuales
+        jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
         callback: function (doc) {
           const pageCount = doc.internal.getNumberOfPages();
           for (let i = 1; i <= pageCount; i++) {
             doc.setPage(i);
             doc.setFontSize(10);
-            doc.setTextColor(100); // Grey color for the footer text
+            doc.setTextColor(100);
             doc.text('🛒🍲 QueComo@QueCompro', doc.internal.pageSize.getWidth() / 2, doc.internal.pageSize.getHeight() - 10, { align: 'center' });
           }
         }
@@ -60,7 +60,7 @@ const RecipeDetailPage: React.FC = () => {
             Volver a Recetas
           </Link>
         </Button>
-        <div className="flex gap-2"> {/* Contenedor para los botones */}
+        <div className="flex gap-2">
           <Button onClick={handleDownloadPdf} variant="outline">
             <Download className="mr-2 h-4 w-4" />
             Descargar PDF
@@ -74,8 +74,7 @@ const RecipeDetailPage: React.FC = () => {
         </div>
       </div>
 
-      {/* Contenido de la receta para la generación del PDF */}
-      <div ref={recipeContentRef} className="p-4 bg-white text-black"> {/* Añadido ref y estilos para PDF */}
+      <div ref={recipeContentRef} className="p-4 bg-white text-black">
         <Card>
           <CardHeader>
             <CardTitle className="text-3xl">{recipe.name}</CardTitle>
@@ -89,6 +88,7 @@ const RecipeDetailPage: React.FC = () => {
                 {recipe.ingredients.map((ingredient, index) => (
                   <li key={index} className="text-lg">
                     <span className="font-medium">{ingredient.quantity}</span> de {ingredient.name}
+                    {ingredient.supplier && <span className="text-sm text-gray-600"> (Proveedor: {ingredient.supplier})</span>}
                   </li>
                 ))}
               </ul>

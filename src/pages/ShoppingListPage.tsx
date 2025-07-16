@@ -4,7 +4,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Button } from "@/components/ui/button";
 import { Download } from "lucide-react";
 import { useMealPlanning } from '@/context/MealPlanningContext';
-import { useSession } from '@/context/SessionContext'; // Importar useSession
+import { useSession } from '@/context/SessionContext';
 import { toast } from "sonner";
 import html2pdf from 'html2pdf.js';
 
@@ -23,7 +23,7 @@ const formatDisplayDate = (date: Date) => date.toLocaleDateString('es-ES', { day
 
 const ShoppingListPage: React.FC = () => {
   const { recipes, mealPlan } = useMealPlanning();
-  const { user } = useSession(); // Obtener el usuario de la sesión
+  const { user } = useSession();
   const shoppingListRef = useRef<HTMLDivElement>(null);
 
   const [currentWeekStart, setCurrentWeekStart] = useState(new Date());
@@ -44,83 +44,98 @@ const ShoppingListPage: React.FC = () => {
 
   // Helper function to parse quantity strings
   const parseQuantity = (quantityStr: string): { value: number | null; unit: string } => {
-    // Regex to match numbers (integers or decimals) and optional units
     const match = quantityStr.match(/^(\d+(\.\d+)?)\s*([a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+)?$/);
     if (match) {
       const value = parseFloat(match[1]);
-      const unit = match[3] ? match[3].trim().toLowerCase() : ''; // Normalize unit to lowercase
+      const unit = match[3] ? match[3].trim().toLowerCase() : '';
       return { value, unit };
     }
-    // For non-numeric quantities like "al gusto", "una pizca", etc.
     return { value: null, unit: quantityStr.trim().toLowerCase() };
   };
 
   const generateShoppingList = () => {
-    const aggregatedList = new Map<string, Map<string, number>>(); // ingredientName -> unit -> totalQuantity
-    const unquantifiedItems = new Map<string, Set<string>>(); // ingredientName -> set of original unparsed quantities
+    // Map: SupplierName -> IngredientName -> Unit -> TotalQuantity
+    const aggregatedList = new Map<string, Map<string, Map<string, number>>>();
+    // Map: SupplierName -> IngredientName -> Set of original unparsed quantities
+    const unquantifiedItems = new Map<string, Map<string, Set<string>>>();
 
     mealPlan.forEach(entry => {
       const recipe = recipes.find(r => r.id === entry.recipeid);
       if (recipe) {
         recipe.ingredients.forEach(ingredient => {
-          const { name, quantity } = ingredient;
+          const { name, quantity, supplier } = ingredient;
+          const supplierName = supplier && supplier.trim() !== '' ? supplier.trim() : 'Sin Proveedor';
           const parsed = parseQuantity(quantity);
 
+          if (!aggregatedList.has(supplierName)) {
+            aggregatedList.set(supplierName, new Map<string, Map<string, number>>());
+          }
+          if (!unquantifiedItems.has(supplierName)) {
+            unquantifiedItems.set(supplierName, new Map<string, Set<string>>());
+          }
+
           if (parsed.value !== null && parsed.unit) {
-            if (!aggregatedList.has(name)) {
-              aggregatedList.set(name, new Map<string, number>());
+            const ingredientMap = aggregatedList.get(supplierName)!;
+            if (!ingredientMap.has(name)) {
+              ingredientMap.set(name, new Map<string, number>());
             }
-            const unitMap = aggregatedList.get(name)!;
+            const unitMap = ingredientMap.get(name)!;
             unitMap.set(parsed.unit, (unitMap.get(parsed.unit) || 0) + parsed.value);
           } else {
-            // Handle quantities that couldn't be parsed numerically
-            if (!unquantifiedItems.has(name)) {
-              unquantifiedItems.set(name, new Set<string>());
+            const unquantifiedMap = unquantifiedItems.get(supplierName)!;
+            if (!unquantifiedMap.has(name)) {
+              unquantifiedMap.set(name, new Set<string>());
             }
-            unquantifiedItems.get(name)!.add(quantity);
+            unquantifiedMap.get(name)!.add(quantity);
           }
         });
       }
     });
 
-    const finalShoppingList: { item: string; quantity: string }[] = [];
+    const finalShoppingList: { supplier: string; items: { item: string; quantity: string }[] }[] = [];
 
-    aggregatedList.forEach((unitMap, itemName) => {
-      let quantityStringParts: string[] = [];
-      unitMap.forEach((totalValue, unit) => {
-        quantityStringParts.push(`${totalValue} ${unit}`);
-      });
-      finalShoppingList.push({
-        item: itemName,
-        quantity: quantityStringParts.join(', ')
-      });
-    });
-
-    unquantifiedItems.forEach((quantitiesSet, itemName) => {
-      // Check if this item was already added with quantified parts
-      const existingEntry = finalShoppingList.find(entry => entry.item === itemName);
-      const unparsedString = Array.from(quantitiesSet).join(', ');
-
-      if (existingEntry) {
-        // Append unparsed quantities to existing entry
-        if (existingEntry.quantity) {
-          existingEntry.quantity += `, ${unparsedString}`;
-        } else {
-          existingEntry.quantity = unparsedString;
-        }
-      } else {
-        // Add as a new entry if no quantified parts existed
-        finalShoppingList.push({
-          item: itemName,
-          quantity: unparsedString
+    // Process aggregated quantities
+    aggregatedList.forEach((ingredientMap, supplierName) => {
+      const items: { item: string; quantity: string }[] = [];
+      ingredientMap.forEach((unitMap, itemName) => {
+        let quantityStringParts: string[] = [];
+        unitMap.forEach((totalValue, unit) => {
+          quantityStringParts.push(`${totalValue} ${unit}`);
         });
-      }
+        items.push({ item: itemName, quantity: quantityStringParts.join(', ') });
+      });
+      finalShoppingList.push({ supplier: supplierName, items: items.sort((a, b) => a.item.localeCompare(b.item)) });
     });
 
-    return finalShoppingList.sort((a, b) => a.item.localeCompare(b.item)); // Sort alphabetically
+    // Add unquantified items, merging with existing if necessary
+    unquantifiedItems.forEach((unquantifiedMap, supplierName) => {
+      let existingSupplierEntry = finalShoppingList.find(entry => entry.supplier === supplierName);
+      if (!existingSupplierEntry) {
+        existingSupplierEntry = { supplier: supplierName, items: [] };
+        finalShoppingList.push(existingSupplierEntry);
+      }
+
+      unquantifiedMap.forEach((quantitiesSet, itemName) => {
+        const unparsedString = Array.from(quantitiesSet).join(', ');
+        const existingItem = existingSupplierEntry!.items.find(item => item.item === itemName);
+
+        if (existingItem) {
+          if (existingItem.quantity) {
+            existingItem.quantity += `, ${unparsedString}`;
+          } else {
+            existingItem.quantity = unparsedString;
+          }
+        } else {
+          existingSupplierEntry!.items.push({ item: itemName, quantity: unparsedString });
+        }
+      });
+      existingSupplierEntry.items.sort((a, b) => a.item.localeCompare(b.item));
+    });
+
+    return finalShoppingList.sort((a, b) => a.supplier.localeCompare(b.supplier));
   };
 
-  const shoppingList = generateShoppingList();
+  const shoppingListGroupedBySupplier = generateShoppingList();
 
   const handleDownloadPdf = () => {
     if (shoppingListRef.current) {
@@ -155,7 +170,7 @@ const ShoppingListPage: React.FC = () => {
     <div className="container mx-auto p-4">
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-3xl font-bold">Lista de Compras</h1>
-        <Button onClick={handleDownloadPdf} disabled={shoppingList.length === 0}>
+        <Button onClick={handleDownloadPdf} disabled={shoppingListGroupedBySupplier.length === 0}>
           <Download className="mr-2 h-4 w-4" />
           Descargar PDF
         </Button>
@@ -170,23 +185,28 @@ const ShoppingListPage: React.FC = () => {
           <div ref={shoppingListRef} className="p-4">
             <h2 className="text-2xl font-bold mb-2">Lista de Compras de {userName}</h2>
             <p className="text-lg text-muted-foreground mb-4">{weekRangeText}</p>
-            {shoppingList.length > 0 ? (
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Artículo</TableHead>
-                    <TableHead>Cantidad</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {shoppingList.map((item, index) => (
-                    <TableRow key={index}>
-                      <TableCell className="font-medium">{item.item}</TableCell>
-                      <TableCell>{item.quantity}</TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
+            {shoppingListGroupedBySupplier.length > 0 ? (
+              shoppingListGroupedBySupplier.map((supplierGroup, supIndex) => (
+                <div key={supplierGroup.supplier} className="mb-6">
+                  <h3 className="text-xl font-semibold mb-3">{supplierGroup.supplier}</h3>
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>Artículo</TableHead>
+                        <TableHead>Cantidad</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {supplierGroup.items.map((item, itemIndex) => (
+                        <TableRow key={`${supIndex}-${itemIndex}`}>
+                          <TableCell className="font-medium">{item.item}</TableCell>
+                          <TableCell>{item.quantity}</TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </div>
+              ))
             ) : (
               <p className="text-center text-muted-foreground">Tu lista de compras está vacía. ¡Planifica algunas comidas!</p>
             )}
