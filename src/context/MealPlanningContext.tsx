@@ -7,18 +7,19 @@ import { toast } from 'sonner';
 interface MealPlanningContextType {
   recipes: Recipe[];
   mealPlan: MealPlanEntry[];
-  suppliers: Supplier[]; // Nuevo: lista de proveedores
-  addRecipe: (newRecipe: Omit<Recipe, 'id'>) => Promise<void>;
-  updateRecipe: (updatedRecipe: Recipe) => Promise<void>;
+  suppliers: Supplier[];
+  addRecipe: (newRecipe: Omit<Recipe, 'id'>, imageFile?: File) => Promise<void>;
+  updateRecipe: (updatedRecipe: Recipe, imageFile?: File | null) => Promise<void>;
   deleteRecipe: (id: string) => Promise<void>;
   addOrUpdateMealPlanEntry: (date: string, mealtype: MealPlanEntry['mealtype'], recipeid: string) => Promise<void>;
   removeMealPlanEntry: (date: string, mealtype: MealPlanEntry['mealtype']) => Promise<void>;
-  addSupplier: (newSupplier: Omit<Supplier, 'id'>) => Promise<void>; // Nuevo: añadir proveedor
-  updateSupplier: (updatedSupplier: Supplier) => Promise<void>; // Nuevo: actualizar proveedor
-  deleteSupplier: (id: string) => Promise<void>; // Nuevo: eliminar proveedor
+  toggleIngredientPurchased: (entryId: string, ingredientName: string) => Promise<void>; // Nuevo
+  addSupplier: (newSupplier: Omit<Supplier, 'id'>) => Promise<void>;
+  updateSupplier: (updatedSupplier: Supplier) => Promise<void>;
+  deleteSupplier: (id: string) => Promise<void>;
   isLoadingRecipes: boolean;
   isLoadingMealPlan: boolean;
-  isLoadingSuppliers: boolean; // Nuevo: estado de carga de proveedores
+  isLoadingSuppliers: boolean;
 }
 
 const MealPlanningContext = createContext<MealPlanningContextType | undefined>(undefined);
@@ -64,32 +65,106 @@ export const MealPlanningProvider: React.FC<{ children: ReactNode }> = ({ childr
     }
   }, [user, isLoadingSession, fetchDataFromSupabase]);
 
-  const addRecipe = async (newRecipe: Omit<Recipe, 'id'>) => {
+  const uploadImage = async (file: File, userId: string, recipeId: string): Promise<string | undefined> => {
+    const fileExt = file.name.split('.').pop();
+    const fileName = `${recipeId}.${fileExt}`;
+    const filePath = `${userId}/${recipeId}/${fileName}`;
+
+    const { error: uploadError } = await supabase.storage
+      .from('recipe-images')
+      .upload(filePath, file, { upsert: true });
+
+    if (uploadError) {
+      toast.error('Error al subir la imagen: ' + uploadError.message);
+      return undefined;
+    }
+
+    const { data } = supabase.storage
+      .from('recipe-images')
+      .getPublicUrl(filePath);
+
+    return data?.publicUrl;
+  };
+
+  const deleteImage = async (imageUrl: string) => {
+    if (!imageUrl) return;
+
+    const pathSegments = imageUrl.split('/');
+    const userId = pathSegments[pathSegments.length - 2];
+    const recipeId = pathSegments[pathSegments.length - 1].split('.')[0];
+    const fileName = pathSegments[pathSegments.length - 1];
+    const filePath = `${userId}/${recipeId}/${fileName}`;
+
+    const { error } = await supabase.storage
+      .from('recipe-images')
+      .remove([filePath]);
+
+    if (error) {
+      console.error('Error al eliminar la imagen de Supabase Storage:', error.message);
+      // No mostrar toast de error al usuario para no interrumpir el flujo principal
+    }
+  };
+
+  const addRecipe = async (newRecipe: Omit<Recipe, 'id'>, imageFile?: File) => {
     if (!user) {
       toast.error('Debes iniciar sesión para añadir recetas.');
       return;
     }
-    const { data, error } = await supabase
+
+    const { data: insertedRecipe, error: insertError } = await supabase
       .from('recipes')
       .insert({ ...newRecipe, user_id: user.id })
       .select();
 
-    if (error) {
-      toast.error('Error al añadir receta: ' + error.message);
-    } else if (data) {
-      setRecipes(prevRecipes => [...prevRecipes, data[0] as Recipe]);
-      toast.success('Receta añadida con éxito.');
+    if (insertError) {
+      toast.error('Error al añadir receta: ' + insertError.message);
+      return;
     }
+
+    let imageUrl: string | undefined;
+    if (imageFile && insertedRecipe && insertedRecipe[0]) {
+      imageUrl = await uploadImage(imageFile, user.id, insertedRecipe[0].id);
+      if (imageUrl) {
+        const { error: updateError } = await supabase
+          .from('recipes')
+          .update({ imageUrl })
+          .eq('id', insertedRecipe[0].id);
+
+        if (updateError) {
+          toast.error('Error al actualizar la URL de la imagen: ' + updateError.message);
+        } else {
+          insertedRecipe[0].imageUrl = imageUrl;
+        }
+      }
+    }
+
+    setRecipes(prevRecipes => [...prevRecipes, insertedRecipe[0] as Recipe]);
+    toast.success('Receta añadida con éxito.');
   };
 
-  const updateRecipe = async (updatedRecipe: Recipe) => {
+  const updateRecipe = async (updatedRecipe: Recipe, imageFile?: File | null) => {
     if (!user) {
       toast.error('Debes iniciar sesión para actualizar recetas.');
       return;
     }
+
+    let newImageUrl: string | undefined = updatedRecipe.imageUrl;
+
+    if (imageFile === null) { // User explicitly removed the image
+      if (updatedRecipe.imageUrl) {
+        await deleteImage(updatedRecipe.imageUrl);
+      }
+      newImageUrl = undefined;
+    } else if (imageFile instanceof File) { // User uploaded a new image
+      if (updatedRecipe.imageUrl) { // Delete old image if it exists
+        await deleteImage(updatedRecipe.imageUrl);
+      }
+      newImageUrl = await uploadImage(imageFile, user.id, updatedRecipe.id);
+    }
+
     const { error } = await supabase
       .from('recipes')
-      .update(updatedRecipe)
+      .update({ ...updatedRecipe, imageUrl: newImageUrl })
       .eq('id', updatedRecipe.id)
       .eq('user_id', user.id);
 
@@ -98,7 +173,7 @@ export const MealPlanningProvider: React.FC<{ children: ReactNode }> = ({ childr
     } else {
       setRecipes(prevRecipes =>
         prevRecipes.map(recipe =>
-          recipe.id === updatedRecipe.id ? updatedRecipe : recipe
+          recipe.id === updatedRecipe.id ? { ...updatedRecipe, imageUrl: newImageUrl } : recipe
         )
       );
       toast.success('Receta actualizada con éxito.');
@@ -110,6 +185,12 @@ export const MealPlanningProvider: React.FC<{ children: ReactNode }> = ({ childr
       toast.error('Debes iniciar sesión para eliminar recetas.');
       return;
     }
+
+    const recipeToDelete = recipes.find(r => r.id === id);
+    if (recipeToDelete && recipeToDelete.imageUrl) {
+      await deleteImage(recipeToDelete.imageUrl);
+    }
+
     const { error } = await supabase
       .from('recipes')
       .delete()
@@ -190,6 +271,46 @@ export const MealPlanningProvider: React.FC<{ children: ReactNode }> = ({ childr
     }
   };
 
+  const toggleIngredientPurchased = async (entryId: string, ingredientName: string) => {
+    if (!user) {
+      toast.error('Debes iniciar sesión para actualizar la lista de compras.');
+      return;
+    }
+
+    const entryToUpdate = mealPlan.find(entry => entry.id === entryId);
+    if (!entryToUpdate) {
+      toast.error('Entrada del plan de comidas no encontrada.');
+      return;
+    }
+
+    const currentPurchased = new Set(entryToUpdate.purchased_ingredients || []);
+    let newPurchased: string[];
+
+    if (currentPurchased.has(ingredientName)) {
+      currentPurchased.delete(ingredientName);
+    } else {
+      currentPurchased.add(ingredientName);
+    }
+    newPurchased = Array.from(currentPurchased);
+
+    const { error } = await supabase
+      .from('meal_plan_entries')
+      .update({ purchased_ingredients: newPurchased })
+      .eq('id', entryId)
+      .eq('user_id', user.id);
+
+    if (error) {
+      toast.error('Error al actualizar el estado de compra: ' + error.message);
+    } else {
+      setMealPlan(prevPlan =>
+        prevPlan.map(entry =>
+          entry.id === entryId ? { ...entry, purchased_ingredients: newPurchased } : entry
+        )
+      );
+      toast.success('Estado de compra actualizado.');
+    }
+  };
+
   const addSupplier = async (newSupplier: Omit<Supplier, 'id'>) => {
     if (!user) {
       toast.error('Debes iniciar sesión para añadir proveedores.');
@@ -260,6 +381,7 @@ export const MealPlanningProvider: React.FC<{ children: ReactNode }> = ({ childr
       deleteRecipe,
       addOrUpdateMealPlanEntry,
       removeMealPlanEntry,
+      toggleIngredientPurchased,
       addSupplier,
       updateSupplier,
       deleteSupplier,

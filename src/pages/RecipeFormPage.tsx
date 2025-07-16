@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { useForm, useFieldArray } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -16,10 +16,13 @@ import {
 } from '@/components/ui/form';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { PlusCircle, MinusCircle, ArrowLeft } from 'lucide-react';
+import { PlusCircle, MinusCircle, ArrowLeft, XCircle } from 'lucide-react';
 import { useMealPlanning } from '@/context/MealPlanningContext';
 import { Recipe } from '@/types';
 import { toast } from 'sonner';
+
+const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
+const ACCEPTED_IMAGE_TYPES = ["image/jpeg", "image/jpg", "image/png", "image/webp"];
 
 const formSchema = z.object({
   name: z.string().min(1, 'El nombre es requerido.'),
@@ -31,12 +34,17 @@ const formSchema = z.object({
     z.object({
       name: z.string().min(1, 'El nombre del ingrediente es requerido.'),
       quantity: z.string().min(1, 'La cantidad es requerida.'),
-      supplier: z.string().optional(), // Nuevo campo para el proveedor
+      supplier: z.string().optional(),
     })
   ).min(1, 'Debe añadir al menos un ingrediente.'),
   instructions: z.array(
     z.string().min(1, 'La instrucción no puede estar vacía.')
   ).min(1, 'Debe añadir al menos una instrucción.'),
+  image: z.any()
+    .refine((file) => !file || file.size <= MAX_FILE_SIZE, `El tamaño máximo de la imagen es 5MB.`)
+    .refine((file) => !file || ACCEPTED_IMAGE_TYPES.includes(file.type), "Solo se permiten imágenes .jpg, .jpeg, .png y .webp.")
+    .optional(),
+  imageUrl: z.string().optional(), // Para mantener la URL existente si no se sube una nueva imagen
 });
 
 type RecipeFormValues = z.infer<typeof formSchema>;
@@ -44,7 +52,7 @@ type RecipeFormValues = z.infer<typeof formSchema>;
 const RecipeFormPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const { recipes, addRecipe, updateRecipe, suppliers, isLoadingSuppliers } = useMealPlanning(); // Obtener suppliers
+  const { recipes, addRecipe, updateRecipe, suppliers, isLoadingSuppliers } = useMealPlanning();
 
   const isEditing = !!id;
   const currentRecipe = isEditing ? recipes.find(r => r.id === id) : undefined;
@@ -55,8 +63,9 @@ const RecipeFormPage: React.FC = () => {
       name: '',
       description: '',
       mealtype: 'Almuerzo',
-      ingredients: [{ name: '', quantity: '', supplier: '' }], // Inicializar con supplier
+      ingredients: [{ name: '', quantity: '', supplier: '' }],
       instructions: [''],
+      imageUrl: '', // Initialize imageUrl
     },
   });
 
@@ -70,6 +79,9 @@ const RecipeFormPage: React.FC = () => {
     name: 'instructions',
   });
 
+  const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+
   useEffect(() => {
     if (isEditing && currentRecipe) {
       form.reset({
@@ -78,7 +90,10 @@ const RecipeFormPage: React.FC = () => {
         mealtype: currentRecipe.mealtype,
         ingredients: currentRecipe.ingredients,
         instructions: currentRecipe.instructions,
+        imageUrl: currentRecipe.imageUrl,
       });
+      setImagePreview(currentRecipe.imageUrl || null);
+      setSelectedFile(null); // Clear selected file on edit load
     } else if (!isEditing) {
       form.reset({
         name: '',
@@ -86,18 +101,49 @@ const RecipeFormPage: React.FC = () => {
         mealtype: 'Almuerzo',
         ingredients: [{ name: '', quantity: '', supplier: '' }],
         instructions: [''],
+        imageUrl: '',
       });
+      setImagePreview(null);
+      setSelectedFile(null);
     }
   }, [isEditing, currentRecipe, form]);
 
-  const onSubmit = (values: RecipeFormValues) => {
-    if (isEditing && currentRecipe) {
-      const updatedRecipe: Recipe = { ...currentRecipe, ...values };
-      updateRecipe(updatedRecipe);
-      toast.success('Receta actualizada con éxito.');
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      setSelectedFile(file);
+      setImagePreview(URL.createObjectURL(file));
+      form.setValue('image', file); // Set the file in the form state for validation
     } else {
-      addRecipe(values);
-      toast.success('Receta añadida con éxito.');
+      setSelectedFile(null);
+      setImagePreview(currentRecipe?.imageUrl || null); // Revert to existing image if no new file selected
+      form.setValue('image', undefined); // Clear the file from form state
+    }
+  };
+
+  const handleRemoveImage = () => {
+    setSelectedFile(null);
+    setImagePreview(null);
+    form.setValue('image', null); // Indicate that the image should be removed
+    form.setValue('imageUrl', undefined); // Clear the existing URL
+  };
+
+  const onSubmit = async (values: RecipeFormValues) => {
+    const recipeData = {
+      name: values.name,
+      description: values.description,
+      mealtype: values.mealtype,
+      ingredients: values.ingredients,
+      instructions: values.instructions,
+    };
+
+    if (isEditing && currentRecipe) {
+      await updateRecipe(
+        { ...currentRecipe, ...recipeData, imageUrl: values.imageUrl },
+        selectedFile === null && currentRecipe.imageUrl ? null : selectedFile // Pass null if image removed, File if new, undefined if no change
+      );
+    } else {
+      await addRecipe(recipeData, selectedFile || undefined);
     }
     navigate('/recipes');
   };
@@ -170,6 +216,33 @@ const RecipeFormPage: React.FC = () => {
                 )}
               />
 
+              {/* Campo de subida de imagen */}
+              <FormItem>
+                <FormLabel>Imagen de la Receta (Opcional)</FormLabel>
+                <FormControl>
+                  <Input
+                    type="file"
+                    accept={ACCEPTED_IMAGE_TYPES.join(',')}
+                    onChange={handleFileChange}
+                  />
+                </FormControl>
+                {imagePreview && (
+                  <div className="relative w-48 h-48 mt-2">
+                    <img src={imagePreview} alt="Previsualización de la receta" className="w-full h-full object-cover rounded-md" />
+                    <Button
+                      type="button"
+                      variant="destructive"
+                      size="icon"
+                      className="absolute top-1 right-1 rounded-full"
+                      onClick={handleRemoveImage}
+                    >
+                      <XCircle className="h-4 w-4" />
+                    </Button>
+                  </div>
+                )}
+                <FormMessage>{form.formState.errors.image?.message as string}</FormMessage>
+              </FormItem>
+
               <div>
                 <h2 className="text-xl font-semibold mb-3">Ingredientes</h2>
                 {ingredientFields.map((item, index) => (
@@ -208,7 +281,7 @@ const RecipeFormPage: React.FC = () => {
                           <FormLabel className={index === 0 ? 'block' : 'sr-only'}>Proveedor (Opcional)</FormLabel>
                           <Select
                             onValueChange={(value) => field.onChange(value === "UNASSIGNED_SUPPLIER" ? undefined : value)}
-                            value={field.value || "UNASSIGNED_SUPPLIER"} // Set default to our unassigned value
+                            value={field.value || "UNASSIGNED_SUPPLIER"}
                             disabled={isLoadingSuppliers}
                           >
                             <FormControl>
@@ -217,7 +290,7 @@ const RecipeFormPage: React.FC = () => {
                               </SelectTrigger>
                             </FormControl>
                             <SelectContent>
-                              <SelectItem value="UNASSIGNED_SUPPLIER">Sin Proveedor</SelectItem> {/* Opción para no seleccionar proveedor */}
+                              <SelectItem value="UNASSIGNED_SUPPLIER">Sin Proveedor</SelectItem>
                               {suppliers.length > 0 ? (
                                 suppliers.map(supplier => (
                                   <SelectItem key={supplier.id} value={supplier.name}>

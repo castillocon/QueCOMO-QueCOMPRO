@@ -11,6 +11,7 @@ export interface Recipe {
   ingredients: Ingredient[];
   instructions: string[];
   mealtype: 'Desayuno' | 'Almuerzo' | 'Cena' | 'Merienda';
+  imageUrl?: string; // Nuevo campo opcional para la URL de la imagen
 }
 
 export interface MealPlanEntry {
@@ -18,6 +19,7 @@ export interface MealPlanEntry {
   date: string; // YYYY-MM-DD
   mealtype: 'Desayuno' | 'Almuerzo' | 'Cena' | 'Merienda';
   recipeid: string; // Cambiado a 'recipeid' (minúsculas)
+  purchased_ingredients?: string[]; // Nuevo campo para ingredientes comprados
 }
 
 export interface Supplier {

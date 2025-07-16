@@ -6,13 +6,12 @@ import { ArrowLeft, Edit, Download } from "lucide-react";
 import { useMealPlanning } from '@/context/MealPlanningContext';
 import { toast } from "sonner";
 import html2pdf from 'html2pdf.js';
-import { formatDisplayDate } from '@/utils/date'; // Importar utilidades de fecha
-import { useSession } from '@/context/SessionContext'; // Importar useSession
+import { useSession } from '@/context/SessionContext';
 
 const RecipeDetailPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const { recipes } = useMealPlanning();
-  const { user, profile } = useSession(); // Obtener el perfil
+  const { user, profile } = useSession();
   const recipe = recipes.find(r => r.id === id);
   const recipeContentRef = useRef<HTMLDivElement>(null);
 
@@ -20,7 +19,7 @@ const RecipeDetailPage: React.FC = () => {
     if (recipeContentRef.current && recipe) {
       toast.loading("Generando PDF de la receta...");
       const filename = `receta_${recipe.name.replace(/\s/g, '_')}.pdf`;
-      const userName = profile?.username || profile?.first_name || user?.email || "Usuario"; // Obtener el nombre de usuario
+      const userName = profile?.username || profile?.first_name || user?.email || "Usuario";
 
       html2pdf().from(recipeContentRef.current).set({
         margin: [10, 10, 10, 10],
@@ -86,6 +85,11 @@ const RecipeDetailPage: React.FC = () => {
             {recipe.description && <p className="text-muted-foreground mt-2">{recipe.description}</p>}
           </CardHeader>
           <CardContent className="grid md:grid-cols-2 gap-8">
+            {recipe.imageUrl && (
+              <div className="md:col-span-2 flex justify-center mb-4">
+                <img src={recipe.imageUrl} alt={recipe.name} className="max-w-full h-auto max-h-96 object-contain rounded-md shadow-md" />
+              </div>
+            )}
             <div>
               <h2 className="text-2xl font-semibold mb-4">Ingredientes</h2>
               <ul className="list-disc list-inside space-y-2">

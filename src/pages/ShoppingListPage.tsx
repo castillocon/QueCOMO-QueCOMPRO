@@ -9,9 +9,10 @@ import { toast } from "sonner";
 import html2pdf from 'html2pdf.js';
 import { getWeekDays, formatDisplayDate } from '@/utils/date';
 import { parseQuantity } from '@/utils/helpers';
+import { Checkbox } from "@/components/ui/checkbox"; // Importar Checkbox
 
 const ShoppingListPage: React.FC = () => {
-  const { recipes, mealPlan } = useMealPlanning();
+  const { recipes, mealPlan, toggleIngredientPurchased } = useMealPlanning();
   const { user, profile } = useSession();
   const shoppingListRef = useRef<HTMLDivElement>(null);
 
@@ -37,9 +38,17 @@ const ShoppingListPage: React.FC = () => {
     // Map: SupplierName -> IngredientName -> Set of original unparsed quantities
     const unquantifiedItems = new Map<string, Map<string, Set<string>>>();
 
+    // Map: RecipeId -> MealPlanEntryId -> Set of purchased ingredients
+    const purchasedStatusMap = new Map<string, Map<string, Set<string>>>();
+
     mealPlan.forEach(entry => {
       const recipe = recipes.find(r => r.id === entry.recipeid);
       if (recipe) {
+        if (!purchasedStatusMap.has(recipe.id)) {
+          purchasedStatusMap.set(recipe.id, new Map<string, Set<string>>());
+        }
+        purchasedStatusMap.get(recipe.id)!.set(entry.id, new Set(entry.purchased_ingredients || []));
+
         recipe.ingredients.forEach(ingredient => {
           const { name, quantity, supplier } = ingredient;
           const supplierName = supplier && supplier.trim() !== '' ? supplier.trim() : 'Sin Proveedor';
@@ -70,17 +79,32 @@ const ShoppingListPage: React.FC = () => {
       }
     });
 
-    const finalShoppingList: { supplier: string; items: { item: string; quantity: string }[] }[] = [];
+    const finalShoppingList: { supplier: string; items: { item: string; quantity: string; isPurchased: boolean; mealPlanEntryId?: string; recipeId?: string }[] }[] = [];
 
     // Process aggregated quantities
     aggregatedList.forEach((ingredientMap, supplierName) => {
-      const items: { item: string; quantity: string }[] = [];
+      const items: { item: string; quantity: string; isPurchased: boolean; mealPlanEntryId?: string; recipeId?: string }[] = [];
       ingredientMap.forEach((totalUnitMap, itemName) => {
         let quantityStringParts: string[] = [];
         totalUnitMap.forEach((totalValue, unit) => {
           quantityStringParts.push(`${totalValue} ${unit}`);
         });
-        items.push({ item: itemName, quantity: quantityStringParts.join(', ') });
+
+        // Determine if the item is purchased. This is tricky for aggregated items.
+        // For simplicity, if *any* instance of this ingredient in *any* meal plan entry
+        // is marked as purchased, we'll consider it purchased for the aggregated list.
+        // A more robust solution would require a dedicated shopping list table.
+        let isAggregatedItemPurchased = false;
+        mealPlan.forEach(entry => {
+          const recipe = recipes.find(r => r.id === entry.recipeid);
+          if (recipe && recipe.ingredients.some(ing => ing.name === itemName)) {
+            if (new Set(entry.purchased_ingredients || []).has(itemName)) {
+              isAggregatedItemPurchased = true;
+            }
+          }
+        });
+
+        items.push({ item: itemName, quantity: quantityStringParts.join(', '), isPurchased: isAggregatedItemPurchased });
       });
       finalShoppingList.push({ supplier: supplierName, items: items.sort((a, b) => a.item.localeCompare(b.item)) });
     });
@@ -97,18 +121,47 @@ const ShoppingListPage: React.FC = () => {
         const unparsedString = Array.from(quantitiesSet).join(', ');
         const existingItem = existingSupplierEntry!.items.find(item => item.item === itemName);
 
+        let isUnquantifiedItemPurchased = false;
+        mealPlan.forEach(entry => {
+          const recipe = recipes.find(r => r.id === entry.recipeid);
+          if (recipe && recipe.ingredients.some(ing => ing.name === itemName)) {
+            if (new Set(entry.purchased_ingredients || []).has(itemName)) {
+              isUnquantifiedItemPurchased = true;
+            }
+          }
+        });
+
         if (existingItem) {
           if (existingItem.quantity) {
             existingItem.quantity += `, ${unparsedString}`;
           } else {
             existingItem.quantity = unparsedString;
           }
+          existingItem.isPurchased = existingItem.isPurchased || isUnquantifiedItemPurchased;
         } else {
-          existingSupplierEntry!.items.push({ item: itemName, quantity: unparsedString });
+          existingSupplierEntry!.items.push({ item: itemName, quantity: unparsedString, isPurchased: isUnquantifiedItemPurchased });
         }
       });
       existingSupplierEntry.items.sort((a, b) => a.item.localeCompare(b.item));
     });
+
+    // For the purpose of toggling, we need to know which mealPlanEntry an ingredient belongs to.
+    // Since the shopping list aggregates, a single ingredient might come from multiple entries.
+    // For simplicity, we'll associate the checkbox with the *first* meal plan entry that contains it.
+    // A more robust solution would involve a dedicated shopping list table with unique items.
+    finalShoppingList.forEach(supplierGroup => {
+      supplierGroup.items.forEach(item => {
+        const relevantEntry = mealPlan.find(entry =>
+          recipes.find(r => r.id === entry.recipeid)?.ingredients.some(ing => ing.name === item.item)
+        );
+        if (relevantEntry) {
+          item.mealPlanEntryId = relevantEntry.id;
+          item.recipeId = relevantEntry.recipeid;
+          item.isPurchased = new Set(relevantEntry.purchased_ingredients || []).has(item.item);
+        }
+      });
+    });
+
 
     return finalShoppingList.sort((a, b) => a.supplier.localeCompare(b.supplier));
   }, [recipes, mealPlan]); // Dependencies for memoization
@@ -168,7 +221,7 @@ const ShoppingListPage: React.FC = () => {
                   <Table>
                     <TableHeader>
                       <TableRow>
-                        <TableHead className="w-[40px]">✓</TableHead> {/* Nueva columna para el checkbox */}
+                        <TableHead className="w-[40px]">✓</TableHead>
                         <TableHead>Artículo</TableHead>
                         <TableHead>Cantidad</TableHead>
                       </TableRow>
@@ -177,7 +230,14 @@ const ShoppingListPage: React.FC = () => {
                       {supplierGroup.items.map((item, itemIndex) => (
                         <TableRow key={`${supIndex}-${itemIndex}`}>
                           <TableCell className="text-center">
-                            <div className="w-4 h-4 border border-gray-400 rounded-sm mx-auto"></div> {/* Checkbox visual */}
+                            {item.mealPlanEntryId ? (
+                              <Checkbox
+                                checked={item.isPurchased}
+                                onCheckedChange={() => toggleIngredientPurchased(item.mealPlanEntryId!, item.item)}
+                              />
+                            ) : (
+                              <div className="w-4 h-4 border border-gray-400 rounded-sm mx-auto"></div>
+                            )}
                           </TableCell>
                           <TableCell className="font-medium">{item.item}</TableCell>
                           <TableCell>{item.quantity}</TableCell>
