@@ -62,12 +62,6 @@ export default {
           border: "hsl(var(--sidebar-border))",
           ring: "hsl(var(--sidebar-ring))",
         },
-        // Colores personalizados
-        color1: '#000e1d',
-        color2: '#003650',
-        color3: '#00688f',
-        color4: '#00a4d9',
-        color5: '#00ecff',
       },
       borderRadius: {
         lg: "var(--radius)",

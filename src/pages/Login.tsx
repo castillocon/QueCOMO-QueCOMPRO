@@ -6,15 +6,15 @@ import { Card, CardContent, CardHeader, CardTitle, CardFooter } from '@/componen
 
 const Login: React.FC = () => {
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100 dark:bg-gray-900">
+    <div className="min-h-screen flex items-center justify-center bg-background dark:bg-background">
       <Card className="w-full max-w-md mx-auto p-6 shadow-lg">
         <CardHeader className="text-center">
-          <CardTitle className="text-3xl font-bold text-color4 mb-2">🛒🍲 QueComo@QueCompro</CardTitle>
-          <p className="text-color2 text-lg">
+          <CardTitle className="text-3xl font-bold text-primary mb-2">🛒🍲 QueComo@QueCompro</CardTitle>
+          <p className="text-muted-foreground text-lg">
             ¡Bienvenido a tu asistente personal de comida y compras!
             Iniciá sesión para descubrir qué comer esta semana y qué comprar sin perder tiempo.
             <br />
-            <span className="font-semibold text-color3">Planificá. Comprá. Comé mejor.</span>
+            <span className="font-semibold text-foreground">Planificá. Comprá. Comé mejor.</span>
           </p>
         </CardHeader>
         <CardContent>
@@ -36,15 +36,15 @@ const Login: React.FC = () => {
             redirectTo={window.location.origin}
           />
         </CardContent>
-        <CardFooter className="flex flex-col items-center text-center mt-6 pt-4 border-t border-gray-200 dark:border-gray-700">
-          <p className="text-sm text-color2 mb-2">
+        <CardFooter className="flex flex-col items-center text-center mt-6 pt-4 border-t border-border dark:border-border">
+          <p className="text-sm text-muted-foreground mb-2">
             ¿Solo quieres probar? Usa estas credenciales de demostración:
           </p>
-          <p className="text-base font-semibold text-color3">
-            Usuario: <span className="font-normal text-color1">demo@quecomoquecompro.com</span>
+          <p className="text-base font-semibold text-foreground">
+            Usuario: <span className="font-normal text-foreground">demo@quecomoquecompro.com</span>
           </p>
-          <p className="text-base font-semibold text-color3">
-            Clave: <span className="font-normal text-color1">demo</span>
+          <p className="text-base font-semibold text-foreground">
+            Clave: <span className="font-normal text-foreground">demo</span>
           </p>
         </CardFooter>
       </Card>
