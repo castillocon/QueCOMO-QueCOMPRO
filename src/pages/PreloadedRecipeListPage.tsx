@@ -1,19 +1,85 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import { Link } from "react-router-dom";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, Download } from "lucide-react";
 import { preloadedRecipes } from "@/data/preloadedRecipes";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { MealPlanEntry } from "@/types"; // Importar MealPlanEntry para los tipos de comida
+import { MealPlanEntry, Recipe } from "@/types"; // Importar MealPlanEntry y Recipe
+import { toast } from "sonner";
+import html2pdf from 'html2pdf.js';
+import { useSession } from '@/context/SessionContext'; // Importar useSession
 
 const PreloadedRecipeListPage: React.FC = () => {
   const [selectedMealType, setSelectedMealType] = useState<MealPlanEntry['mealtype'] | 'Todos'>('Todos');
+  const pdfContentRef = useRef<HTMLDivElement>(null);
+  const [showPdfContent, setShowPdfContent] = useState(false);
+  const { user, profile } = useSession();
+
+  const mealTypeOrder: (MealPlanEntry['mealtype'] | 'Todos')[] = ['Desayuno', 'Almuerzo', 'Merienda', 'Cena'];
 
   const filteredRecipes = preloadedRecipes.filter(recipe =>
     selectedMealType === 'Todos' || recipe.mealtype === selectedMealType
-  );
+  ).sort((a, b) => {
+    // Sort by meal type first
+    const mealTypeAIndex = mealTypeOrder.indexOf(a.mealtype);
+    const mealTypeBIndex = mealTypeOrder.indexOf(b.mealtype);
+    if (mealTypeAIndex !== mealTypeBIndex) {
+      return mealTypeAIndex - mealTypeBIndex;
+    }
+    // Then by name
+    return a.name.localeCompare(b.name);
+  });
+
+  const handleDownloadPdf = async () => {
+    if (!pdfContentRef.current) {
+      toast.error("No se pudo encontrar el contenido de las recetas.");
+      return;
+    }
+
+    toast.loading("Generando PDF de las recetas...");
+    setShowPdfContent(true); // Mostrar el contenido oculto para la generación del PDF
+
+    setTimeout(async () => {
+      try {
+        const filterText = selectedMealType === 'Todos' ? 'Todas' : selectedMealType;
+        const filename = `recetas_pre_cargadas_${filterText.toLowerCase().replace(/\s/g, '_')}.pdf`;
+        const userName = profile?.username || profile?.first_name || user?.email || "Usuario";
+
+        await html2pdf().from(pdfContentRef.current).set({
+          margin: [10, 10, 10, 10],
+          filename: filename,
+          image: { type: 'jpeg', quality: 0.98 },
+          html2canvas: { scale: 2, logging: true, dpi: 192, letterRendering: true },
+          jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
+          callback: function (doc) {
+            const pageCount = doc.internal.getNumberOfPages();
+            for (let i = 1; i <= pageCount; i++) {
+              doc.setPage(i);
+              doc.setFontSize(10);
+              doc.setTextColor(100);
+              doc.text(`🛒🍲 QueComo@QueCompro - ${userName}`, doc.internal.pageSize.getWidth() / 2, doc.internal.pageSize.getHeight() - 10, { align: 'center' });
+            }
+          }
+        }).save();
+        toast.success("PDF generado con éxito.");
+      } catch (error) {
+        console.error("Error al generar el PDF:", error);
+        toast.error("Error al generar el PDF.");
+      } finally {
+        setShowPdfContent(false); // Ocultar el contenido de nuevo
+      }
+    }, 50); // Pequeño retraso para asegurar que el DOM se actualice
+  };
+
+  // Group recipes by meal type for PDF display
+  const groupedRecipes: { [key: string]: Recipe[] } = {};
+  mealTypeOrder.forEach(type => {
+    if (type !== 'Todos') {
+      groupedRecipes[type] = filteredRecipes.filter(r => r.mealtype === type);
+    }
+  });
 
   return (
     <div className="container mx-auto p-4">
@@ -25,23 +91,29 @@ const PreloadedRecipeListPage: React.FC = () => {
       </Button>
       <h1 className="text-3xl font-bold mb-6 text-primary">Recetas Pre-cargadas</h1>
 
-      <div className="mb-6 flex items-center gap-4">
-        <h2 className="text-lg font-semibold">Filtrar por Tipo de Comida:</h2>
-        <Select
-          onValueChange={(value: MealPlanEntry['mealtype'] | 'Todos') => setSelectedMealType(value)}
-          value={selectedMealType}
-        >
-          <SelectTrigger className="w-[180px]">
-            <SelectValue placeholder="Seleccionar tipo" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="Todos">Todos</SelectItem>
-            <SelectItem value="Desayuno">Desayuno</SelectItem>
-            <SelectItem value="Almuerzo">Almuerzo</SelectItem>
-            <SelectItem value="Merienda">Merienda</SelectItem>
-            <SelectItem value="Cena">Cena</SelectItem>
-          </SelectContent>
-        </Select>
+      <div className="mb-6 flex items-center justify-between gap-4">
+        <div className="flex items-center gap-4">
+          <h2 className="text-lg font-semibold">Filtrar por Tipo de Comida:</h2>
+          <Select
+            onValueChange={(value: MealPlanEntry['mealtype'] | 'Todos') => setSelectedMealType(value)}
+            value={selectedMealType}
+          >
+            <SelectTrigger className="w-[180px]">
+              <SelectValue placeholder="Seleccionar tipo" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="Todos">Todos</SelectItem>
+              <SelectItem value="Desayuno">Desayuno</SelectItem>
+              <SelectItem value="Almuerzo">Almuerzo</SelectItem>
+              <SelectItem value="Merienda">Merienda</SelectItem>
+              <SelectItem value="Cena">Cena</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+        <Button onClick={handleDownloadPdf} disabled={filteredRecipes.length === 0}>
+          <Download className="mr-2 h-4 w-4" />
+          Descargar Lista PDF
+        </Button>
       </div>
 
       {filteredRecipes.length > 0 ? (
@@ -80,6 +152,45 @@ const PreloadedRecipeListPage: React.FC = () => {
           No hay recetas pre-cargadas disponibles para el tipo de comida seleccionado.
         </p>
       )}
+
+      {/* Contenido oculto para la generación del PDF */}
+      <div ref={pdfContentRef} className={`w-[210mm] p-4 bg-white text-black ${showPdfContent ? 'block' : 'hidden'}`}>
+        <h1 className="text-2xl font-bold mb-2 text-center">Lista de Recetas Pre-cargadas</h1>
+        <p className="text-lg text-center mb-4">
+          {selectedMealType === 'Todos' ? 'Todas las Recetas' : `Filtrado por: ${selectedMealType}`}
+        </p>
+        {mealTypeOrder.map(mealType => {
+          if (mealType === 'Todos') return null; // Skip 'Todos' as it's a filter option, not a meal type
+          const recipesForType = groupedRecipes[mealType];
+          if (recipesForType && recipesForType.length > 0) {
+            return (
+              <div key={mealType} className="mb-6">
+                <h2 className="text-xl font-semibold mb-3">{mealType}</h2>
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead className="w-[200px]">Nombre</TableHead>
+                      <TableHead>Descripción</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {recipesForType.map(recipe => (
+                      <TableRow key={recipe.id}>
+                        <TableCell className="font-medium">{recipe.name}</TableCell>
+                        <TableCell className="text-sm">{recipe.description || "Sin descripción."}</TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </div>
+            );
+          }
+          return null;
+        })}
+        {filteredRecipes.length === 0 && (
+          <p className="text-center text-muted-foreground">No hay recetas para mostrar.</p>
+        )}
+      </div>
     </div>
   );
 };
