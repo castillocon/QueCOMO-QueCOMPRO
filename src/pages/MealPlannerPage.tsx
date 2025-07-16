@@ -1,9 +1,13 @@
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { MealPlanEntry } from "@/types";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useMealPlanning } from '@/context/MealPlanningContext';
+import { useSession } from '@/context/SessionContext'; // Importar useSession
+import { Download } from "lucide-react";
+import { toast } from "sonner";
+import html2pdf from 'html2pdf.js';
 
 const getWeekDays = (startDate: Date) => {
   const days = [];
@@ -16,24 +20,33 @@ const getWeekDays = (startDate: Date) => {
 };
 
 const formatDate = (date: Date) => date.toISOString().split('T')[0]; // YYYY-MM-DD
-// Modificado para un formato más conciso: "1 Ene" en lugar de "lunes, 1 de enero"
 const formatDisplayDate = (date: Date) => date.toLocaleDateString('es-ES', { day: 'numeric', month: 'short' });
+const formatDayOfWeek = (date: Date) => date.toLocaleDateString('es-ES', { weekday: 'long' });
 
 const MealPlannerPage: React.FC = () => {
-  const [currentWeekStart, setCurrentWeekStart] = useState(new Date());
+  const [currentWeekStart, setCurrentWeekStart] = useState(() => {
+    const today = new Date();
+    const dayOfWeek = today.getDay(); // 0 for Sunday, 1 for Monday, ..., 6 for Saturday
+    const diff = today.getDate() - dayOfWeek + (dayOfWeek === 0 ? -6 : 1); // Adjust to Monday
+    const monday = new Date(today.setDate(diff));
+    monday.setHours(0, 0, 0, 0); // Set to start of the day
+    return monday;
+  });
+
   const { recipes, mealPlan, addOrUpdateMealPlanEntry } = useMealPlanning();
+  const { user } = useSession();
+  const pdfContentRef = useRef<HTMLDivElement>(null);
 
   const weekDays = getWeekDays(currentWeekStart);
-  const mealTypes = ['Desayuno', 'Almuerzo', 'Cena', 'Merienda'];
+  const mealTypes = ['Desayuno', 'Almuerzo', 'Merienda', 'Cena']; // Orden cambiado
 
-  const handleRecipeSelect = (date: string, mealtype: MealPlanEntry['mealtype'], recipeid: string) => { // Cambiado a 'recipeid'
+  const handleRecipeSelect = (date: string, mealtype: MealPlanEntry['mealtype'], recipeid: string) => {
     addOrUpdateMealPlanEntry(date, mealtype, recipeid);
   };
 
   const getRecipeForMeal = (date: string, mealtype: MealPlanEntry['mealtype']) => {
     const entry = mealPlan.find(e => e.date === date && e.mealtype === mealtype);
-    // Filtrar recetas por mealtype (minúsculas)
-    return entry ? recipes.find(r => r.id === entry.recipeid) : undefined; // Cambiado a 'recipeid'
+    return entry ? recipes.find(r => r.id === entry.recipeid) : undefined;
   };
 
   const goToPreviousWeek = () => {
@@ -48,6 +61,29 @@ const MealPlannerPage: React.FC = () => {
     setCurrentWeekStart(newDate);
   };
 
+  const handleDownloadPdf = () => {
+    if (pdfContentRef.current) {
+      toast.loading("Generando PDF del plan semanal...");
+      const startDateFormatted = formatDisplayDate(weekDays[0]).replace(/\s/g, '_');
+      const endDateFormatted = formatDisplayDate(weekDays[6]).replace(/\s/g, '_');
+      const filename = `plan_semanal_${startDateFormatted}_al_${endDateFormatted}.pdf`;
+
+      html2pdf().from(pdfContentRef.current).set({
+        margin: [10, 10, 10, 10], // Top, Left, Bottom, Right
+        filename: filename,
+        image: { type: 'jpeg', quality: 0.98 },
+        html2canvas: { scale: 2, logging: true, dpi: 192, letterRendering: true },
+        jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+      }).save();
+      toast.success("PDF generado con éxito.");
+    } else {
+      toast.error("No se pudo encontrar el contenido del plan semanal.");
+    }
+  };
+
+  const userName = user?.user_metadata?.first_name || user?.email || "Usuario";
+  const weekRangeText = `Semana del ${formatDisplayDate(weekDays[0])} al ${formatDisplayDate(weekDays[6])}`;
+
   return (
     <div className="container mx-auto p-4">
       <h1 className="text-3xl font-bold mb-6 text-center">Planificador Semanal de Comidas</h1>
@@ -55,9 +91,16 @@ const MealPlannerPage: React.FC = () => {
       <div className="flex justify-between items-center mb-6">
         <Button onClick={goToPreviousWeek} variant="outline">Semana Anterior</Button>
         <h2 className="text-xl font-semibold whitespace-nowrap">
-          Semana del {formatDisplayDate(weekDays[0])} al {formatDisplayDate(weekDays[6])}
+          {weekRangeText}
         </h2>
         <Button onClick={goToNextWeek} variant="outline">Semana Siguiente</Button>
+      </div>
+
+      <div className="flex justify-end mb-4">
+        <Button onClick={handleDownloadPdf}>
+          <Download className="mr-2 h-4 w-4" />
+          Descargar Plan Semanal PDF
+        </Button>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -69,14 +112,13 @@ const MealPlannerPage: React.FC = () => {
             <CardContent className="flex-grow p-4 space-y-4">
               {mealTypes.map(mealType => {
                 const selectedRecipe = getRecipeForMeal(formatDate(day), mealType as MealPlanEntry['mealtype']);
-                // Filtrar recetas por mealtype (minúsculas)
                 const availableRecipes = recipes.filter(r => r.mealtype === mealType);
 
                 return (
                   <div key={mealType} className="border rounded-md p-3">
                     <h3 className="font-medium text-md mb-2">{mealType}</h3>
                     <Select
-                      onValueChange={(recipeid) => handleRecipeSelect(formatDate(day), mealType as MealPlanEntry['mealtype'], recipeid)} // Cambiado a 'recipeid'
+                      onValueChange={(recipeid) => handleRecipeSelect(formatDate(day), mealType as MealPlanEntry['mealtype'], recipeid)}
                       value={selectedRecipe?.id || ""}
                     >
                       <SelectTrigger className="w-full">
@@ -107,6 +149,41 @@ const MealPlannerPage: React.FC = () => {
             </CardContent>
           </Card>
         ))}
+      </div>
+
+      {/* Contenido oculto para la generación del PDF */}
+      <div ref={pdfContentRef} className="absolute -left-[9999px] w-[210mm] p-4 bg-white text-black">
+        <h1 className="text-2xl font-bold mb-2 text-center">Plan Semanal de Comidas de {userName}</h1>
+        <p className="text-lg text-center mb-4">{weekRangeText}</p>
+        <table className="w-full border-collapse">
+          <thead>
+            <tr className="bg-gray-100">
+              <th className="border p-2 text-left">Tipo de Comida</th>
+              {weekDays.map(day => (
+                <th key={formatDate(day)} className="border p-2 text-left">
+                  {formatDayOfWeek(day).charAt(0).toUpperCase() + formatDayOfWeek(day).slice(1).toLowerCase()}
+                  <br />
+                  <span className="font-normal text-sm">{formatDisplayDate(day)}</span>
+                </th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            {mealTypes.map(mealType => (
+              <tr key={mealType}>
+                <td className="border p-2 font-medium">{mealType}</td>
+                {weekDays.map(day => {
+                  const recipe = getRecipeForMeal(formatDate(day), mealType as MealPlanEntry['mealtype']);
+                  return (
+                    <td key={`${formatDate(day)}-${mealType}`} className="border p-2 text-sm">
+                      {recipe ? recipe.name : '-'}
+                    </td>
+                  );
+                })}
+              </tr>
+            ))}
+          </tbody>
+        </table>
       </div>
     </div>
   );
