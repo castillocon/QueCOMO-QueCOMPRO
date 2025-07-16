@@ -7,10 +7,12 @@ import { useMealPlanning } from '@/context/MealPlanningContext';
 import { toast } from "sonner";
 import html2pdf from 'html2pdf.js';
 import { formatDisplayDate } from '@/utils/date'; // Importar utilidades de fecha
+import { useSession } from '@/context/SessionContext'; // Importar useSession
 
 const RecipeDetailPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const { recipes } = useMealPlanning();
+  const { user, profile } = useSession(); // Obtener el perfil
   const recipe = recipes.find(r => r.id === id);
   const recipeContentRef = useRef<HTMLDivElement>(null);
 
@@ -18,6 +20,7 @@ const RecipeDetailPage: React.FC = () => {
     if (recipeContentRef.current && recipe) {
       toast.loading("Generando PDF de la receta...");
       const filename = `receta_${recipe.name.replace(/\s/g, '_')}.pdf`;
+      const userName = profile?.username || profile?.first_name || user?.email || "Usuario"; // Obtener el nombre de usuario
 
       html2pdf().from(recipeContentRef.current).set({
         margin: [10, 10, 10, 10],
@@ -31,7 +34,7 @@ const RecipeDetailPage: React.FC = () => {
             doc.setPage(i);
             doc.setFontSize(10);
             doc.setTextColor(100);
-            doc.text('🛒🍲 QueComo@QueCompro', doc.internal.pageSize.getWidth() / 2, doc.internal.pageSize.getHeight() - 10, { align: 'center' });
+            doc.text(`🛒🍲 QueComo@QueCompro - ${userName}`, doc.internal.pageSize.getWidth() / 2, doc.internal.pageSize.getHeight() - 10, { align: 'center' });
           }
         }
       }).save();

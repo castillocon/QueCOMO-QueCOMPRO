@@ -25,3 +25,10 @@ export interface Supplier {
   name: string;
   description?: string;
 }
+
+export interface Profile {
+  id: string;
+  first_name?: string;
+  last_name?: string;
+  username?: string; // Nuevo campo para el nombre de usuario
+}

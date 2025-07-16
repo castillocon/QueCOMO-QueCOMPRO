@@ -21,7 +21,7 @@ interface LayoutProps {
 }
 
 const Layout: React.FC<LayoutProps> = ({ children }) => {
-  const { user } = useSession();
+  const { user, profile } = useSession(); // Obtener el perfil
 
   const handleLogout = async () => {
     const { error } = await supabase.auth.signOut();
@@ -32,7 +32,8 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
     }
   };
 
-  const userName = user?.user_metadata?.first_name || user?.email || "Usuario";
+  // Usar el username del perfil, si no existe, usar first_name, si no, el email
+  const displayName = profile?.username || profile?.first_name || user?.email || "Usuario";
 
   return (
     <div className="grid min-h-screen w-full md:grid-cols-[220px_1fr] lg:grid-cols-[280px_1fr]">
@@ -46,13 +47,13 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
               <DropdownMenuTrigger asChild>
                 <Button variant="ghost" className="relative h-8 flex items-center justify-center space-x-2 px-4">
                   <UserCircle className="h-5 w-5" />
-                  <span className="hidden md:inline-block">{userName}</span>
+                  <span className="hidden md:inline-block">{displayName}</span>
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent className="w-56" align="end" forceMount>
                 <DropdownMenuLabel className="font-normal">
                   <div className="flex flex-col space-y-1">
-                    <p className="text-sm font-medium leading-none">{userName}</p>
+                    <p className="text-sm font-medium leading-none">{displayName}</p>
                     {user?.email && (
                       <p className="text-xs leading-none text-muted-foreground">
                         {user.email}

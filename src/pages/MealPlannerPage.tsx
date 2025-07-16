@@ -22,7 +22,7 @@ const MealPlannerPage: React.FC = () => {
   });
 
   const { recipes, mealPlan, addOrUpdateMealPlanEntry } = useMealPlanning();
-  const { user } = useSession();
+  const { user, profile } = useSession(); // Obtener el perfil
   const pdfContentRef = useRef<HTMLDivElement>(null);
   const [showPdfContent, setShowPdfContent] = useState(false);
 
@@ -91,7 +91,8 @@ const MealPlannerPage: React.FC = () => {
     }, 50);
   };
 
-  const userName = user?.user_metadata?.first_name || user?.email || "Usuario";
+  // Usar el username del perfil, si no existe, usar first_name, si no, el email
+  const userName = profile?.username || profile?.first_name || user?.email || "Usuario";
   const weekRangeText = `Semana del ${formatDisplayDate(weekDays[0])} al ${formatDisplayDate(weekDays[6])}`;
 
   return (

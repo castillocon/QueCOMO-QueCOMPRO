@@ -12,7 +12,7 @@ import { parseQuantity } from '@/utils/helpers'; // Importar parseQuantity
 
 const ShoppingListPage: React.FC = () => {
   const { recipes, mealPlan } = useMealPlanning();
-  const { user } = useSession();
+  const { user, profile } = useSession(); // Obtener el perfil
   const shoppingListRef = useRef<HTMLDivElement>(null);
 
   const [currentWeekStart, setCurrentWeekStart] = useState(new Date());
@@ -28,7 +28,8 @@ const ShoppingListPage: React.FC = () => {
   }, []);
 
   const weekDays = getWeekDays(currentWeekStart);
-  const userName = user?.user_metadata?.first_name || user?.email || "Usuario";
+  // Usar el username del perfil, si no existe, usar first_name, si no, el email
+  const userName = profile?.username || profile?.first_name || user?.email || "Usuario";
   const weekRangeText = `Semana del ${formatDisplayDate(weekDays[0])} al ${formatDisplayDate(weekDays[6])}`;
 
   const generateShoppingList = () => {
