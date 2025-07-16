@@ -1,12 +1,13 @@
+import React from "react"; // Añadir esta línea
 import { createRoot } from "react-dom/client";
 import App from "./App.tsx";
 import "./globals.css";
-import { SessionProvider } from "./context/SessionContext.tsx"; // Importar SessionProvider
-import { BrowserRouter } from "react-router-dom"; // Importar BrowserRouter
+import { SessionProvider } from "./context/SessionContext.tsx";
+import { BrowserRouter } from "react-router-dom";
 
 createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
-    <BrowserRouter> {/* BrowserRouter debe envolver SessionProvider si SessionProvider usa useNavigate */}
+    <BrowserRouter>
       <SessionProvider>
         <App />
       </SessionProvider>
