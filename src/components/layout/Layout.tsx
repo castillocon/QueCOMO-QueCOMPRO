@@ -40,9 +40,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
       <div className="flex flex-col">
         <header className="flex h-14 items-center gap-4 border-b bg-muted/40 px-4 lg:h-[60px] lg:px-6">
           <MobileSidebar />
-          <Link to="/" className="flex items-center gap-2 font-semibold text-primary">
-            <span className="text-lg font-bold">🛒🍲 QueComo@QueCompro</span>
-          </Link>
+          {/* Título eliminado de aquí */}
           <div className="ml-auto flex items-center gap-2">
             <DropdownMenu>
               <DropdownMenuTrigger asChild>

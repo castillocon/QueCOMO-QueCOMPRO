@@ -30,7 +30,9 @@ const Sidebar: React.FC = () => {
     <div className="hidden border-r bg-muted/40 md:block">
       <div className="flex h-full max-h-screen flex-col gap-2">
         <div className="flex h-14 items-center border-b px-4 lg:h-[60px] lg:px-6">
-          {/* Título eliminado de aquí para evitar duplicación */}
+          <Link to="/" className="flex items-center gap-2 font-semibold text-primary">
+            <span className="text-lg font-bold">🛒🍲 QueComo@QueCompro</span>
+          </Link>
         </div>
         <div className="flex-1">
           <nav className="grid items-start px-2 text-sm font-medium lg:px-4">
@@ -61,7 +63,9 @@ export const MobileSidebar: React.FC = () => {
       </SheetTrigger>
       <SheetContent side="left" className="flex flex-col">
         <nav className="grid gap-2 text-lg font-medium">
-          {/* Título eliminado de aquí para evitar duplicación */}
+          <Link to="/" className="flex items-center gap-2 text-lg font-semibold mb-4 text-primary">
+            <span className="text-lg font-bold">🛒🍲 QueComo@QueCompro</span>
+          </Link>
           <NavLink to="/" icon={Home} label="Planificador Semanal" isMobile />
           <NavLink to="/recipes" icon={Utensils} label="Mis Recetas" isMobile />
           <NavLink to="/preloaded-recipes" icon={BookOpen} label="Recetas Pre-cargadas" isMobile />
