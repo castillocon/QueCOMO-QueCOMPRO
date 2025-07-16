@@ -134,13 +134,13 @@ const RecipeFormPage: React.FC = () => {
       name: values.name,
       description: values.description,
       mealtype: values.mealtype,
-      ingredients: values.ingredients,
+      ingredients: values.ingredients as Ingredient[], // Explicit cast here
       instructions: values.instructions,
     };
 
     if (isEditing && currentRecipe) {
       await updateRecipe(
-        { ...currentRecipe, ...recipeData, imageUrl: values.imageUrl },
+        { ...currentRecipe, ...recipeData, imageUrl: values.imageUrl } as Recipe, // Explicit cast here
         selectedFile === null && currentRecipe.imageUrl ? null : selectedFile // Pass null if image removed, File if new, undefined if no change
       );
     } else {

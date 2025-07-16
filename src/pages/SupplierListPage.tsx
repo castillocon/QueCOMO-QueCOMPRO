@@ -64,14 +64,14 @@ const SupplierListPage: React.FC = () => {
   }, [isEditDialogOpen, currentSupplier, editForm]);
 
   const handleAddSubmit = async (values: SupplierFormValues) => {
-    await addSupplier(values);
+    await addSupplier(values as Omit<Supplier, 'id'>); // Explicit cast here
     setIsAddDialogOpen(false);
     addForm.reset();
   };
 
   const handleEditSubmit = async (values: SupplierFormValues) => {
     if (currentSupplier) {
-      await updateSupplier({ ...currentSupplier, ...values });
+      await updateSupplier({ ...currentSupplier, ...values } as Supplier); // Explicit cast here
       setIsEditDialogOpen(false);
     }
   };
