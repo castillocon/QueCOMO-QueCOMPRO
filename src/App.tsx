@@ -11,7 +11,9 @@ import RecipeFormPage from "./pages/RecipeFormPage";
 import ShoppingListPage from "./pages/ShoppingListPage";
 import NotFound from "./pages/NotFound";
 import Login from "./pages/Login";
-import ProfilePage from "./pages/ProfilePage"; // Importar la nueva página de perfil
+import ProfilePage from "./pages/ProfilePage";
+import PreloadedRecipeListPage from "./pages/PreloadedRecipeListPage"; // Importar la nueva página de lista
+import PreloadedRecipeDetailPage from "./pages/PreloadedRecipeDetailPage"; // Importar la nueva página de detalle
 import { MealPlanningProvider } from "./context/MealPlanningContext";
 import { useSession } from "./context/SessionContext";
 
@@ -101,11 +103,31 @@ const App = () => (
             }
           />
           <Route
-            path="/profile" // Nueva ruta para el perfil
+            path="/profile"
             element={
               <ProtectedRoute>
                 <Layout>
                   <ProfilePage />
+                </Layout>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/preloaded-recipes" // Nueva ruta para la lista de recetas pre-cargadas
+            element={
+              <ProtectedRoute>
+                <Layout>
+                  <PreloadedRecipeListPage />
+                </Layout>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/preloaded-recipes/:id" // Nueva ruta para el detalle de recetas pre-cargadas
+            element={
+              <ProtectedRoute>
+                <Layout>
+                  <PreloadedRecipeDetailPage />
                 </Layout>
               </ProtectedRoute>
             }
