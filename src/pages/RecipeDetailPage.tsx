@@ -1,14 +1,35 @@
-import React from "react";
+import React, { useRef } from "react"; // Importar useRef
 import { useParams, Link } from "react-router-dom";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, Edit } from "lucide-react";
+import { ArrowLeft, Edit, Download } from "lucide-react"; // Importar Download
 import { useMealPlanning } from '@/context/MealPlanningContext';
+import { toast } from "sonner"; // Importar toast para notificaciones
+import html2pdf from 'html2pdf.js'; // Importar html2pdf
 
 const RecipeDetailPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const { recipes } = useMealPlanning();
   const recipe = recipes.find(r => r.id === id);
+  const recipeContentRef = useRef<HTMLDivElement>(null); // Ref para el contenido de la receta
+
+  const handleDownloadPdf = () => {
+    if (recipeContentRef.current && recipe) {
+      toast.loading("Generando PDF de la receta...");
+      const filename = `receta_${recipe.name.replace(/\s/g, '_')}.pdf`; // Nombre de archivo dinámico
+
+      html2pdf().from(recipeContentRef.current).set({
+        margin: [10, 10, 10, 10],
+        filename: filename,
+        image: { type: 'jpeg', quality: 0.98 },
+        html2canvas: { scale: 2, logging: true, dpi: 192, letterRendering: true },
+        jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' } // Orientación vertical para recetas individuales
+      }).save();
+      toast.success("PDF generado con éxito.");
+    } else {
+      toast.error("No se pudo encontrar el contenido de la receta para descargar.");
+    }
+  };
 
   if (!recipe) {
     return (
@@ -30,41 +51,50 @@ const RecipeDetailPage: React.FC = () => {
             Volver a Recetas
           </Link>
         </Button>
-        <Button asChild>
-          <Link to={`/recipes/${recipe.id}/edit`}>
-            <Edit className="mr-2 h-4 w-4" />
-            Editar Receta
-          </Link>
-        </Button>
+        <div className="flex gap-2"> {/* Contenedor para los botones */}
+          <Button onClick={handleDownloadPdf} variant="outline">
+            <Download className="mr-2 h-4 w-4" />
+            Descargar PDF
+          </Button>
+          <Button asChild>
+            <Link to={`/recipes/${recipe.id}/edit`}>
+              <Edit className="mr-2 h-4 w-4" />
+              Editar Receta
+            </Link>
+          </Button>
+        </div>
       </div>
 
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-3xl">{recipe.name}</CardTitle>
-          <CardDescription className="text-lg">{recipe.mealtype}</CardDescription> {/* Cambiado a 'mealtype' */}
-          {recipe.description && <p className="text-muted-foreground mt-2">{recipe.description}</p>}
-        </CardHeader>
-        <CardContent className="grid md:grid-cols-2 gap-8">
-          <div>
-            <h2 className="text-2xl font-semibold mb-4">Ingredientes</h2>
-            <ul className="list-disc list-inside space-y-2">
-              {recipe.ingredients.map((ingredient, index) => (
-                <li key={index} className="text-lg">
-                  <span className="font-medium">{ingredient.quantity}</span> de {ingredient.name}
-                </li>
-              ))}
-            </ul>
-          </div>
-          <div>
-            <h2 className="text-2xl font-semibold mb-4">Instrucciones</h2>
-            <ol className="list-decimal list-inside space-y-2">
-              {recipe.instructions.map((instruction, index) => (
-                <li key={index} className="text-lg">{instruction}</li>
-              ))}
-            </ol>
-          </div>
-        </CardContent>
-      </Card>
+      {/* Contenido de la receta para la generación del PDF */}
+      <div ref={recipeContentRef} className="p-4 bg-white text-black"> {/* Añadido ref y estilos para PDF */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-3xl">{recipe.name}</CardTitle>
+            <CardDescription className="text-lg">{recipe.mealtype}</CardDescription>
+            {recipe.description && <p className="text-muted-foreground mt-2">{recipe.description}</p>}
+          </CardHeader>
+          <CardContent className="grid md:grid-cols-2 gap-8">
+            <div>
+              <h2 className="text-2xl font-semibold mb-4">Ingredientes</h2>
+              <ul className="list-disc list-inside space-y-2">
+                {recipe.ingredients.map((ingredient, index) => (
+                  <li key={index} className="text-lg">
+                    <span className="font-medium">{ingredient.quantity}</span> de {ingredient.name}
+                  </li>
+                ))}
+              </ul>
+            </div>
+            <div>
+              <h2 className="text-2xl font-semibold mb-4">Instrucciones</h2>
+              <ol className="list-decimal list-inside space-y-2">
+                {recipe.instructions.map((instruction, index) => (
+                  <li key={index} className="text-lg">{instruction}</li>
+                ))}
+              </ol>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
     </div>
   );
 };
