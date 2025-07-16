@@ -9,8 +9,13 @@ const Login: React.FC = () => {
     <div className="min-h-screen flex items-center justify-center bg-gray-100 dark:bg-gray-900">
       <Card className="w-full max-w-md mx-auto p-6 shadow-lg">
         <CardHeader className="text-center">
-          <CardTitle className="text-2xl font-bold">Bienvenido</CardTitle>
-          <p className="text-muted-foreground">Inicia sesión para acceder a tu planificador de comidas.</p>
+          <CardTitle className="text-3xl font-bold text-color4 mb-2">🛒🍲 QueComo@QueCompro</CardTitle>
+          <p className="text-color2 text-lg">
+            ¡Bienvenido a tu asistente personal de comida y compras!
+            Iniciá sesión para descubrir qué comer esta semana y qué comprar sin perder tiempo.
+            <br />
+            <span className="font-semibold text-color3">Planificá. Comprá. Comé mejor.</span>
+          </p>
         </CardHeader>
         <CardContent>
           <Auth
