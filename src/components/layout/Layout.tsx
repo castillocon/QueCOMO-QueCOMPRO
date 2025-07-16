@@ -1,6 +1,7 @@
 import React from "react";
 import Sidebar, { MobileSidebar } from "./Sidebar";
 import { MadeWithDyad } from "@/components/made-with-dyad";
+import { Link } from "react-router-dom"; // Import Link
 
 interface LayoutProps {
   children: React.ReactNode;
