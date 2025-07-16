@@ -4,6 +4,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { preloadedRecipes } from "@/data/preloadedRecipes";
 import { ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 
 const PreloadedRecipeListPage: React.FC = () => {
   return (
@@ -16,30 +17,42 @@ const PreloadedRecipeListPage: React.FC = () => {
       </Button>
       <h1 className="text-3xl font-bold mb-6 text-primary">Recetas Pre-cargadas</h1>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-        {preloadedRecipes.length > 0 ? (
-          preloadedRecipes.map(recipe => (
-            <Card key={recipe.id}>
-              <CardHeader>
-                <CardTitle>{recipe.name}</CardTitle>
-                <CardDescription>{recipe.mealtype}</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <p className="text-sm text-muted-foreground line-clamp-2 mb-3">
-                  {recipe.description || "Sin descripción."}
-                </p>
-                <Button asChild variant="outline" className="w-full">
-                  <Link to={`/preloaded-recipes/${recipe.id}`}>Ver Receta</Link>
-                </Button>
-              </CardContent>
-            </Card>
-          ))
-        ) : (
-          <p className="col-span-full text-center text-muted-foreground">
-            No hay recetas pre-cargadas disponibles.
-          </p>
-        )}
-      </div>
+      {preloadedRecipes.length > 0 ? (
+        <Card>
+          <CardContent className="p-0">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead className="w-[200px]">Nombre</TableHead>
+                  <TableHead className="w-[120px]">Tipo de Comida</TableHead>
+                  <TableHead>Descripción</TableHead>
+                  <TableHead className="w-[100px] text-right">Acciones</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {preloadedRecipes.map(recipe => (
+                  <TableRow key={recipe.id}>
+                    <TableCell className="font-medium">{recipe.name}</TableCell>
+                    <TableCell>{recipe.mealtype}</TableCell>
+                    <TableCell className="text-muted-foreground line-clamp-2">
+                      {recipe.description || "Sin descripción."}
+                    </TableCell>
+                    <TableCell className="text-right">
+                      <Button asChild variant="outline" size="sm">
+                        <Link to={`/preloaded-recipes/${recipe.id}`}>Ver</Link>
+                      </Button>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </CardContent>
+        </Card>
+      ) : (
+        <p className="col-span-full text-center text-muted-foreground">
+          No hay recetas pre-cargadas disponibles.
+        </p>
+      )}
     </div>
   );
 };
