@@ -9,12 +9,12 @@ export interface Recipe {
   description?: string;
   ingredients: Ingredient[];
   instructions: string[];
-  mealtype: 'Desayuno' | 'Almuerzo' | 'Cena' | 'Merienda'; // Cambiado a 'mealtype'
+  mealtype: 'Desayuno' | 'Almuerzo' | 'Cena' | 'Merienda';
 }
 
 export interface MealPlanEntry {
   id: string;
   date: string; // YYYY-MM-DD
-  mealType: 'Desayuno' | 'Almuerzo' | 'Cena' | 'Merienda';
+  mealtype: 'Desayuno' | 'Almuerzo' | 'Cena' | 'Merienda'; // Cambiado a 'mealtype'
   recipeId: string;
 }

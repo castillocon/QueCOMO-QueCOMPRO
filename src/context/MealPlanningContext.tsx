@@ -10,8 +10,8 @@ interface MealPlanningContextType {
   addRecipe: (newRecipe: Omit<Recipe, 'id'>) => Promise<void>;
   updateRecipe: (updatedRecipe: Recipe) => Promise<void>;
   deleteRecipe: (id: string) => Promise<void>;
-  addOrUpdateMealPlanEntry: (date: string, mealType: MealPlanEntry['mealType'], recipeId: string) => Promise<void>;
-  removeMealPlanEntry: (date: string, mealType: MealPlanEntry['mealType']) => Promise<void>;
+  addOrUpdateMealPlanEntry: (date: string, mealType: MealPlanEntry['mealtype'], recipeId: string) => Promise<void>; // Cambiado a 'mealtype'
+  removeMealPlanEntry: (date: string, mealType: MealPlanEntry['mealtype']) => Promise<void>; // Cambiado a 'mealtype'
   isLoadingRecipes: boolean;
   isLoadingMealPlan: boolean;
 }
@@ -23,7 +23,7 @@ export const MealPlanningProvider: React.FC<{ children: ReactNode }> = ({ childr
   const [recipes, setRecipes] = useState<Recipe[]>([]);
   const [mealPlan, setMealPlan] = useState<MealPlanEntry[]>([]);
   const [isLoadingRecipes, setIsLoadingRecipes] = useState(true);
-  const [isLoadingMealPlan, setIsLoadingMealPlan] = useState(true); // Corregido aquí
+  const [isLoadingMealPlan, setIsLoadingMealPlan] = useState(true);
 
   // Fetch recipes
   useEffect(() => {
@@ -84,11 +84,10 @@ export const MealPlanningProvider: React.FC<{ children: ReactNode }> = ({ childr
       toast.error('Debes iniciar sesión para añadir recetas.');
       return;
     }
-    // Asegurarse de que el objeto enviado a Supabase tenga 'mealtype' en minúsculas
     const { mealtype, ...rest } = newRecipe;
     const { data, error } = await supabase
       .from('recipes')
-      .insert({ ...rest, mealtype, user_id: user.id }) // Cambiado a 'mealtype'
+      .insert({ ...rest, mealtype, user_id: user.id })
       .select();
 
     if (error) {
@@ -104,11 +103,10 @@ export const MealPlanningProvider: React.FC<{ children: ReactNode }> = ({ childr
       toast.error('Debes iniciar sesión para actualizar recetas.');
       return;
     }
-    // Asegurarse de que el objeto enviado a Supabase tenga 'mealtype' en minúsculas
     const { mealtype, ...rest } = updatedRecipe;
     const { error } = await supabase
       .from('recipes')
-      .update({ ...rest, mealtype }) // Cambiado a 'mealtype'
+      .update({ ...rest, mealtype })
       .eq('id', updatedRecipe.id)
       .eq('user_id', user.id);
 
@@ -144,14 +142,14 @@ export const MealPlanningProvider: React.FC<{ children: ReactNode }> = ({ childr
     }
   };
 
-  const addOrUpdateMealPlanEntry = async (date: string, mealType: MealPlanEntry['mealType'], recipeId: string) => {
+  const addOrUpdateMealPlanEntry = async (date: string, mealType: MealPlanEntry['mealtype'], recipeId: string) => { // Cambiado a 'mealtype'
     if (!user) {
       toast.error('Debes iniciar sesión para planificar comidas.');
       return;
     }
 
     const existingEntry = mealPlan.find(
-      entry => entry.date === date && entry.mealType === mealType
+      entry => entry.date === date && entry.mealtype === mealType // Cambiado a 'mealtype'
     );
 
     if (existingEntry) {
@@ -174,7 +172,7 @@ export const MealPlanningProvider: React.FC<{ children: ReactNode }> = ({ childr
     } else {
       const { data, error } = await supabase
         .from('meal_plan_entries')
-        .insert({ date, mealType, recipeId, user_id: user.id })
+        .insert({ date, mealtype: mealType, recipeId, user_id: user.id }) // Cambiado a 'mealtype'
         .select();
 
       if (error) {
@@ -186,12 +184,12 @@ export const MealPlanningProvider: React.FC<{ children: ReactNode }> = ({ childr
     }
   };
 
-  const removeMealPlanEntry = async (date: string, mealType: MealPlanEntry['mealType']) => {
+  const removeMealPlanEntry = async (date: string, mealType: MealPlanEntry['mealtype']) => { // Cambiado a 'mealtype'
     if (!user) {
       toast.error('Debes iniciar sesión para eliminar entradas del plan.');
       return;
     }
-    const entryToRemove = mealPlan.find(entry => entry.date === date && entry.mealType === mealType);
+    const entryToRemove = mealPlan.find(entry => entry.date === date && entry.mealtype === mealType); // Cambiado a 'mealtype'
 
     if (entryToRemove) {
       const { error } = await supabase
