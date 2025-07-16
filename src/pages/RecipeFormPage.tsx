@@ -26,20 +26,20 @@ const ACCEPTED_IMAGE_TYPES = ["image/jpeg", "image/jpg", "image/png", "image/web
 
 // Definir el esquema de Ingredient por separado
 const ingredientSchema = z.object({
-  name: z.string().min(1, 'El nombre del ingrediente es requerido.'),
-  quantity: z.string().min(1, 'La cantidad es requerida.'),
+  name: z.string().nonempty('El nombre del ingrediente es requerido.'),
+  quantity: z.string().nonempty('La cantidad es requerida.'),
   supplier: z.string().optional(),
 });
 
 const formSchema = z.object({
-  name: z.string().min(1, 'El nombre es requerido.'),
+  name: z.string().nonempty('El nombre es requerido.'),
   description: z.string().optional(),
   mealtype: z.enum(['Desayuno', 'Almuerzo', 'Cena', 'Merienda'], {
     required_error: 'El tipo de comida es requerido.',
   }),
   ingredients: z.array(ingredientSchema).min(1, 'Debe añadir al menos un ingrediente.'),
   instructions: z.array(
-    z.string().min(1, 'La instrucción no puede estar vacía.')
+    z.string().nonempty('La instrucción no puede estar vacía.')
   ).min(1, 'Debe añadir al menos una instrucción.'),
   image: z.any()
     .refine((file) => !file || file.size <= MAX_FILE_SIZE, `El tamaño máximo de la imagen es 5MB.`)
@@ -64,7 +64,7 @@ const RecipeFormPage: React.FC = () => {
       name: '',
       description: '',
       mealtype: 'Almuerzo',
-      ingredients: [{ name: '', quantity: '', supplier: '' }] as Ingredient[], // Explicitly cast
+      ingredients: [{ name: '', quantity: '', supplier: '' }],
       instructions: [''],
       imageUrl: '', // Initialize imageUrl
     },
@@ -100,7 +100,7 @@ const RecipeFormPage: React.FC = () => {
         name: '',
         description: '',
         mealtype: 'Almuerzo',
-        ingredients: [{ name: '', quantity: '', supplier: '' }] as Ingredient[], // Explicitly cast
+        ingredients: [{ name: '', quantity: '', supplier: '' }],
         instructions: [''],
         imageUrl: '',
       });

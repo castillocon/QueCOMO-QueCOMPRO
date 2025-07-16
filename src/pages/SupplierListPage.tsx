@@ -26,7 +26,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { Supplier } from "@/types"; // Importar Supplier
 
 const supplierFormSchema = z.object({
-  name: z.string().min(1, "El nombre es requerido."),
+  name: z.string().nonempty("El nombre es requerido."),
   description: z.string().optional(),
 });
 
@@ -43,7 +43,7 @@ const SupplierListPage: React.FC = () => {
     defaultValues: {
       name: "",
       description: "",
-    } as Omit<Supplier, 'id'>, // Explicitly cast
+    },
   });
 
   const editForm = useForm<SupplierFormValues>({
@@ -51,7 +51,7 @@ const SupplierListPage: React.FC = () => {
     defaultValues: {
       name: "",
       description: "",
-    } as Omit<Supplier, 'id'>, // Explicitly cast
+    },
   });
 
   React.useEffect(() => {
