@@ -1,6 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import { Home, Utensils, ShoppingCart, Menu, BookOpen } from "lucide-react"; // Importar BookOpen
+import { Home, Utensils, ShoppingCart, Menu, BookOpen, Store } from "lucide-react"; // Importar Store
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { cn } from "@/lib/utils";
@@ -39,8 +39,9 @@ const Sidebar: React.FC = () => {
           <nav className="grid items-start px-2 text-sm font-medium lg:px-4">
             <NavLink to="/" icon={Home} label="Planificador Semanal" />
             <NavLink to="/recipes" icon={Utensils} label="Mis Recetas" />
-            <NavLink to="/preloaded-recipes" icon={BookOpen} label="Recetas Pre-cargadas" /> {/* Nuevo enlace */}
+            <NavLink to="/preloaded-recipes" icon={BookOpen} label="Recetas Pre-cargadas" />
             <NavLink to="/shopping-list" icon={ShoppingCart} label="Lista de Compras" />
+            <NavLink to="/suppliers" icon={Store} label="Proveedores" /> {/* Nuevo enlace */}
           </nav>
         </div>
       </div>
@@ -69,8 +70,9 @@ export const MobileSidebar: React.FC = () => {
           </Link>
           <NavLink to="/" icon={Home} label="Planificador Semanal" isMobile />
           <NavLink to="/recipes" icon={Utensils} label="Mis Recetas" isMobile />
-          <NavLink to="/preloaded-recipes" icon={BookOpen} label="Recetas Pre-cargadas" isMobile /> {/* Nuevo enlace */}
+          <NavLink to="/preloaded-recipes" icon={BookOpen} label="Recetas Pre-cargadas" isMobile />
           <NavLink to="/shopping-list" icon={ShoppingCart} label="Lista de Compras" isMobile />
+          <NavLink to="/suppliers" icon={Store} label="Proveedores" isMobile /> {/* Nuevo enlace */}
         </nav>
       </SheetContent>
     </Sheet>

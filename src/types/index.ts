@@ -19,3 +19,9 @@ export interface MealPlanEntry {
   mealtype: 'Desayuno' | 'Almuerzo' | 'Cena' | 'Merienda';
   recipeid: string; // Cambiado a 'recipeid' (minúsculas)
 }
+
+export interface Supplier {
+  id: string;
+  name: string;
+  description?: string;
+}

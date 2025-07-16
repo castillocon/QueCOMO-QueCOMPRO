@@ -12,8 +12,9 @@ import ShoppingListPage from "./pages/ShoppingListPage";
 import NotFound from "./pages/NotFound";
 import Login from "./pages/Login";
 import ProfilePage from "./pages/ProfilePage";
-import PreloadedRecipeListPage from "./pages/PreloadedRecipeListPage"; // Importar la nueva página de lista
-import PreloadedRecipeDetailPage from "./pages/PreloadedRecipeDetailPage"; // Importar la nueva página de detalle
+import PreloadedRecipeListPage from "./pages/PreloadedRecipeListPage";
+import PreloadedRecipeDetailPage from "./pages/PreloadedRecipeDetailPage";
+import SupplierListPage from "./pages/SupplierListPage"; // Importar la nueva página de proveedores
 import { MealPlanningProvider } from "./context/MealPlanningContext";
 import { useSession } from "./context/SessionContext";
 
@@ -113,7 +114,7 @@ const App = () => (
             }
           />
           <Route
-            path="/preloaded-recipes" // Nueva ruta para la lista de recetas pre-cargadas
+            path="/preloaded-recipes"
             element={
               <ProtectedRoute>
                 <Layout>
@@ -123,11 +124,21 @@ const App = () => (
             }
           />
           <Route
-            path="/preloaded-recipes/:id" // Nueva ruta para el detalle de recetas pre-cargadas
+            path="/preloaded-recipes/:id"
             element={
               <ProtectedRoute>
                 <Layout>
                   <PreloadedRecipeDetailPage />
+                </Layout>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/suppliers" // Nueva ruta para la lista de proveedores
+            element={
+              <ProtectedRoute>
+                <Layout>
+                  <SupplierListPage />
                 </Layout>
               </ProtectedRoute>
             }

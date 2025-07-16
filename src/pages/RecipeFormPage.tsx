@@ -44,7 +44,7 @@ type RecipeFormValues = z.infer<typeof formSchema>;
 const RecipeFormPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const { recipes, addRecipe, updateRecipe } = useMealPlanning();
+  const { recipes, addRecipe, updateRecipe, suppliers, isLoadingSuppliers } = useMealPlanning(); // Obtener suppliers
 
   const isEditing = !!id;
   const currentRecipe = isEditing ? recipes.find(r => r.id === id) : undefined;
@@ -206,9 +206,27 @@ const RecipeFormPage: React.FC = () => {
                       render={({ field }) => (
                         <FormItem className="flex-1 min-w-[100px]">
                           <FormLabel className={index === 0 ? 'block' : 'sr-only'}>Proveedor (Opcional)</FormLabel>
-                          <FormControl>
-                            <Input placeholder="Ej: Supermercado A" {...field} />
-                          </FormControl>
+                          <Select onValueChange={field.onChange} value={field.value || ''} disabled={isLoadingSuppliers}>
+                            <FormControl>
+                              <SelectTrigger>
+                                <SelectValue placeholder="Seleccionar Proveedor" />
+                              </SelectTrigger>
+                            </FormControl>
+                            <SelectContent>
+                              <SelectItem value="">Sin Proveedor</SelectItem> {/* Opción para no seleccionar proveedor */}
+                              {suppliers.length > 0 ? (
+                                suppliers.map(supplier => (
+                                  <SelectItem key={supplier.id} value={supplier.name}>
+                                    {supplier.name}
+                                  </SelectItem>
+                                ))
+                              ) : (
+                                <SelectItem value="no-suppliers" disabled>
+                                  {isLoadingSuppliers ? "Cargando..." : "No hay proveedores. Añade uno en 'Proveedores'."}
+                                </SelectItem>
+                              )}
+                            </SelectContent>
+                          </Select>
                           <FormMessage />
                         </FormItem>
                       )}

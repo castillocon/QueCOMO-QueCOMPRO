@@ -1,5 +1,5 @@
 import React, { createContext, useState, useContext, ReactNode, useEffect } from 'react';
-import { Recipe, MealPlanEntry } from '@/types';
+import { Recipe, MealPlanEntry, Supplier } from '@/types';
 import { supabase } from '@/integrations/supabase/client';
 import { useSession } from './SessionContext';
 import { toast } from 'sonner';
@@ -7,13 +7,18 @@ import { toast } from 'sonner';
 interface MealPlanningContextType {
   recipes: Recipe[];
   mealPlan: MealPlanEntry[];
+  suppliers: Supplier[]; // Nuevo: lista de proveedores
   addRecipe: (newRecipe: Omit<Recipe, 'id'>) => Promise<void>;
   updateRecipe: (updatedRecipe: Recipe) => Promise<void>;
   deleteRecipe: (id: string) => Promise<void>;
-  addOrUpdateMealPlanEntry: (date: string, mealtype: MealPlanEntry['mealtype'], recipeid: string) => Promise<void>; // Cambiado a 'recipeid'
+  addOrUpdateMealPlanEntry: (date: string, mealtype: MealPlanEntry['mealtype'], recipeid: string) => Promise<void>;
   removeMealPlanEntry: (date: string, mealtype: MealPlanEntry['mealtype']) => Promise<void>;
+  addSupplier: (newSupplier: Omit<Supplier, 'id'>) => Promise<void>; // Nuevo: añadir proveedor
+  updateSupplier: (updatedSupplier: Supplier) => Promise<void>; // Nuevo: actualizar proveedor
+  deleteSupplier: (id: string) => Promise<void>; // Nuevo: eliminar proveedor
   isLoadingRecipes: boolean;
   isLoadingMealPlan: boolean;
+  isLoadingSuppliers: boolean; // Nuevo: estado de carga de proveedores
 }
 
 const MealPlanningContext = createContext<MealPlanningContextType | undefined>(undefined);
@@ -22,8 +27,10 @@ export const MealPlanningProvider: React.FC<{ children: ReactNode }> = ({ childr
   const { user, isLoading: isLoadingSession } = useSession();
   const [recipes, setRecipes] = useState<Recipe[]>([]);
   const [mealPlan, setMealPlan] = useState<MealPlanEntry[]>([]);
+  const [suppliers, setSuppliers] = useState<Supplier[]>([]); // Nuevo estado para proveedores
   const [isLoadingRecipes, setIsLoadingRecipes] = useState(true);
   const [isLoadingMealPlan, setIsLoadingMealPlan] = useState(true);
+  const [isLoadingSuppliers, setIsLoadingSuppliers] = useState(true); // Nuevo estado de carga
 
   // Fetch recipes
   useEffect(() => {
@@ -79,15 +86,41 @@ export const MealPlanningProvider: React.FC<{ children: ReactNode }> = ({ childr
     }
   }, [user, isLoadingSession]);
 
+  // Fetch suppliers
+  useEffect(() => {
+    const fetchSuppliers = async () => {
+      if (!user) {
+        setSuppliers([]);
+        setIsLoadingSuppliers(false);
+        return;
+      }
+      setIsLoadingSuppliers(true);
+      const { data, error } = await supabase
+        .from('suppliers')
+        .select('*')
+        .eq('user_id', user.id);
+
+      if (error) {
+        toast.error('Error al cargar proveedores: ' + error.message);
+      } else {
+        setSuppliers(data as Supplier[]);
+      }
+      setIsLoadingSuppliers(false);
+    };
+
+    if (!isLoadingSession) {
+      fetchSuppliers();
+    }
+  }, [user, isLoadingSession]);
+
   const addRecipe = async (newRecipe: Omit<Recipe, 'id'>) => {
     if (!user) {
       toast.error('Debes iniciar sesión para añadir recetas.');
       return;
     }
-    const { mealtype, ...rest } = newRecipe;
     const { data, error } = await supabase
       .from('recipes')
-      .insert({ ...rest, mealtype, user_id: user.id })
+      .insert({ ...newRecipe, user_id: user.id })
       .select();
 
     if (error) {
@@ -103,10 +136,9 @@ export const MealPlanningProvider: React.FC<{ children: ReactNode }> = ({ childr
       toast.error('Debes iniciar sesión para actualizar recetas.');
       return;
     }
-    const { mealtype, ...rest } = updatedRecipe;
     const { error } = await supabase
       .from('recipes')
-      .update({ ...rest, mealtype })
+      .update(updatedRecipe)
       .eq('id', updatedRecipe.id)
       .eq('user_id', user.id);
 
@@ -137,12 +169,12 @@ export const MealPlanningProvider: React.FC<{ children: ReactNode }> = ({ childr
       toast.error('Error al eliminar receta: ' + error.message);
     } else {
       setRecipes(prevRecipes => prevRecipes.filter(recipe => recipe.id !== id));
-      setMealPlan(prevPlan => prevPlan.filter(entry => entry.recipeid !== id)); // Cambiado a 'recipeid'
+      setMealPlan(prevPlan => prevPlan.filter(entry => entry.recipeid !== id));
       toast.success('Receta eliminada con éxito.');
     }
   };
 
-  const addOrUpdateMealPlanEntry = async (date: string, mealtype: MealPlanEntry['mealtype'], recipeid: string) => { // Cambiado a 'recipeid'
+  const addOrUpdateMealPlanEntry = async (date: string, mealtype: MealPlanEntry['mealtype'], recipeid: string) => {
     if (!user) {
       toast.error('Debes iniciar sesión para planificar comidas.');
       return;
@@ -155,7 +187,7 @@ export const MealPlanningProvider: React.FC<{ children: ReactNode }> = ({ childr
     if (existingEntry) {
       const { error } = await supabase
         .from('meal_plan_entries')
-        .update({ recipeid }) // Cambiado a 'recipeid'
+        .update({ recipeid })
         .eq('id', existingEntry.id)
         .eq('user_id', user.id);
 
@@ -164,7 +196,7 @@ export const MealPlanningProvider: React.FC<{ children: ReactNode }> = ({ childr
       } else {
         setMealPlan(prevPlan =>
           prevPlan.map(entry =>
-            entry.id === existingEntry.id ? { ...entry, recipeid } : entry // Cambiado a 'recipeid'
+            entry.id === existingEntry.id ? { ...entry, recipeid } : entry
           )
         );
         toast.success('Entrada del plan actualizada.');
@@ -172,7 +204,7 @@ export const MealPlanningProvider: React.FC<{ children: ReactNode }> = ({ childr
     } else {
       const { data, error } = await supabase
         .from('meal_plan_entries')
-        .insert({ date, mealtype, recipeid, user_id: user.id }) // Cambiado a 'recipeid'
+        .insert({ date, mealtype, recipeid, user_id: user.id })
         .select();
 
       if (error) {
@@ -207,17 +239,82 @@ export const MealPlanningProvider: React.FC<{ children: ReactNode }> = ({ childr
     }
   };
 
+  const addSupplier = async (newSupplier: Omit<Supplier, 'id'>) => {
+    if (!user) {
+      toast.error('Debes iniciar sesión para añadir proveedores.');
+      return;
+    }
+    const { data, error } = await supabase
+      .from('suppliers')
+      .insert({ ...newSupplier, user_id: user.id })
+      .select();
+
+    if (error) {
+      toast.error('Error al añadir proveedor: ' + error.message);
+    } else if (data) {
+      setSuppliers(prevSuppliers => [...prevSuppliers, data[0] as Supplier]);
+      toast.success('Proveedor añadido con éxito.');
+    }
+  };
+
+  const updateSupplier = async (updatedSupplier: Supplier) => {
+    if (!user) {
+      toast.error('Debes iniciar sesión para actualizar proveedores.');
+      return;
+    }
+    const { error } = await supabase
+      .from('suppliers')
+      .update(updatedSupplier)
+      .eq('id', updatedSupplier.id)
+      .eq('user_id', user.id);
+
+    if (error) {
+      toast.error('Error al actualizar proveedor: ' + error.message);
+    } else {
+      setSuppliers(prevSuppliers =>
+        prevSuppliers.map(supplier =>
+          supplier.id === updatedSupplier.id ? updatedSupplier : supplier
+        )
+      );
+      toast.success('Proveedor actualizado con éxito.');
+    }
+  };
+
+  const deleteSupplier = async (id: string) => {
+    if (!user) {
+      toast.error('Debes iniciar sesión para eliminar proveedores.');
+      return;
+    }
+    const { error } = await supabase
+      .from('suppliers')
+      .delete()
+      .eq('id', id)
+      .eq('user_id', user.id);
+
+    if (error) {
+      toast.error('Error al eliminar proveedor: ' + error.message);
+    } else {
+      setSuppliers(prevSuppliers => prevSuppliers.filter(supplier => supplier.id !== id));
+      toast.success('Proveedor eliminado con éxito.');
+    }
+  };
+
   return (
     <MealPlanningContext.Provider value={{
       recipes,
       mealPlan,
+      suppliers, // Exponer proveedores
       addRecipe,
       updateRecipe,
       deleteRecipe,
       addOrUpdateMealPlanEntry,
       removeMealPlanEntry,
+      addSupplier, // Exponer funciones de proveedor
+      updateSupplier,
+      deleteSupplier,
       isLoadingRecipes,
-      isLoadingMealPlan
+      isLoadingMealPlan,
+      isLoadingSuppliers // Exponer estado de carga de proveedores
     }}>
       {children}
     </MealPlanningContext.Provider>
