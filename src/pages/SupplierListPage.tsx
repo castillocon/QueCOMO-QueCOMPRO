@@ -28,7 +28,7 @@ import { Supplier } from "@/types"; // Importar Supplier
 const supplierFormSchema = z.object({
   name: z.string().min(1, "El nombre es requerido."),
   description: z.string().optional(),
-}) satisfies z.ZodType<Omit<Supplier, 'id'>>; // Añadir esta aserción
+}); // Eliminado 'satisfies z.ZodType<Omit<Supplier, 'id'>>'
 
 type SupplierFormValues = z.infer<typeof supplierFormSchema>;
 
