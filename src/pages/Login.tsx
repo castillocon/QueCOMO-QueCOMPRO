@@ -15,7 +15,7 @@ const Login: React.FC = () => {
         <CardContent>
           <Auth
             supabaseClient={supabase}
-            providers={[]} {/* Se eliminaron los proveedores 'google' y 'microsoft' */}
+            providers={[]}
             appearance={{
               theme: ThemeSupa,
               variables: {
