@@ -21,6 +21,7 @@ interface MealPlanningContextType {
   isLoadingMealPlan: boolean;
   isLoadingSuppliers: boolean;
   recipesById: Map<string, Recipe>; // Nuevo: Mapa de recetas por ID
+  resetUserData: () => void; // Nueva función para resetear datos
 }
 
 const MealPlanningContext = createContext<MealPlanningContextType | undefined>(undefined);
@@ -377,6 +378,12 @@ export const MealPlanningProvider: React.FC<{ children: ReactNode }> = ({ childr
     }
   };
 
+  const resetUserData = useCallback(() => {
+    setRecipes([]);
+    setMealPlan([]);
+    setSuppliers([]);
+  }, []);
+
   return (
     <MealPlanningContext.Provider value={{
       recipes,
@@ -394,7 +401,8 @@ export const MealPlanningProvider: React.FC<{ children: ReactNode }> = ({ childr
       isLoadingRecipes,
       isLoadingMealPlan,
       isLoadingSuppliers,
-      recipesById // Exponer el mapa
+      recipesById,
+      resetUserData // Exponer la nueva función
     }}>
       {children}
     </MealPlanningContext.Provider>
