@@ -1,6 +1,6 @@
 import React from 'react';
 import { Auth } from '@supabase/auth-ui-react';
-import { ThemeSupa, i18n } from '@supabase/auth-ui-shared'; // Importar i18n y ThemeSupa como exportaciones con nombre
+import { ThemeSupa } from '@supabase/auth-ui-shared'; // Eliminar i18n de la importación
 import { supabase } from '@/integrations/supabase/client';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
@@ -17,7 +17,7 @@ const Login: React.FC = () => {
             supabaseClient={supabase}
             providers={['google', 'microsoft']}
             appearance={{
-              theme: ThemeSupa, // Usar ThemeSupa directamente
+              theme: ThemeSupa,
               variables: {
                 default: {
                   colors: {
@@ -29,45 +29,7 @@ const Login: React.FC = () => {
             }}
             theme="light"
             redirectTo={window.location.origin}
-            localization={{
-              variables: {
-                ...i18n.es, // Usar i18n.es directamente
-                sign_in: {
-                  email_label: 'Correo electrónico',
-                  password_label: 'Contraseña',
-                  email_input_placeholder: 'Tu correo electrónico',
-                  password_input_placeholder: 'Tu contraseña',
-                  button_label: 'Iniciar sesión',
-                  social_auth_typography: 'O continuar con',
-                  link_text: '¿Ya tienes una cuenta? Inicia sesión',
-                },
-                sign_up: {
-                  email_label: 'Correo electrónico',
-                  password_label: 'Crear contraseña',
-                  email_input_placeholder: 'Tu correo electrónico',
-                  password_input_placeholder: 'Tu contraseña',
-                  button_label: 'Registrarse',
-                  social_auth_typography: 'O registrarse con',
-                  link_text: '¿No tienes una cuenta? Regístrate',
-                },
-                forgotten_password: {
-                  link_text: '¿Olvidaste tu contraseña?',
-                  email_label: 'Correo electrónico',
-                  email_input_placeholder: 'Tu correo electrónico',
-                  button_label: 'Enviar instrucciones de recuperación',
-                },
-                update_password: {
-                  password_label: 'Nueva contraseña',
-                  password_input_placeholder: 'Tu nueva contraseña',
-                  button_label: 'Actualizar contraseña',
-                },
-                magic_link: {
-                  email_input_placeholder: 'Tu correo electrónico',
-                  button_label: 'Enviar enlace mágico',
-                  link_text: '¿Ya tienes una cuenta? Inicia sesión',
-                },
-              },
-            }}
+            // Se eliminó la prop localization
           />
         </CardContent>
       </Card>
