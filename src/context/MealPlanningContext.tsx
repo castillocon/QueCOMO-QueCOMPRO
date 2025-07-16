@@ -23,7 +23,7 @@ export const MealPlanningProvider: React.FC<{ children: ReactNode }> = ({ childr
   const [recipes, setRecipes] = useState<Recipe[]>([]);
   const [mealPlan, setMealPlan] = useState<MealPlanEntry[]>([]);
   const [isLoadingRecipes, setIsLoadingRecipes] = useState(true);
-  const [isLoadingMealPlan, setIsLoadingMealPlan] = true);
+  const [isLoadingMealPlan, setIsLoadingMealPlan] = useState(true); // Corregido aquí
 
   // Fetch recipes
   useEffect(() => {
