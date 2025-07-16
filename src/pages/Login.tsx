@@ -1,9 +1,8 @@
 import React from 'react';
 import { Auth } from '@supabase/auth-ui-react';
-import { ThemeSupa } from '@supabase/auth-ui-shared';
+import * as AuthUIShared from '@supabase/auth-ui-shared'; // Importar todo como AuthUIShared
 import { supabase } from '@/integrations/supabase/client';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { i18n } from '@supabase/auth-ui-shared'; // Importar i18n como exportación con nombre
 
 const Login: React.FC = () => {
   return (
@@ -18,7 +17,7 @@ const Login: React.FC = () => {
             supabaseClient={supabase}
             providers={['google', 'microsoft']}
             appearance={{
-              theme: ThemeSupa,
+              theme: AuthUIShared.ThemeSupa, // Acceder a ThemeSupa desde AuthUIShared
               variables: {
                 default: {
                   colors: {
@@ -32,7 +31,7 @@ const Login: React.FC = () => {
             redirectTo={window.location.origin}
             localization={{
               variables: {
-                ...i18n.es, // Usar la configuración de idioma español
+                ...AuthUIShared.i18n.es, // Acceder a i18n.es desde AuthUIShared
                 sign_in: {
                   email_label: 'Correo electrónico',
                   password_label: 'Contraseña',
