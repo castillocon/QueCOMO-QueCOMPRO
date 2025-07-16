@@ -2,6 +2,7 @@ import React from "react";
 import Sidebar, { MobileSidebar } from "./Sidebar";
 import { MadeWithDyad } from "@/components/made-with-dyad";
 import { Link } from "react-router-dom"; // Import Link
+import { Utensils } from "lucide-react"; // Import Utensils
 
 interface LayoutProps {
   children: React.ReactNode;
