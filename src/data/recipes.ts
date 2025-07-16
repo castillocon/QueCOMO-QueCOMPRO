@@ -19,7 +19,7 @@ export const mockRecipes: Recipe[] = [
       "Añadir el aderezo César y mezclar bien.",
       "Servir inmediatamente."
     ],
-    mealType: "Almuerzo",
+    mealtype: "Almuerzo",
   },
   {
     id: "rec-2",
@@ -40,7 +40,7 @@ export const mockRecipes: Recipe[] = [
       "Hornear durante 12-15 minutos, o hasta que el salmón esté cocido y los espárragos tiernos.",
       "Servir caliente."
     ],
-    mealType: "Cena",
+    mealtype: "Cena",
   },
   {
     id: "rec-3",
@@ -57,7 +57,7 @@ export const mockRecipes: Recipe[] = [
       "Licuar hasta obtener una mezcla suave y homogénea.",
       "Servir frío."
     ],
-    mealType: "Desayuno",
+    mealtype: "Desayuno",
   },
   {
     id: "rec-4",
@@ -79,7 +79,7 @@ export const mockRecipes: Recipe[] = [
       "Sazonar con sal, pimienta y chile en hojuelas si se desea.",
       "Servir inmediatamente."
     ],
-    mealType: "Desayuno",
+    mealtype: "Desayuno",
   },
   {
     id: "rec-5",
@@ -106,7 +106,7 @@ export const mockRecipes: Recipe[] = [
       "Sazonar con sal y pimienta al gusto.",
       "Servir caliente."
     ],
-    mealType: "Almuerzo",
+    mealtype: "Almuerzo",
   },
   {
     id: "rec-6",
@@ -128,7 +128,7 @@ export const mockRecipes: Recipe[] = [
       "Añadir el pesto, los tomates cherry y un chorrito de aceite de oliva. Mezclar bien.",
       "Servir con piñones tostados y hojas de albahaca fresca."
     ],
-    mealType: "Cena",
+    mealtype: "Cena",
   },
   {
     id: "rec-7",
@@ -145,7 +145,7 @@ export const mockRecipes: Recipe[] = [
       "Rociar con miel si se desea.",
       "Servir."
     ],
-    mealType: "Merienda",
+    mealtype: "Merienda",
   },
   {
     id: "rec-8",
@@ -169,6 +169,6 @@ export const mockRecipes: Recipe[] = [
       "Enrollar la tortilla firmemente.",
       "Cortar por la mitad y servir."
     ],
-    mealType: "Almuerzo",
+    mealtype: "Almuerzo",
   },
 ];
