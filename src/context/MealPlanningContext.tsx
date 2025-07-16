@@ -10,8 +10,8 @@ interface MealPlanningContextType {
   addRecipe: (newRecipe: Omit<Recipe, 'id'>) => Promise<void>;
   updateRecipe: (updatedRecipe: Recipe) => Promise<void>;
   deleteRecipe: (id: string) => Promise<void>;
-  addOrUpdateMealPlanEntry: (date: string, mealtype: MealPlanEntry['mealtype'], recipeId: string) => Promise<void>; // Corregido aquí
-  removeMealPlanEntry: (date: string, mealtype: MealPlanEntry['mealtype']) => Promise<void>; // Corregido aquí
+  addOrUpdateMealPlanEntry: (date: string, mealtype: MealPlanEntry['mealtype'], recipeid: string) => Promise<void>; // Cambiado a 'recipeid'
+  removeMealPlanEntry: (date: string, mealtype: MealPlanEntry['mealtype']) => Promise<void>;
   isLoadingRecipes: boolean;
   isLoadingMealPlan: boolean;
 }
@@ -137,25 +137,25 @@ export const MealPlanningProvider: React.FC<{ children: ReactNode }> = ({ childr
       toast.error('Error al eliminar receta: ' + error.message);
     } else {
       setRecipes(prevRecipes => prevRecipes.filter(recipe => recipe.id !== id));
-      setMealPlan(prevPlan => prevPlan.filter(entry => entry.recipeId !== id));
+      setMealPlan(prevPlan => prevPlan.filter(entry => entry.recipeid !== id)); // Cambiado a 'recipeid'
       toast.success('Receta eliminada con éxito.');
     }
   };
 
-  const addOrUpdateMealPlanEntry = async (date: string, mealtype: MealPlanEntry['mealtype'], recipeId: string) => { // Corregido aquí
+  const addOrUpdateMealPlanEntry = async (date: string, mealtype: MealPlanEntry['mealtype'], recipeid: string) => { // Cambiado a 'recipeid'
     if (!user) {
       toast.error('Debes iniciar sesión para planificar comidas.');
       return;
     }
 
     const existingEntry = mealPlan.find(
-      entry => entry.date === date && entry.mealtype === mealtype // Ya estaba bien
+      entry => entry.date === date && entry.mealtype === mealtype
     );
 
     if (existingEntry) {
       const { error } = await supabase
         .from('meal_plan_entries')
-        .update({ recipeId })
+        .update({ recipeid }) // Cambiado a 'recipeid'
         .eq('id', existingEntry.id)
         .eq('user_id', user.id);
 
@@ -164,7 +164,7 @@ export const MealPlanningProvider: React.FC<{ children: ReactNode }> = ({ childr
       } else {
         setMealPlan(prevPlan =>
           prevPlan.map(entry =>
-            entry.id === existingEntry.id ? { ...entry, recipeId } : entry
+            entry.id === existingEntry.id ? { ...entry, recipeid } : entry // Cambiado a 'recipeid'
           )
         );
         toast.success('Entrada del plan actualizada.');
@@ -172,7 +172,7 @@ export const MealPlanningProvider: React.FC<{ children: ReactNode }> = ({ childr
     } else {
       const { data, error } = await supabase
         .from('meal_plan_entries')
-        .insert({ date, mealtype, recipeId, user_id: user.id }) // Ya estaba bien
+        .insert({ date, mealtype, recipeid, user_id: user.id }) // Cambiado a 'recipeid'
         .select();
 
       if (error) {
@@ -184,12 +184,12 @@ export const MealPlanningProvider: React.FC<{ children: ReactNode }> = ({ childr
     }
   };
 
-  const removeMealPlanEntry = async (date: string, mealtype: MealPlanEntry['mealtype']) => { // Corregido aquí
+  const removeMealPlanEntry = async (date: string, mealtype: MealPlanEntry['mealtype']) => {
     if (!user) {
       toast.error('Debes iniciar sesión para eliminar entradas del plan.');
       return;
     }
-    const entryToRemove = mealPlan.find(entry => entry.date === date && entry.mealtype === mealtype); // Ya estaba bien
+    const entryToRemove = mealPlan.find(entry => entry.date === date && entry.mealtype === mealtype);
 
     if (entryToRemove) {
       const { error } = await supabase

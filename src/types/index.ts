@@ -15,6 +15,6 @@ export interface Recipe {
 export interface MealPlanEntry {
   id: string;
   date: string; // YYYY-MM-DD
-  mealtype: 'Desayuno' | 'Almuerzo' | 'Cena' | 'Merienda'; // Cambiado a 'mealtype'
-  recipeId: string;
+  mealtype: 'Desayuno' | 'Almuerzo' | 'Cena' | 'Merienda';
+  recipeid: string; // Cambiado a 'recipeid' (minúsculas)
 }

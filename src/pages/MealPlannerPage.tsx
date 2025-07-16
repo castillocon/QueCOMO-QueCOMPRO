@@ -26,14 +26,14 @@ const MealPlannerPage: React.FC = () => {
   const weekDays = getWeekDays(currentWeekStart);
   const mealTypes = ['Desayuno', 'Almuerzo', 'Cena', 'Merienda'];
 
-  const handleRecipeSelect = (date: string, mealtype: MealPlanEntry['mealtype'], recipeId: string) => { // Corregido aquí
-    addOrUpdateMealPlanEntry(date, mealtype, recipeId);
+  const handleRecipeSelect = (date: string, mealtype: MealPlanEntry['mealtype'], recipeid: string) => { // Cambiado a 'recipeid'
+    addOrUpdateMealPlanEntry(date, mealtype, recipeid);
   };
 
-  const getRecipeForMeal = (date: string, mealtype: MealPlanEntry['mealtype']) => { // Corregido aquí
+  const getRecipeForMeal = (date: string, mealtype: MealPlanEntry['mealtype']) => {
     const entry = mealPlan.find(e => e.date === date && e.mealtype === mealtype);
     // Filtrar recetas por mealtype (minúsculas)
-    return entry ? recipes.find(r => r.id === entry.recipeId) : undefined;
+    return entry ? recipes.find(r => r.id === entry.recipeid) : undefined; // Cambiado a 'recipeid'
   };
 
   const goToPreviousWeek = () => {
@@ -68,7 +68,7 @@ const MealPlannerPage: React.FC = () => {
             </CardHeader>
             <CardContent className="flex-grow p-4 space-y-4">
               {mealTypes.map(mealType => {
-                const selectedRecipe = getRecipeForMeal(formatDate(day), mealType as MealPlanEntry['mealtype']); // Corregido aquí
+                const selectedRecipe = getRecipeForMeal(formatDate(day), mealType as MealPlanEntry['mealtype']);
                 // Filtrar recetas por mealtype (minúsculas)
                 const availableRecipes = recipes.filter(r => r.mealtype === mealType);
 
@@ -76,7 +76,7 @@ const MealPlannerPage: React.FC = () => {
                   <div key={mealType} className="border rounded-md p-3">
                     <h3 className="font-medium text-md mb-2">{mealType}</h3>
                     <Select
-                      onValueChange={(recipeId) => handleRecipeSelect(formatDate(day), mealType as MealPlanEntry['mealtype'], recipeId)} // Corregido aquí
+                      onValueChange={(recipeid) => handleRecipeSelect(formatDate(day), mealType as MealPlanEntry['mealtype'], recipeid)} // Cambiado a 'recipeid'
                       value={selectedRecipe?.id || ""}
                     >
                       <SelectTrigger className="w-full">
