@@ -31,7 +31,7 @@ const Sidebar: React.FC = () => {
       <div className="flex h-full max-h-screen flex-col gap-2">
         <div className="flex h-14 items-center border-b px-4 lg:h-[60px] lg:px-6">
           <Link to="/" className="flex items-center gap-2 font-semibold text-primary">
-            <span className="text-lg font-bold">🛒🍲 QueComo@QueCompro</span>
+            <span className="text-base font-bold">🛒🍲 QueComo@QueCompro</span>
           </Link>
         </div>
         <div className="flex-1">
@@ -40,7 +40,7 @@ const Sidebar: React.FC = () => {
             <NavLink to="/recipes" icon={Utensils} label="Mis Recetas" />
             <NavLink to="/preloaded-recipes" icon={BookOpen} label="Recetas Pre-cargadas" />
             <NavLink to="/shopping-list" icon={ShoppingCart} label="Lista de Compras" />
-            <NavLink to="/suppliers" icon={Store} label="Proveedores" /> {/* Nuevo enlace */}
+            <NavLink to="/suppliers" icon={Store} label="Proveedores" />
           </nav>
         </div>
       </div>
@@ -64,13 +64,13 @@ export const MobileSidebar: React.FC = () => {
       <SheetContent side="left" className="flex flex-col">
         <nav className="grid gap-2 text-lg font-medium">
           <Link to="/" className="flex items-center gap-2 text-lg font-semibold mb-4 text-primary">
-            <span className="text-lg font-bold">🛒🍲 QueComo@QueCompro</span>
+            <span className="text-base font-bold">🛒🍲 QueComo@QueCompro</span>
           </Link>
           <NavLink to="/" icon={Home} label="Planificador Semanal" isMobile />
           <NavLink to="/recipes" icon={Utensils} label="Mis Recetas" isMobile />
           <NavLink to="/preloaded-recipes" icon={BookOpen} label="Recetas Pre-cargadas" isMobile />
           <NavLink to="/shopping-list" icon={ShoppingCart} label="Lista de Compras" isMobile />
-          <NavLink to="/suppliers" icon={Store} label="Proveedores" isMobile /> {/* Nuevo enlace */}
+          <NavLink to="/suppliers" icon={Store} label="Proveedores" isMobile />
         </nav>
       </SheetContent>
     </Sheet>
