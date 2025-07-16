@@ -1,12 +1,20 @@
-import React from "react";
+import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { preloadedRecipes } from "@/data/preloadedRecipes";
-import { ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { ArrowLeft } from "lucide-react";
+import { preloadedRecipes } from "@/data/preloadedRecipes";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { MealPlanEntry } from "@/types"; // Importar MealPlanEntry para los tipos de comida
 
 const PreloadedRecipeListPage: React.FC = () => {
+  const [selectedMealType, setSelectedMealType] = useState<MealPlanEntry['mealtype'] | 'Todos'>('Todos');
+
+  const filteredRecipes = preloadedRecipes.filter(recipe =>
+    selectedMealType === 'Todos' || recipe.mealtype === selectedMealType
+  );
+
   return (
     <div className="container mx-auto p-4">
       <Button variant="outline" asChild className="mb-6">
@@ -17,7 +25,26 @@ const PreloadedRecipeListPage: React.FC = () => {
       </Button>
       <h1 className="text-3xl font-bold mb-6 text-primary">Recetas Pre-cargadas</h1>
 
-      {preloadedRecipes.length > 0 ? (
+      <div className="mb-6 flex items-center gap-4">
+        <h2 className="text-lg font-semibold">Filtrar por Tipo de Comida:</h2>
+        <Select
+          onValueChange={(value: MealPlanEntry['mealtype'] | 'Todos') => setSelectedMealType(value)}
+          value={selectedMealType}
+        >
+          <SelectTrigger className="w-[180px]">
+            <SelectValue placeholder="Seleccionar tipo" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="Todos">Todos</SelectItem>
+            <SelectItem value="Desayuno">Desayuno</SelectItem>
+            <SelectItem value="Almuerzo">Almuerzo</SelectItem>
+            <SelectItem value="Merienda">Merienda</SelectItem>
+            <SelectItem value="Cena">Cena</SelectItem>
+          </SelectContent>
+        </Select>
+      </div>
+
+      {filteredRecipes.length > 0 ? (
         <Card>
           <CardContent className="p-0">
             <Table>
@@ -30,7 +57,7 @@ const PreloadedRecipeListPage: React.FC = () => {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {preloadedRecipes.map(recipe => (
+                {filteredRecipes.map(recipe => (
                   <TableRow key={recipe.id}>
                     <TableCell className="font-medium">{recipe.name}</TableCell>
                     <TableCell>{recipe.mealtype}</TableCell>
@@ -50,7 +77,7 @@ const PreloadedRecipeListPage: React.FC = () => {
         </Card>
       ) : (
         <p className="col-span-full text-center text-muted-foreground">
-          No hay recetas pre-cargadas disponibles.
+          No hay recetas pre-cargadas disponibles para el tipo de comida seleccionado.
         </p>
       )}
     </div>
