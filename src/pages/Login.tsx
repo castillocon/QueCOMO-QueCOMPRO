@@ -1,10 +1,21 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Auth } from '@supabase/auth-ui-react';
 import { ThemeSupa } from '@supabase/auth-ui-shared';
 import { supabase } from '@/integrations/supabase/client';
-import { Card, CardContent, CardHeader, CardTitle, CardFooter } from '@/components/ui/card'; // Importar CardFooter
+import { Card, CardContent, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
 
 const Login: React.FC = () => {
+  const [demoEmail, setDemoEmail] = useState<string>('');
+  const [demoPassword, setDemoPassword] = useState<string>('');
+  const [authKey, setAuthKey] = useState<number>(0); // Key para forzar el re-montaje del componente Auth
+
+  const handleFillDemo = () => {
+    setDemoEmail('demo@quecomoquecompro.com');
+    setDemoPassword('demo');
+    setAuthKey(Date.now()); // Cambia la key para forzar el re-montaje
+  };
+
   return (
     <div className="min-h-screen flex items-center justify-center bg-background dark:bg-background">
       <Card className="w-full max-w-md mx-auto p-6 shadow-lg">
@@ -19,6 +30,7 @@ const Login: React.FC = () => {
         </CardHeader>
         <CardContent>
           <Auth
+            key={authKey} {/* Usa la key para forzar el re-montaje */}
             supabaseClient={supabase}
             providers={[]}
             appearance={{
@@ -34,9 +46,14 @@ const Login: React.FC = () => {
             }}
             theme="light"
             redirectTo={window.location.origin}
+            defaultEmail={demoEmail} {/* Pasa el email de demostración */}
+            defaultPassword={demoPassword} {/* Pasa la contraseña de demostración */}
           />
         </CardContent>
         <CardFooter className="flex flex-col items-center text-center mt-6 pt-4 border-t border-border dark:border-border">
+          <Button onClick={handleFillDemo} className="w-full mb-4">
+            Rellenar con Credenciales de Demostración
+          </Button>
           <p className="text-sm text-muted-foreground mb-2">
             ¿Solo quieres probar? Usa estas credenciales de demostración:
           </p>
