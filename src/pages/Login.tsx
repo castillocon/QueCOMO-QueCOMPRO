@@ -7,20 +7,31 @@ import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
 
 const Login: React.FC = () => {
-  const [demoEmail, setDemoEmail] = useState<string>('');
-  const [demoPassword, setDemoPassword] = useState<string>('');
-  const [authKey, setAuthKey] = useState<number>(0); // Key para forzar el re-montaje del componente Auth
+  // No necesitamos estados para demoEmail y demoPassword si vamos a iniciar sesión directamente
+  // const [demoEmail, setDemoEmail] = useState<string>('');
+  // const [demoPassword, setDemoPassword] = useState<string>('');
+  // const [authKey, setAuthKey] = useState<number>(0); // No necesitamos key para re-montar si no pasamos props
 
-  const handleFillDemo = () => {
-    setDemoEmail('demo@quecomoquecompro.com');
-    setDemoPassword('demo');
-    setAuthKey(prevKey => prevKey + 1); // Incrementa la key para forzar el re-montaje
-    toast.info('Campos de demostración rellenados. ¡Ahora puedes iniciar sesión!');
+  const handleLoginDemo = async () => {
+    const email = 'demo@quecomoquecompro.com';
+    const password = 'demo';
+
+    toast.loading('Iniciando sesión con credenciales de demostración...', { id: 'demo-login' });
+
+    const { error } = await supabase.auth.signInWithPassword({
+      email,
+      password,
+    });
+
+    if (error) {
+      toast.error('Error al iniciar sesión con demo: ' + error.message, { id: 'demo-login' });
+    } else {
+      toast.success('¡Sesión de demostración iniciada con éxito!', { id: 'demo-login' });
+      // La redirección se maneja automáticamente por SessionContext
+    }
   };
 
-  // Eliminamos el useEffect que manipulaba el DOM directamente.
-  // Ahora, el componente Auth se re-renderizará con los nuevos defaultEmail y defaultPassword
-  // gracias al cambio de la prop 'key'.
+  // Eliminamos el useEffect que manipulaba el DOM o pasaba props, ya no es necesario.
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-background dark:bg-background">
@@ -36,7 +47,7 @@ const Login: React.FC = () => {
         </CardHeader>
         <CardContent>
           <Auth
-            key={authKey} // La key fuerza el re-montaje del componente Auth
+            // Ya no necesitamos la prop key aquí, ni defaultEmail/defaultPassword
             supabaseClient={supabase}
             providers={[]}
             appearance={{
@@ -52,13 +63,11 @@ const Login: React.FC = () => {
             }}
             theme="light"
             redirectTo={window.location.origin}
-            defaultEmail={demoEmail} // Pasamos el email de demostración como prop
-            defaultPassword={demoPassword} // Pasamos la contraseña de demostración como prop
           />
         </CardContent>
         <CardFooter className="flex flex-col items-center text-center mt-6 pt-4 border-t border-border dark:border-border">
-          <Button onClick={handleFillDemo} className="w-full mb-4">
-            Rellenar con Credenciales de Demostración
+          <Button onClick={handleLoginDemo} className="w-full mb-4">
+            Iniciar Sesión con Credenciales de Demostración
           </Button>
           <p className="text-sm text-muted-foreground mb-2">
             ¿Solo quieres probar? Usa estas credenciales de demostración:
