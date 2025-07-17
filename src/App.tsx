@@ -5,7 +5,7 @@ import React, { Suspense } from "react";
 import { Routes, Route, Navigate } from "react-router-dom";
 import Layout from "./components/layout/Layout";
 import { useSession } from "./context/SessionContext";
-import { MealPlanningProvider } from "./context/MealPlanningContext"; // Importar MealPlanningProvider
+import { MealPlanningProvider } from "./context/MealPlanningContext";
 
 // Importaciones dinámicas para code splitting
 const MealPlannerPage = React.lazy(() => import("./pages/MealPlannerPage"));
@@ -19,6 +19,8 @@ const ProfilePage = React.lazy(() => import("./pages/ProfilePage"));
 const PreloadedRecipeListPage = React.lazy(() => import("./pages/PreloadedRecipeListPage"));
 const PreloadedRecipeDetailPage = React.lazy(() => import("./pages/PreloadedRecipeDetailPage"));
 const SupplierListPage = React.lazy(() => import("./pages/SupplierListPage"));
+const PreloadedSupplierListPage = React.lazy(() => import("./pages/PreloadedSupplierListPage"));
+const PreloadedSupplierDetailPage = React.lazy(() => import("./pages/PreloadedSupplierDetailPage"));
 
 const queryClient = new QueryClient();
 
@@ -150,6 +152,26 @@ const App = () => (
                 <ProtectedRoute>
                   <Layout>
                     <SupplierListPage />
+                  </Layout>
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/preloaded-suppliers"
+              element={
+                <ProtectedRoute>
+                  <Layout>
+                    <PreloadedSupplierListPage />
+                  </Layout>
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/preloaded-suppliers/:id"
+              element={
+                <ProtectedRoute>
+                  <Layout>
+                    <PreloadedSupplierDetailPage />
                   </Layout>
                 </ProtectedRoute>
               }

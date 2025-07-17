@@ -40,7 +40,8 @@ const Sidebar: React.FC = () => {
             <NavLink to="/recipes" icon={Utensils} label="Mis Recetas" />
             <NavLink to="/preloaded-recipes" icon={BookOpen} label="Recetas Pre-cargadas" />
             <NavLink to="/shopping-list" icon={ShoppingCart} label="Lista de Compras" />
-            <NavLink to="/suppliers" icon={Store} label="Proveedores" />
+            <NavLink to="/suppliers" icon={Store} label="Mis Proveedores" />
+            <NavLink to="/preloaded-suppliers" icon={Store} label="Proveedores Pre-cargados" />
           </nav>
         </div>
       </div>
@@ -70,7 +71,8 @@ export const MobileSidebar: React.FC = () => {
           <NavLink to="/recipes" icon={Utensils} label="Mis Recetas" isMobile />
           <NavLink to="/preloaded-recipes" icon={BookOpen} label="Recetas Pre-cargadas" isMobile />
           <NavLink to="/shopping-list" icon={ShoppingCart} label="Lista de Compras" isMobile />
-          <NavLink to="/suppliers" icon={Store} label="Proveedores" isMobile />
+          <NavLink to="/suppliers" icon={Store} label="Mis Proveedores" isMobile />
+          <NavLink to="/preloaded-suppliers" icon={Store} label="Proveedores Pre-cargados" isMobile />
         </nav>
       </SheetContent>
     </Sheet>
