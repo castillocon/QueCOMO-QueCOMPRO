@@ -30,7 +30,7 @@ const Login: React.FC = () => {
         </CardHeader>
         <CardContent>
           <Auth
-            key={authKey} {/* Usa la key para forzar el re-montaje */}
+            key={authKey}
             supabaseClient={supabase}
             providers={[]}
             appearance={{
@@ -46,8 +46,8 @@ const Login: React.FC = () => {
             }}
             theme="light"
             redirectTo={window.location.origin}
-            defaultEmail={demoEmail} {/* Pasa el email de demostración */}
-            defaultPassword={demoPassword} {/* Pasa la contraseña de demostración */}
+            defaultEmail={demoEmail} // Pasa el email de demostración
+            defaultPassword={demoPassword} // Pasa la contraseña de demostración
           />
         </CardContent>
         <CardFooter className="flex flex-col items-center text-center mt-6 pt-4 border-t border-border dark:border-border">
