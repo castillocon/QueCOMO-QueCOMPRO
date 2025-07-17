@@ -4,7 +4,7 @@ import { ThemeSupa } from '@supabase/auth-ui-shared';
 import { supabase } from '@/integrations/supabase/client';
 import { Card, CardContent, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { toast } from 'sonner'; // Importar toast
+import { toast } from 'sonner';
 
 const Login: React.FC = () => {
   const [demoEmail, setDemoEmail] = useState<string>('');
@@ -14,34 +14,13 @@ const Login: React.FC = () => {
   const handleFillDemo = () => {
     setDemoEmail('demo@quecomoquecompro.com');
     setDemoPassword('demo');
-    setAuthKey(Date.now()); // Cambia la key para forzar el re-montaje
-    toast.info('Rellenando campos con credenciales de demostración...');
+    setAuthKey(prevKey => prevKey + 1); // Incrementa la key para forzar el re-montaje
+    toast.info('Campos de demostración rellenados. ¡Ahora puedes iniciar sesión!');
   };
 
-  useEffect(() => {
-    if (demoEmail && demoPassword) {
-      // Añadir un pequeño retraso para asegurar que el componente Auth se haya re-renderizado
-      const timer = setTimeout(() => {
-        const emailInput = document.querySelector('input[name="email"]') as HTMLInputElement;
-        const passwordInput = document.querySelector('input[name="password"]') as HTMLInputElement;
-
-        if (emailInput) {
-          emailInput.value = demoEmail;
-          // Disparar eventos para simular la entrada del usuario y activar el manejo interno de cambios de React
-          emailInput.dispatchEvent(new Event('input', { bubbles: true }));
-          emailInput.dispatchEvent(new Event('change', { bubbles: true }));
-        }
-        if (passwordInput) {
-          passwordInput.value = demoPassword;
-          passwordInput.dispatchEvent(new Event('input', { bubbles: true }));
-          passwordInput.dispatchEvent(new Event('change', { bubbles: true }));
-        }
-        toast.success('Campos rellenados. ¡Ahora puedes iniciar sesión!');
-      }, 100); // Pequeño retraso de 100ms
-
-      return () => clearTimeout(timer); // Limpiar el temporizador si el componente se desmonta
-    }
-  }, [authKey, demoEmail, demoPassword]); // Depende de authKey para ejecutarse después del re-montaje
+  // Eliminamos el useEffect que manipulaba el DOM directamente.
+  // Ahora, el componente Auth se re-renderizará con los nuevos defaultEmail y defaultPassword
+  // gracias al cambio de la prop 'key'.
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-background dark:bg-background">
@@ -57,7 +36,7 @@ const Login: React.FC = () => {
         </CardHeader>
         <CardContent>
           <Auth
-            key={authKey}
+            key={authKey} // La key fuerza el re-montaje del componente Auth
             supabaseClient={supabase}
             providers={[]}
             appearance={{
@@ -73,8 +52,8 @@ const Login: React.FC = () => {
             }}
             theme="light"
             redirectTo={window.location.origin}
-            // Las propiedades defaultEmail y defaultPassword se han eliminado aquí
-            // ya que la manipulación directa del DOM es más fiable para este caso.
+            defaultEmail={demoEmail} // Pasamos el email de demostración como prop
+            defaultPassword={demoPassword} // Pasamos la contraseña de demostración como prop
           />
         </CardContent>
         <CardFooter className="flex flex-col items-center text-center mt-6 pt-4 border-t border-border dark:border-border">
